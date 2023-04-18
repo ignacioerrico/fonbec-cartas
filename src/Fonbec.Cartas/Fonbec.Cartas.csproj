@@ -10,4 +10,8 @@
     <ProjectReference Include="..\1-UI\Fonbec.Cartas.Ui\Fonbec.Cartas.Ui.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

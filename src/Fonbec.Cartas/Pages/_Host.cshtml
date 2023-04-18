@@ -8,15 +8,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/site.css" rel="stylesheet" />
-    <link href="Fonbec.Cartas.styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link rel="stylesheet" href="_content/Fonbec.Cartas.Ui/css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="_content/Fonbec.Cartas.Ui/css/site.css" />
+    <link rel="stylesheet" href="Fonbec.Cartas.styles.css" />
+    <link rel="icon" type="image/png" href="_content/Fonbec.Cartas.Ui/favicon.png" />
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
-    <component type="typeof(App)" render-mode="ServerPrerendered" />
+    <component type="typeof(Ui.App)" render-mode="ServerPrerendered" />
 
     <div id="blazor-error-ui">
         <environment include="Staging,Production">

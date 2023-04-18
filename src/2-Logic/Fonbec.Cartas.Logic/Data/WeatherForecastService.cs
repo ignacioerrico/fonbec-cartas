@@ -1,4 +1,4 @@
-namespace Fonbec.Cartas.Data;
+namespace Fonbec.Cartas.Logic.Data;
 
 public class WeatherForecastService
 {
