@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.DataAccess.Identity;
+﻿using Fonbec.Cartas.DataAccess.ExtensionMethods;
+using Fonbec.Cartas.DataAccess.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,8 +15,8 @@ public class FonbecCartasDbContext : IdentityDbContext<FonbecUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
+
+        // Seed roles
+        builder.SeedRoles();
     }
 }

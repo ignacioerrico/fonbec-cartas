@@ -1,31 +1,36 @@
 using Fonbec.Cartas.DataAccess;
 using Fonbec.Cartas.DataAccess.Identity;
-using MudBlazor.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Entity Framework
 var connectionString = builder.Configuration.GetConnectionString("FonbecCartasDbContextConnection")
                        ?? throw new InvalidOperationException("Connection string 'FonbecCartasDbContextConnection' not found.");
 builder.Services.AddDbContext<FonbecCartasDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
 });
+
+// Identity
 builder.Services.AddDefaultIdentity<FonbecUser>(options =>
     {
         options.SignIn.RequireConfirmedAccount = true;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<FonbecCartasDbContext>();
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddMudServices();
+Fonbec.Cartas.Ui.ConfigureServices.RegisterOptions(builder.Services, builder.Configuration);
 
-Fonbec.Cartas.Ui.ServiceRegistration.Register(builder.Services);
+Fonbec.Cartas.Ui.ConfigureServices.RegisterServices(builder.Services);
 
 var app = builder.Build();
+
+Fonbec.Cartas.Ui.Configure.SeedAminUser(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
