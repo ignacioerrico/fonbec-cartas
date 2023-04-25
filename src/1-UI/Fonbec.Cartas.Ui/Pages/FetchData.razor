@@ -1,6 +1,6 @@
 ﻿@page "/fetchdata"
-@using Fonbec.Cartas.Logic.Data
-@inject WeatherForecastService ForecastService
+@attribute [Authorize(Roles = "Coordinador")]
+@inject Logic.Data.WeatherForecastService ForecastService
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -38,7 +38,7 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private Logic.Data.WeatherForecast[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {

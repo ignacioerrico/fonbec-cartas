@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @using Microsoft.AspNetCore.Components.Web
 @namespace Fonbec.Cartas.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -19,7 +20,14 @@
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
-    <component type="typeof(Ui.App)" render-mode="ServerPrerendered" />
+    @{
+        var initialState = new Ui.InitialState
+        {
+            XsrfToken = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken
+        };
+    }
+
+    <component type="typeof(Ui.App)" render-mode="ServerPrerendered" param-InitialState="@initialState" />
 
     <div id="blazor-error-ui">
         <environment include="Staging,Production">

@@ -8,15 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Entity Framework
 var connectionString = builder.Configuration.GetConnectionString("FonbecCartasDbContextConnection")
                        ?? throw new InvalidOperationException("Connection string 'FonbecCartasDbContextConnection' not found.");
-builder.Services.AddDbContext<FonbecCartasDbContext>(options =>
-{
-    options.UseSqlServer(connectionString);
-});
+builder.Services
+    .AddDbContext<FonbecCartasDbContext>(options =>
+        options.UseSqlServer(connectionString));
 
 // Identity
-builder.Services.AddDefaultIdentity<FonbecUser>(options =>
-    {
-    })
+builder.Services
+    .AddDefaultIdentity<FonbecUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<FonbecCartasDbContext>();
 
@@ -45,6 +43,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapBlazorHub();

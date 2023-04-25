@@ -18,6 +18,8 @@ namespace Fonbec.Cartas.Ui
         {
             services.AddMudServices();
 
+            services.AddScoped<InitialState>();
+
             services.AddSingleton<WeatherForecastService>();
         }
     }

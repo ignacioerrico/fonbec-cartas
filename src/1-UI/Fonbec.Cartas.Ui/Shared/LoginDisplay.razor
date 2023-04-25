@@ -1,0 +1,33 @@
+﻿@inject InitialState InitialState
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        <MudText Class="mr-4">¡Hola, @context.User.Identity?.Name!</MudText>
+        <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Info" Class="mr-4"
+                   OnClick="@(() => NavigateTo("Identity/Account/Manage"))">
+            Tu cuenta
+        </MudButton>
+        <form method="post" action="Identity/Account/LogOut">
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Secondary">
+                Cerrar sesión
+            </MudButton>
+            <input type="hidden"
+                   name="__RequestVerificationToken"
+                   value="@InitialState.XsrfToken" />
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Success" Class="mr-4"
+                   OnClick="@(() => NavigateTo("Identity/Account/Login"))">
+            Iniciar sesión
+        </MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private void NavigateTo(string path)
+    {
+        NavigationManager.NavigateTo(path, new NavigationOptions { ForceLoad = true });
+    }
+}
