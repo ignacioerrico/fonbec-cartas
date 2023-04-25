@@ -5,31 +5,28 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{07B215C5-28D6-4209-9E69-74A2EBF770C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fonbec.Cartas", "src\Fonbec.Cartas\Fonbec.Cartas.csproj", "{2A4D5B8E-53BB-45B1-AFCF-76A1DF93A663}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonbec.Cartas", "src\Fonbec.Cartas\Fonbec.Cartas.csproj", "{2A4D5B8E-53BB-45B1-AFCF-76A1DF93A663}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-UI", "1-UI", "{25FA6C8B-271C-442E-A70B-44458F750512}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fonbec.Cartas.Ui", "src\1-UI\Fonbec.Cartas.Ui\Fonbec.Cartas.Ui.csproj", "{A23E1F6C-7D22-4EEC-9DCA-ADCFB13E8A48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonbec.Cartas.Ui", "src\1-UI\Fonbec.Cartas.Ui\Fonbec.Cartas.Ui.csproj", "{A23E1F6C-7D22-4EEC-9DCA-ADCFB13E8A48}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Logic", "2-Logic", "{80CDAFEE-764D-447A-8BBC-D8D2C42B8D14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fonbec.Cartas.Logic", "src\2-Logic\Fonbec.Cartas.Logic\Fonbec.Cartas.Logic.csproj", "{8004B626-75D0-4D0A-9EE0-5F0A8E482BF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonbec.Cartas.Logic", "src\2-Logic\Fonbec.Cartas.Logic\Fonbec.Cartas.Logic.csproj", "{8004B626-75D0-4D0A-9EE0-5F0A8E482BF7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3-DataAccess", "3-DataAccess", "{4765181B-9F79-4299-A7AB-DB9CA842111B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fonbec.Cartas.DataAccess", "src\3-DataAccess\Fonbec.Cartas.DataAccess\Fonbec.Cartas.DataAccess.csproj", "{2E09FF47-8164-4D76-A82A-1D36FD0C4482}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonbec.Cartas.DataAccess", "src\3-DataAccess\Fonbec.Cartas.DataAccess\Fonbec.Cartas.DataAccess.csproj", "{2E09FF47-8164-4D76-A82A-1D36FD0C4482}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D8318B21-412F-4DE8-9E5D-85392675A2BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fonbec.Cartas.Logic.Tests", "test\Fonbec.Cartas.Logic.Tests\Fonbec.Cartas.Logic.Tests.csproj", "{60944B75-AC78-412C-BED9-8CAA9BFC8EA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonbec.Cartas.Logic.Tests", "test\Fonbec.Cartas.Logic.Tests\Fonbec.Cartas.Logic.Tests.csproj", "{60944B75-AC78-412C-BED9-8CAA9BFC8EA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2A4D5B8E-53BB-45B1-AFCF-76A1DF93A663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -52,6 +49,9 @@ Global
 		{60944B75-AC78-412C-BED9-8CAA9BFC8EA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60944B75-AC78-412C-BED9-8CAA9BFC8EA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60944B75-AC78-412C-BED9-8CAA9BFC8EA1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2A4D5B8E-53BB-45B1-AFCF-76A1DF93A663} = {07B215C5-28D6-4209-9E69-74A2EBF770C3}
