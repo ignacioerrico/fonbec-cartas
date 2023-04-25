@@ -16,7 +16,6 @@ builder.Services.AddDbContext<FonbecCartasDbContext>(options =>
 // Identity
 builder.Services.AddDefaultIdentity<FonbecUser>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = true;
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<FonbecCartasDbContext>();
