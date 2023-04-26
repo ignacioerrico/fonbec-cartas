@@ -18,6 +18,20 @@ builder.Services
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<FonbecCartasDbContext>();
 
+// Google external login
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+if (googleClientId is not null && googleClientSecret is not null)
+{
+    builder.Services
+        .AddAuthentication()
+        .AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+        });
+}
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
