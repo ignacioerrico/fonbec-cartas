@@ -1,7 +1,9 @@
 # FONBEC Cartas
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/ignacioerrico/fonbec-cartas/blob/main/LICENSE.txt)
 
-![Castellano](https://github.com/madebybowtie/FlagKit/raw/master/Assets/PNG/AR@2x.png?raw=true) Castellano
+![Castellano](https://github.com/madebybowtie/FlagKit/raw/master/Assets/PNG/AR@2x.png?raw=true)
+
+**Castellano**
 
 [FONBEC](http://www.fonbec.org.ar/) es una fundación de Argentina que conecta dos mundos: el de chicos que quieren estudiar (_becarios_) y el de personas generosas que quieren ayudar (_padrinos_ y _madrinas_).
 Uno de los [pilares de FONBEC](https://www.fonbec.org.ar/?page_id=12) es la **carta**, que incentiva la relación entre padrino y ahijado.
@@ -10,7 +12,9 @@ Hay fechas preestableciadas para el envío de una carta por parte de los becario
 Ese proceso se estuvo haciendo de manera manual, lo que no solo demanda tiempo, sino que también es proclive a errores humanos (cartas que no se envían, cartas que se envían a la persona incorrecta, etc.).
 El objetivo de este proyecto es automatizar ese proceso para que cada persona que interviene pueda enfocarse en su rol.
 
-![Castellano](https://github.com/madebybowtie/FlagKit/raw/master/Assets/PNG/US@2x.png?raw=true) English
+![English](https://github.com/madebybowtie/FlagKit/raw/master/Assets/PNG/US@2x.png?raw=true)
+
+**English**
 
 [FONBEC](http://www.fonbec.org.ar/) is a nonprofit based in Argentina which connects students who want to continue their education but lack the resources to do so (_grantees_) with people who want to help them (_benefactors_).
 One of the pillars of the organization is the **letter**, which encourages the relationship between grantees and benefactors. This way, grantees are not an "anonymous entity."
