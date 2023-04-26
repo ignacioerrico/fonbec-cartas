@@ -1,9 +1,8 @@
 # FONBEC Cartas
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/ignacioerrico/fonbec-cartas/blob/main/LICENSE.txt)
 
-(English below)
+![Castellano](https://github.com/madebybowtie/FlagKit/raw/master/Assets/PNG/AR@2x.png?raw=true) Castellano
 
-<img src="/madebybowtie/FlagKit/raw/master/Assets/PNG/AR@2x.png?raw=true" width="21" height="15" style="max-width: 100%;">
 [FONBEC](http://www.fonbec.org.ar/) es una fundación de Argentina que conecta dos mundos: el de chicos que quieren estudiar (_becarios_) y el de personas generosas que quieren ayudar (_padrinos_ y _madrinas_).
 Uno de los [pilares de FONBEC](https://www.fonbec.org.ar/?page_id=12) es la **carta**, que incentiva la relación entre padrino y ahijado.
 De esta manera, el ahijado no es un ser anónimo.
@@ -11,7 +10,8 @@ Hay fechas preestableciadas para el envío de una carta por parte de los becario
 Ese proceso se estuvo haciendo de manera manual, lo que no solo demanda tiempo, sino que también es proclive a errores humanos (cartas que no se envían, cartas que se envían a la persona incorrecta, etc.).
 El objetivo de este proyecto es automatizar ese proceso para que cada persona que interviene pueda enfocarse en su rol.
 
-<img src="/madebybowtie/FlagKit/raw/master/Assets/PNG/US@2x.png?raw=true" width="21" height="15" style="max-width: 100%;">
+![Castellano](https://github.com/madebybowtie/FlagKit/raw/master/Assets/PNG/US@2x.png?raw=true) English
+
 [FONBEC](http://www.fonbec.org.ar/) is a nonprofit based in Argentina which connects students who want to continue their education but lack the resources to do so (_grantees_) with people who want to help them (_benefactors_).
 One of the pillars of the organization is the **letter**, which encourages the relationship between grantees and benefactors. This way, grantees are not an "anonymous entity."
 There are predefined dates in the year for grantees to send a letter to their benefactors, and a group of _volunteers_ (which I'm a part of) reads them (so as to try to identify needs or issues that students may have) and sends them to the corresponding benefactor.
