@@ -13,11 +13,6 @@ namespace Fonbec.Cartas.Ui
     {
         public static void SeedAminUser(IServiceProvider services)
         {
-            var scopeFactory = services.GetRequiredService<IServiceScopeFactory>();
-            
-            using var scope = scopeFactory.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<FonbecUser>>();
-
             var adminUserOptions = services.GetService<IOptions<AdminUserOptions>>()?.Value
                                    ?? throw new NullReferenceException("AdminUserOptions could not be retrieved.");
 
@@ -36,6 +31,9 @@ namespace Fonbec.Cartas.Ui
             {
                 throw new ValidationException("Some values in AdminUserOptions are not set.");
             }
+
+            using var serviceScope = services.CreateScope();
+            var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<FonbecUser>>();
 
             if (userManager.FindByNameAsync(userName).Result is not null)
             {
