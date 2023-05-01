@@ -70,7 +70,7 @@ namespace Fonbec.Cartas.Areas.Identity.Pages.Account.Manage
             /// </summary>
             [Required]
             [EmailAddress]
-            [Display(Name = "New email")]
+            [Display(Name = "Dirección de correo nueva")]
             public string NewEmail { get; set; }
         }
 
@@ -126,14 +126,14 @@ namespace Fonbec.Cartas.Areas.Identity.Pages.Account.Manage
                     protocol: Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Confirmá tu dirección de correo electrónico",
+                    $"Confirmá tu dirección de correo electrónico <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>haciendo clic en este enlace</a>.");
 
-                StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                StatusMessage = "Te acabamos de enviar un correo con un enlace para que confirmes esa dirección. Revisá tu correo.";
                 return RedirectToPage();
             }
 
-            StatusMessage = "Your email is unchanged.";
+            StatusMessage = "Tu dirección de correo sigue igual, probablemente porque ya la confirmaste.";
             return RedirectToPage();
         }
 
@@ -162,10 +162,10 @@ namespace Fonbec.Cartas.Areas.Identity.Pages.Account.Manage
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                "Confirmá tu dirección de correo electrónico",
+                $"Confirmá tu dirección de correo electrónico <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>haciendo clic en este enlace</a>.");
 
-            StatusMessage = "Verification email sent. Please check your email.";
+            StatusMessage = "Te acabamos de enviar un correo con un enlace para que confirmes esa dirección. Revisá tu correo.";
             return RedirectToPage();
         }
     }

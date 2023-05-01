@@ -56,7 +56,7 @@ namespace Fonbec.Cartas.Areas.Identity.Pages.Account
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Thank you for confirming your email change.";
+            StatusMessage = "Gracias por confirmar el cambio de tu dirección de correo electrónico.";
             return Page();
         }
     }
