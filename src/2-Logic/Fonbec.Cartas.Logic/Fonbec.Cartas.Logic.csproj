@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\3-DataAccess\Fonbec.Cartas.DataAccess\Fonbec.Cartas.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Azure.Communication.Email" Version="1.0.0" />
+  </ItemGroup>
+
 </Project>

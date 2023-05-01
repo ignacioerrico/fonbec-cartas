@@ -37,7 +37,7 @@ builder.Services.AddServerSideBlazor();
 
 Fonbec.Cartas.Ui.ConfigureServices.RegisterOptions(builder.Services, builder.Configuration);
 
-Fonbec.Cartas.Ui.ConfigureServices.RegisterServices(builder.Services);
+Fonbec.Cartas.Ui.ConfigureServices.RegisterServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
