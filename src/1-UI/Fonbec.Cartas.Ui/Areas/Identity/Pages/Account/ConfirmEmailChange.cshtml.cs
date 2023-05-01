@@ -49,16 +49,9 @@ namespace Fonbec.Cartas.Areas.Identity.Pages.Account
             var result = await _userManager.ChangeEmailAsync(user, email, code);
             if (!result.Succeeded)
             {
-                StatusMessage = "Error changing email.";
-                return Page();
-            }
-
-            // In our UI email and user name are one and the same, so when we update the email
-            // we need to update the user name.
-            var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
-            if (!setUserNameResult.Succeeded)
-            {
-                StatusMessage = "Error changing user name.";
+                var errors = string.Join(Environment.NewLine,
+                    result.Errors.Select(e => $"Código: {e.Code}, Descripción: {e.Description}"));
+                StatusMessage = $"Error al intentar actualizar la dirección de correo electrónico a {email}.\n{errors}";
                 return Page();
             }
 

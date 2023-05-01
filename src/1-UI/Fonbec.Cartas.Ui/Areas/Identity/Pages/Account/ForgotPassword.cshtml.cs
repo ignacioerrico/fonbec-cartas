@@ -71,10 +71,15 @@ namespace Fonbec.Cartas.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
+                var htmlMessage = new StringBuilder();
+                htmlMessage.AppendLine($"Reseteá tu contraseña <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>haciendo clic acá</a>.");
+                htmlMessage.AppendLine();
+                htmlMessage.AppendLine($"Recordá que tu usuario es <strong>{user.UserName}</strong>.");
+
                 await _emailSender.SendEmailAsync(
                     Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Reseteá tu contraseña",
+                    htmlMessage.ToString());
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
