@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fonbec.Cartas.DataAccess;
 
-public class FonbecCartasDbContext : IdentityDbContext<FonbecUser>
+public class FonbecCartasIdentityDbContext : IdentityDbContext<FonbecUser>
 {
-    public FonbecCartasDbContext(DbContextOptions<FonbecCartasDbContext> options)
+    public FonbecCartasIdentityDbContext(DbContextOptions<FonbecCartasIdentityDbContext> options)
         : base(options)
     {
     }

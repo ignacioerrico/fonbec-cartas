@@ -9,14 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("FonbecCartasDbContextConnection")
                        ?? throw new InvalidOperationException("Connection string 'FonbecCartasDbContextConnection' not found.");
 builder.Services
-    .AddDbContext<FonbecCartasDbContext>(options =>
+    .AddDbContext<FonbecCartasIdentityDbContext>(options =>
         options.UseSqlServer(connectionString));
 
 // Identity
 builder.Services
     .AddDefaultIdentity<FonbecUser>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<FonbecCartasDbContext>();
+    .AddEntityFrameworkStores<FonbecCartasIdentityDbContext>();
 
 // Google external login
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];

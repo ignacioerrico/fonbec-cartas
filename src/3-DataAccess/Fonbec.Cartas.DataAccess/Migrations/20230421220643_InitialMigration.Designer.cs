@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Fonbec.Cartas.DataAccess.Migrations
 {
-    [DbContext(typeof(FonbecCartasDbContext))]
+    [DbContext(typeof(FonbecCartasIdentityDbContext))]
     [Migration("20230421220643_InitialMigration")]
     partial class InitialMigration
     {

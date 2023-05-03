@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Fonbec.Cartas.DataAccess.Migrations
 {
-    [DbContext(typeof(FonbecCartasDbContext))]
+    [DbContext(typeof(FonbecCartasIdentityDbContext))]
     partial class FonbecCartasDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
