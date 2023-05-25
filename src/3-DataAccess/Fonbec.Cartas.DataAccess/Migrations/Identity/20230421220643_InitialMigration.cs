@@ -1,9 +1,8 @@
-﻿using System;
+﻿#nullable disable
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
-
-namespace Fonbec.Cartas.DataAccess.Migrations
+namespace Fonbec.Cartas.DataAccess.Migrations.Identity
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

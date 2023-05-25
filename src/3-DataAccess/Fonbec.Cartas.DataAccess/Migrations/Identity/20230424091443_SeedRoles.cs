@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#nullable disable
 
-#nullable disable
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Fonbec.Cartas.DataAccess.Migrations
+namespace Fonbec.Cartas.DataAccess.Migrations.Identity
 {
     /// <inheritdoc />
     public partial class SeedRoles : Migration

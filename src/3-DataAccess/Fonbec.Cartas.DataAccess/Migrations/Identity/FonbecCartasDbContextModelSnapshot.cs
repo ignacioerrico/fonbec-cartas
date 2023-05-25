@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Fonbec.Cartas.DataAccess.Migrations
+namespace Fonbec.Cartas.DataAccess.Migrations.Identity
 {
     [DbContext(typeof(FonbecCartasIdentityDbContext))]
     partial class FonbecCartasDbContextModelSnapshot : ModelSnapshot

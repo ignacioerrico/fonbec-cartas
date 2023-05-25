@@ -12,6 +12,10 @@ builder.Services
     .AddDbContext<FonbecCartasIdentityDbContext>(options =>
         options.UseSqlServer(connectionString));
 
+builder.Services
+    .AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString));
+
 // Identity
 builder.Services
     .AddDefaultIdentity<FonbecUser>()

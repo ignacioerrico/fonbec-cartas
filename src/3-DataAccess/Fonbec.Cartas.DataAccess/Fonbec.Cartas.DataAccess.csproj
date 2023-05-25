@@ -11,4 +11,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\Application\" />
+    <Folder Include="Migrations\Identity\" />
+  </ItemGroup>
+
 </Project>
