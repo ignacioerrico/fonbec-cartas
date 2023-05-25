@@ -1,0 +1,26 @@
+﻿@page "/admin/filiales/{FilialId}"
+
+<PageHeader Title="@_pageTitle" />
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true"
+                       Class="my-4" />
+}
+
+<MudForm @ref="_mudForm" @bind-IsValid="@_formValidationSucceeded">
+    <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_filialName" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar el nombre."
+                  MaxLength="20" />
+
+    <MudPaper Elevation="0" Class="pt-4">
+        <MudButton OnClick="Save" Disabled="SaveButtonDisabled"
+                   Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
+            @_saveButtonText
+        </MudButton>
+        <MudButton Href="/admin/filiales"
+                   Variant="Variant.Filled" Color="Color.Default">
+            Cancelar
+        </MudButton>
+    </MudPaper>
+</MudForm>

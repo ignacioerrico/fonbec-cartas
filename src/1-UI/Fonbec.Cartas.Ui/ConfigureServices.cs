@@ -1,6 +1,8 @@
 ﻿using Azure.Communication.Email;
+using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.Logic.Data;
 using Fonbec.Cartas.Logic.Services;
+using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Ui.Areas.Identity;
 using Fonbec.Cartas.Ui.Options;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -30,6 +32,10 @@ namespace Fonbec.Cartas.Ui
             var communicationServiceConnectionString =
                 configuration.GetConnectionString("CommunicationServiceConnection");
             services.AddSingleton(_ => new EmailClient(communicationServiceConnectionString));
+
+            services.AddScoped<IFilialService, FilialService>();
+            
+            services.AddScoped<IFilialesRepository, FilialesRepository>();
 
             services.AddSingleton<WeatherForecastService>();
         }
