@@ -1,0 +1,14 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudText>¿Estás seguro de que querés dar de baja a <strong>@ItemToDelete</strong>?</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">
+            Cancelar
+        </MudButton>
+        <MudButton OnClick="ConfirmDelete"
+                   Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.DeleteForever">
+            Dar de baja
+        </MudButton>
+    </DialogActions>
+</MudDialog>

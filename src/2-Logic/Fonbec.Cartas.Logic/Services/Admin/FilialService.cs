@@ -9,6 +9,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
         Task<string?> GetFilialNameAsync(int id);
         Task<int> CreateFilialAsync(string filialName);
         Task<int> UpdateFilialAsync(int id, string newName);
+        Task<int> SoftDeleteAsync(int id);
     }
 
     public class FilialService : IFilialService
@@ -45,6 +46,11 @@ namespace Fonbec.Cartas.Logic.Services.Admin
         public async Task<int> UpdateFilialAsync(int id, string newName)
         {
             return await _filialesRepository.UpdateFilialAsync(id, newName);
+        }
+
+        public async Task<int> SoftDeleteAsync(int id)
+        {
+            return await _filialesRepository.SoftDeleteAsync(id);
         }
     }
 }

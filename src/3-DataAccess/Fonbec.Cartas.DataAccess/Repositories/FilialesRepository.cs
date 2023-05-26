@@ -9,6 +9,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         Task<string?> GetFilialNameAsync(int id);
         Task<int> CreateFilialAsync(string filialName);
         Task<int> UpdateFilialAsync(int id, string newName);
+        Task<int> SoftDeleteAsync(int id);
     }
 
     public class FilialesRepository : IFilialesRepository
@@ -55,6 +56,21 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             }
 
             filial.Name = newName;
+
+            appDbContext.Filiales.Update(filial);
+            return await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> SoftDeleteAsync(int id)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var filial = await appDbContext.Filiales.FindAsync(id);
+            if (filial is null)
+            {
+                return 0;
+            }
+
+            filial.SoftDeletedOnUtc = DateTimeOffset.UtcNow;
 
             appDbContext.Filiales.Update(filial);
             return await appDbContext.SaveChangesAsync();
