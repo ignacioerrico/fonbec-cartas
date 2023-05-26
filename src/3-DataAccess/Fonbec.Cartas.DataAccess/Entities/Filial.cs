@@ -1,6 +1,6 @@
 ﻿namespace Fonbec.Cartas.DataAccess.Entities
 {
-    public class Filial
+    public class Filial : Auditable
     {
         public int Id { get; set; }
 
