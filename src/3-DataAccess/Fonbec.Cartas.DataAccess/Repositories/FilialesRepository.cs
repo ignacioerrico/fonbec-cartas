@@ -13,21 +13,23 @@ namespace Fonbec.Cartas.DataAccess.Repositories
 
     public class FilialesRepository : IFilialesRepository
     {
-        private readonly ApplicationDbContext _appDbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _appDbContextFactory;
 
-        public FilialesRepository(ApplicationDbContext appDbContext)
+        public FilialesRepository(IDbContextFactory<ApplicationDbContext> appDbContextFactory)
         {
-            _appDbContext = appDbContext;
+            _appDbContextFactory = appDbContextFactory;
         }
 
         public async Task<List<Filial>> GetAllFilialesAsync()
         {
-            return await _appDbContext.Filiales.ToListAsync();
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            return await appDbContext.Filiales.ToListAsync();
         }
 
         public async Task<string?> GetFilialNameAsync(int id)
         {
-            var filial = await _appDbContext.Filiales.FindAsync(id);
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var filial = await appDbContext.Filiales.FindAsync(id);
             return filial?.Name;
         }
 
@@ -38,20 +40,24 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                 Name = filialName
             };
 
-            await _appDbContext.Filiales.AddAsync(newFilial);
-            return await _appDbContext.SaveChangesAsync();
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            await appDbContext.Filiales.AddAsync(newFilial);
+            return await appDbContext.SaveChangesAsync();
         }
 
         public async Task<int> UpdateFilialAsync(int id, string newName)
         {
-            var filial = await _appDbContext.Filiales.FindAsync(id);
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var filial = await appDbContext.Filiales.FindAsync(id);
             if (filial is null)
             {
                 return 0;
             }
 
             filial.Name = newName;
-            return await _appDbContext.SaveChangesAsync();
+
+            appDbContext.Filiales.Update(filial);
+            return await appDbContext.SaveChangesAsync();
         }
     }
 }

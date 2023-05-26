@@ -9,12 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("FonbecCartasDbContextConnection")
                        ?? throw new InvalidOperationException("Connection string 'FonbecCartasDbContextConnection' not found.");
 builder.Services
-    .AddDbContext<FonbecCartasIdentityDbContext>(options =>
-        options.UseSqlServer(connectionString));
+    .AddDbContextFactory<FonbecCartasIdentityDbContext>(options =>
+        options.UseSqlServer(connectionString)
+            .EnableSensitiveDataLogging()
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
 builder.Services
-    .AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(connectionString));
+    .AddDbContextFactory<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString)
+            .EnableSensitiveDataLogging()
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
 // Identity
 builder.Services
