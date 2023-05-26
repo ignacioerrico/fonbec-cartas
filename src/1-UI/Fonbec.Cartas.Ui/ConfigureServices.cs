@@ -22,7 +22,8 @@ namespace Fonbec.Cartas.Ui
 
         public static void RegisterServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMudServices();
+            services.AddMudServices(config =>
+                config.SnackbarConfiguration.PositionClass = MudBlazor.Defaults.Classes.Position.BottomRight);
 
             services.AddScoped<InitialState>();
 
