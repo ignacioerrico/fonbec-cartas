@@ -66,9 +66,19 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nombre">
-                <MudText Color="Color.Primary">
-                    <strong>@context.Name</strong>
-                </MudText>
+                <MudTooltip Delay="500" Arrow="true" Placement="Placement.Bottom" Color="Color.Dark">
+                    <ChildContent>
+                        <MudText Color="Color.Primary">
+                            <strong>@context.Name</strong>
+                        </MudText>
+                    </ChildContent>
+                    <TooltipContent>
+                        @foreach (var line in context.AuditDisplay())
+                        {
+                            <MudText Align="Align.Left" Typo="Typo.body1">@line</MudText>
+                        }
+                    </TooltipContent>
+                </MudTooltip>
             </MudTd>
             <MudTd DataLabel="Coordinadores">
                 @(context.CoordinadoresDisplay() ?? "—")
