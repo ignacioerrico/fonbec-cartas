@@ -1,9 +1,9 @@
-﻿@page "/admin/coordinadores/{UserWithAccountId}"
+﻿@page "/admin/revisores/{UserWithAccountId}"
 
 @using Fonbec.Cartas.DataAccess.Entities.Actors
 @using Fonbec.Cartas.Ui.Components.Admin
 
-<UserWithAccountEdit T="Coordinador" UserWithAccountId="@UserWithAccountId" />
+<UserWithAccountEdit T="Revisor" UserWithAccountId="@UserWithAccountId" />
 
 @code {
     [Parameter]

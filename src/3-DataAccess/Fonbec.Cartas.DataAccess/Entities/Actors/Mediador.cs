@@ -1,6 +1,6 @@
 ﻿namespace Fonbec.Cartas.DataAccess.Entities.Actors
 {
-    public class Coordinador : EntityBase, IAmUserWithAccount, IHaveEmail
+    public class Mediador : EntityBase, IAmUserWithAccount, IHaveEmail
     {
         public string Email { get; set; } = string.Empty;
 

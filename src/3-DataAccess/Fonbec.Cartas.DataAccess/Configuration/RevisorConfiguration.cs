@@ -2,7 +2,7 @@
 
 namespace Fonbec.Cartas.DataAccess.Configuration
 {
-    public class CoordinadorConfiguration : UserWithAccountConfiguration<Coordinador>
+    public class RevisorConfiguration : UserWithAccountConfiguration<Revisor>
     {
     }
 }

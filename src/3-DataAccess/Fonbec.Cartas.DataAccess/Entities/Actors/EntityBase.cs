@@ -4,6 +4,8 @@ namespace Fonbec.Cartas.DataAccess.Entities.Actors
 {
     public abstract class EntityBase : Auditable
     {
+        public int Id { get; set; }
+
         public int FilialId { get; set; }
         public Filial Filial { get; set; }
 

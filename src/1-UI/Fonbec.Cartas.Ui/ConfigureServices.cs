@@ -1,4 +1,5 @@
 ﻿using Azure.Communication.Email;
+using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.Logic.Data;
 using Fonbec.Cartas.Logic.Services;
@@ -35,10 +36,14 @@ namespace Fonbec.Cartas.Ui
             services.AddSingleton(_ => new EmailClient(communicationServiceConnectionString));
 
             services.AddScoped<IFilialService, FilialService>();
-            services.AddScoped<ICoordinadorService, CoordinadorService>();
-            
+            services.AddScoped<UserWithAccountService<Coordinador>, CoordinadorService>();
+            services.AddScoped<UserWithAccountService<Mediador>, MediadorService>();
+            services.AddScoped<UserWithAccountService<Revisor>, RevisorService>();
+
             services.AddScoped<IFilialesRepository, FilialesRepository>();
-            services.AddScoped<ICoordinadorRepository, CoordinadorRepository>();
+            services.AddScoped<UserWithAccountRepositoryBase<Coordinador>, CoordinadorRepository>();
+            services.AddScoped<UserWithAccountRepositoryBase<Mediador>, MediadorRepository>();
+            services.AddScoped<UserWithAccountRepositoryBase<Revisor>, RevisorRepository>();
 
             services.AddSingleton<WeatherForecastService>();
         }

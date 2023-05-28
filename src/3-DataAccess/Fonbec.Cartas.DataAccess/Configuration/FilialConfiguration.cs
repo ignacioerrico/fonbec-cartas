@@ -20,6 +20,16 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .HasForeignKey(c => c.FilialId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(f => f.Mediadores)
+                .WithOne(c => c.Filial)
+                .HasForeignKey(c => c.FilialId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(f => f.Revisores)
+                .WithOne(c => c.Filial)
+                .HasForeignKey(c => c.FilialId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasQueryFilter(f => !f.SoftDeletedOnUtc.HasValue);
         }
     }

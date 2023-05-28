@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Fonbec.Cartas.Logic.Services.Admin
 {
-    public class CoordinadorService : UserWithAccountService<Coordinador>
+    public class MediadorService : UserWithAccountService<Mediador>
     {
-        public CoordinadorService(UserWithAccountRepositoryBase<Coordinador> userWithAccountRepository,
+        public MediadorService(UserWithAccountRepositoryBase<Mediador> userWithAccountRepository,
             UserManager<FonbecUser> userManager,
             IUserStore<FonbecUser> userStore)
             : base(userWithAccountRepository,

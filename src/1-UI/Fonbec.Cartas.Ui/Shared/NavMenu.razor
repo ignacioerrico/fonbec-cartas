@@ -1,9 +1,12 @@
-﻿<MudNavMenu>
+﻿@using Fonbec.Cartas.Ui.Constants
+<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
     <AuthorizeView>
         <Authorized>
-            <MudNavLink Href="admin/filiales" Match="NavLinkMatch.Prefix">Filiales</MudNavLink>
-            <MudNavLink Href="admin/coordinadores" Match="NavLinkMatch.Prefix">Coordinadores</MudNavLink>
+            <MudNavLink Href="@NavRoutes.AdminFilialesList" Match="NavLinkMatch.Prefix">Filiales</MudNavLink>
+            <MudNavLink Href="@NavRoutes.AdminCoordinadoresList" Match="NavLinkMatch.Prefix">Coordinadores</MudNavLink>
+            <MudNavLink Href="@NavRoutes.AdminMediadoresList" Match="NavLinkMatch.Prefix">Mediadores</MudNavLink>
+            <MudNavLink Href="@NavRoutes.AdminRevisoresList" Match="NavLinkMatch.Prefix">Revisores</MudNavLink>
             <MudNavLink Href="counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
             <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix">Fetch data</MudNavLink>
         </Authorized>

@@ -16,6 +16,10 @@ namespace Fonbec.Cartas.DataAccess
 
         public DbSet<Coordinador> Coordinadores => Set<Coordinador>();
 
+        public DbSet<Mediador> Mediadores => Set<Mediador>();
+
+        public DbSet<Revisor> Revisores => Set<Revisor>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

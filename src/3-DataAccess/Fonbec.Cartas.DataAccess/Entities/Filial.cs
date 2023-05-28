@@ -9,5 +9,9 @@ namespace Fonbec.Cartas.DataAccess.Entities
         public string Name { get; set; } = string.Empty;
 
         public List<Coordinador> Coordinadores { get; set; } = new();
+
+        public List<Mediador> Mediadores { get; set; } = new();
+
+        public List<Revisor> Revisores { get; set; } = new();
     }
 }

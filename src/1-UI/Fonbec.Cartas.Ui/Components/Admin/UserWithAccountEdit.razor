@@ -1,0 +1,70 @@
+﻿@typeparam T where T : EntityBase, IAmUserWithAccount, IHaveEmail
+
+@using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.DataAccess.Entities.Actors
+@using Fonbec.Cartas.Logic.ViewModels.Admin
+
+<PageHeader Title="@_pageTitle" />
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true"
+                       Class="my-4" />
+}
+
+<MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
+    <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_userWithAccount.FirstName" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar el nombre."
+                  MaxLength="@MaxLength.Actor.FirstName" />
+
+    <MudTextField T="string" Label="Apellido" @bind-Value="_userWithAccount.LastName" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar el apellido."
+                  MaxLength="@MaxLength.Actor.LastName" />
+
+    <MudTextField T="string" Label="Apodo" @bind-Value="_userWithAccount.NickName" Immediate="true"
+                  MaxLength="@MaxLength.Actor.NickName" />
+
+    <GenderSelector @bind-SelectedGender="_userWithAccount.Gender" />
+
+    <MudSelect T="FilialViewModel" Label="Filial" @bind-Value="_selectedFilial"
+               Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+        @foreach (var filial in _filiales)
+        {
+            <MudSelectItem Value="filial" />
+        }
+    </MudSelect>
+
+    <MudTextField T="string" Label="Correo electrónico" @bind-Value="_userWithAccount.Email" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar una dirección de correo electrónico."
+                  MaxLength="@MaxLength.Actor.Email" />
+
+    <MudTextField T="string" Label="Teléfono" @bind-Value="_userWithAccount.Phone" Immediate="true"
+                  MaxLength="@MaxLength.Actor.Phone" />
+
+    <MudTextField T="string" Label="Usuario" @bind-Value="_userWithAccount.Username" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar un nombre de usuario."
+                  MaxLength="@MaxLength.Actor.Username" />
+
+    @if (_isNew)
+    {
+        <MudTextField T="string" Label="Contraseña inicial" @bind-Value="_initialPassword" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar una contraseña."
+                  MaxLength="@MaxLength.Actor.InitialPassword" />
+
+        @foreach (var error in _createErrors)
+        {
+            <MudText Color="@Color.Error">@error</MudText>
+        }
+    }
+
+    <MudPaper Elevation="0" Class="pt-4">
+        <MudButton OnClick="Save" Disabled="SaveButtonDisabled"
+                   Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
+            @_saveButtonText
+        </MudButton>
+        <MudButton Href="@_pathToList"
+                   Variant="Variant.Filled" Color="Color.Default">
+            Cancelar
+        </MudButton>
+    </MudPaper>
+</MudForm>

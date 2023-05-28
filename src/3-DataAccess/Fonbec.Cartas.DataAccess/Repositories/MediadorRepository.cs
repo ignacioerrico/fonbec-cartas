@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fonbec.Cartas.DataAccess.Repositories
 {
-    public class CoordinadorRepository : UserWithAccountRepositoryBase<Coordinador>
+    public class MediadorRepository : UserWithAccountRepositoryBase<Mediador>
     {
-        public CoordinadorRepository(IDbContextFactory<ApplicationDbContext> appDbContextFactory)
+        public MediadorRepository(IDbContextFactory<ApplicationDbContext> appDbContextFactory)
             : base(appDbContextFactory)
         {
         }
