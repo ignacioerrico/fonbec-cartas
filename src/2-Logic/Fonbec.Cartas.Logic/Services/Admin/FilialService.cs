@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.DataAccess.Repositories;
+﻿using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.Logic.ViewModels.Admin;
 
 namespace Fonbec.Cartas.Logic.Services.Admin
@@ -6,6 +7,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
     public interface IFilialService
     {
         Task<List<FilialesListViewModel>> GetAllFilialesAsync();
+        Task<List<FilialViewModel>> GetAllFilialesForSelectionAsync();
         Task<string?> GetFilialNameAsync(int id);
         Task<int> CreateFilialAsync(string filialName);
         Task<int> UpdateFilialAsync(int id, string newName);
@@ -35,6 +37,12 @@ namespace Fonbec.Cartas.Logic.Services.Admin
                 .ToList();
         }
 
+        public async Task<List<FilialViewModel>> GetAllFilialesForSelectionAsync()
+        {
+            var filiales = await _filialesRepository.GetAllFilialesAsync();
+            return filiales.Select(f => new FilialViewModel(f.Id, f.Name)).ToList();
+        }
+
         public async Task<string?> GetFilialNameAsync(int id)
         {
             return await _filialesRepository.GetFilialNameAsync(id);
@@ -42,7 +50,12 @@ namespace Fonbec.Cartas.Logic.Services.Admin
 
         public async Task<int> CreateFilialAsync(string filialName)
         {
-            return await _filialesRepository.CreateFilialAsync(filialName);
+            var newFilial = new Filial
+            {
+                Name = filialName
+            };
+
+            return await _filialesRepository.CreateFilialAsync(newFilial);
         }
 
         public async Task<int> UpdateFilialAsync(int id, string newName)

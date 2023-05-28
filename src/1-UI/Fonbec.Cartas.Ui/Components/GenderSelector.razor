@@ -1,0 +1,7 @@
+﻿@using Fonbec.Cartas.DataAccess.Entities.Enums
+
+<MudSelect T="GenderSelectorModel" Label="Sexo" @bind-Value="_selectedGender" SelectedValuesChanged="SelectedValuesChanged"
+           Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="Male" />
+    <MudSelectItem Value="Female" />
+</MudSelect>

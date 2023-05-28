@@ -1,13 +1,13 @@
-ï»¿@page "/admin/filiales"
+@page "/admin/coordinadores"
 @using Fonbec.Cartas.Logic.ViewModels.Admin
 @attribute [Authorize(Roles = DataAccess.Constants.FonbecRoles.Admin)]
 
-<PageHeader Title="Filiales" />
+<PageHeader Title="Coordinadores" />
 
-<MudTooltip Text="Alta filial"
+<MudTooltip Text="Alta coordinador"
             Arrow="true" Placement="Placement.Right"
             Color="Color.Primary">
-    <MudFab Href="/admin/filiales/new"
+    <MudFab Href="/admin/coordinadores/new"
             StartIcon="@Icons.Material.Filled.Add"
             Color="Color.Primary" />
 </MudTooltip>
@@ -17,15 +17,15 @@
     <MudText Class="mt-4"><em>Cargado datos&hellip;</em></MudText>
     <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
 }
-else if (!_filiales.Any())
+else if (!_coordinadores.Any())
 {
-    <MudText Typo="Typo.h6" Class="mt-4">No hay filiales.</MudText>
+    <MudText Typo="Typo.h6" Class="mt-4">No hay coordinadores.</MudText>
 }
 else
 {
-    <MudTable Items="_filiales"
+    <MudTable Items="_coordinadores"
               Dense="true" Hover="true" Striped="true" Bordered="true"
-              Filter="new Func<FilialesListViewModel, bool>(Filter)"
+              Filter="new Func<CoordinadoresListViewModel, bool>(Filter)"
               SortLabel="Ordenar por"
               Class="mt-4">
         <ToolBarContent>
@@ -36,30 +36,21 @@ else
         </ToolBarContent>
         <HeaderContent>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.Name)"
-                                   InitialDirection="SortDirection.Ascending">
+                <MudTableSortLabel SortBy="new Func<CoordinadoresListViewModel, object>(coordinador => coordinador.Name)"
+                               InitialDirection="SortDirection.Ascending">
                     Nombre
                 </MudTableSortLabel>
             </MudTh>
-            <MudTh>Coordinadores</MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.QtyMediadores)">
-                    # Mediadores
+                <MudTableSortLabel SortBy="new Func<CoordinadoresListViewModel, object>(coordinador => coordinador.Filial)">
+                    Filial
                 </MudTableSortLabel>
             </MudTh>
+            <MudTh>Correo electrónico</MudTh>
+            <MudTh>Teléfono</MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.QtyBecarios)">
-                    # Becarios
-                </MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.QtyPadrinos)">
-                    # Padrinos
-                </MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.QtyVoluntarios)">
-                    # Voluntarios
+                <MudTableSortLabel SortBy="new Func<CoordinadoresListViewModel, object>(coordinador => coordinador.Username)">
+                    Usuario
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>Acciones</MudTh>
@@ -81,30 +72,22 @@ else
                     </TooltipContent>
                 </MudTooltip>
             </MudTd>
-            <MudTd DataLabel="Coordinadores">
-                @(context.CoordinadoresDisplay() ?? "â€”")
+            <MudTd DataLabel="Filial">
+                @context.Filial
             </MudTd>
-            <MudTd DataLabel="# Mediadores">
-                   @context.QtyMediadores
+            <MudTd DataLabel="Correo electrónico">
+                <MudLink Href="@($"mailto:{context.Email}")">@context.Email</MudLink>
             </MudTd>
-            <MudTd DataLabel="# Becarios">
-                   @context.QtyBecarios
+            <MudTd DataLabel="Teléfono">
+                @context.Phone
             </MudTd>
-            <MudTd DataLabel="# Padrinos">
-                   @context.QtyPadrinos
-            </MudTd>
-            <MudTd DataLabel="# Voluntarios">
-                   @context.QtyVoluntarios
+            <MudTd DataLabel="Usuario">
+                @context.Username
             </MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@($"/admin/filiales/{context.Id}")"
-                                   Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
-                </MudTooltip>
-                <MudTooltip Text="Borrar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton OnClick="@(_ => OpenDeleteDialog(context.Id, context.Name))"
-                                   Disabled="_filiales.Count == 1"
-                                   Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Primary" />
+                    <MudIconButton Href="@($"/admin/coordinadores/{context.Id}")"
+                               Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>
@@ -113,8 +96,8 @@ else
         </PagerContent>
     </MudTable>
 
-    <MudSwitch @bind-Checked="_includeCoordinadores" Color="Color.Info"
+    <MudSwitch @bind-Checked="_includeAll" Color="Color.Info"
                Class="mt-4">
-        Incluir nombres de coordinadores en la bÃºsqueda.
+        Incluir todos los campos en la búsqueda (no solo el nombre).
     </MudSwitch>
 }

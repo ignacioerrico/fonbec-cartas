@@ -1,4 +1,5 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Fonbec.Cartas.DataAccess.ExtensionMethods;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,8 @@ namespace Fonbec.Cartas.DataAccess
         }
 
         public DbSet<Filial> Filiales => Set<Filial>();
+
+        public DbSet<Coordinador> Coordinadores => Set<Coordinador>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

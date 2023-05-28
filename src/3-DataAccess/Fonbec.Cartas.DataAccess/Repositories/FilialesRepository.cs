@@ -7,7 +7,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
     {
         Task<List<Filial>> GetAllFilialesAsync();
         Task<string?> GetFilialNameAsync(int id);
-        Task<int> CreateFilialAsync(string filialName);
+        Task<int> CreateFilialAsync(Filial filial);
         Task<int> UpdateFilialAsync(int id, string newName);
         Task<int> SoftDeleteAsync(int id);
     }
@@ -34,15 +34,10 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             return filial?.Name;
         }
 
-        public async Task<int> CreateFilialAsync(string filialName)
+        public async Task<int> CreateFilialAsync(Filial filial)
         {
-            var newFilial = new Filial
-            {
-                Name = filialName
-            };
-
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-            await appDbContext.Filiales.AddAsync(newFilial);
+            await appDbContext.Filiales.AddAsync(filial);
             return await appDbContext.SaveChangesAsync();
         }
 

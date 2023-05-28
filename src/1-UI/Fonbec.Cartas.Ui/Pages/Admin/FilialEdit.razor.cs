@@ -31,6 +31,11 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (!firstRender)
+            {
+                return;
+            }
+
             await _mudTextFieldNombre.FocusAsync();
 
             if (!_isNewFilial)
@@ -47,7 +52,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
             {
                 _isNewFilial = true;
 
-                _pageTitle = "Filial nueva";
+                _pageTitle = "Alta de Filial";
                 _saveButtonText = "Crear";
             }
             else if (int.TryParse(FilialId, out var filialId) && filialId > 0)

@@ -35,8 +35,10 @@ namespace Fonbec.Cartas.Ui
             services.AddSingleton(_ => new EmailClient(communicationServiceConnectionString));
 
             services.AddScoped<IFilialService, FilialService>();
+            services.AddScoped<ICoordinadorService, CoordinadorService>();
             
             services.AddScoped<IFilialesRepository, FilialesRepository>();
+            services.AddScoped<ICoordinadorRepository, CoordinadorRepository>();
 
             services.AddSingleton<WeatherForecastService>();
         }

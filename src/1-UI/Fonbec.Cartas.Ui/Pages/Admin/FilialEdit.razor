@@ -1,4 +1,5 @@
 ﻿@page "/admin/filiales/{FilialId}"
+@using Fonbec.Cartas.DataAccess.Constants
 
 <PageHeader Title="@_pageTitle" />
 
@@ -11,7 +12,7 @@
 <MudForm @ref="_mudForm" @bind-IsValid="@_formValidationSucceeded">
     <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_filialName" Immediate="true"
                   Required="true" RequiredError="Se debe especificar el nombre."
-                  MaxLength="20" />
+                  MaxLength="MaxLength.Filial.Name" />
 
     <MudPaper Elevation="0" Class="pt-4">
         <MudButton OnClick="Save" Disabled="SaveButtonDisabled"
