@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using Fonbec.Cartas.Logic.Models;
 
 namespace Fonbec.Cartas.Logic.Tests.Models
@@ -10,8 +11,11 @@ namespace Fonbec.Cartas.Logic.Tests.Models
         {
             var sut = new Recipient("john@doe.com");
 
-            sut.EmailAddress.Should().Be("<john@doe.com>");
-            sut.DisplayName.Should().Be("john@doe.com");
+            using (new AssertionScope())
+            {
+                sut.EmailAddress.Should().Be("<john@doe.com>");
+                sut.DisplayName.Should().Be("john@doe.com");
+            }
         }
 
         [Fact]
@@ -19,8 +23,11 @@ namespace Fonbec.Cartas.Logic.Tests.Models
         {
             var sut = new Recipient("john@doe.com", "John Doe");
 
-            sut.EmailAddress.Should().Be("<john@doe.com>");
-            sut.DisplayName.Should().Be("John Doe");
+            using (new AssertionScope())
+            {
+                sut.EmailAddress.Should().Be("<john@doe.com>");
+                sut.DisplayName.Should().Be("John Doe");
+            }
         }
     }
 }
