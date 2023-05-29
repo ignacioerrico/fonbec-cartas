@@ -4,6 +4,7 @@ using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.Logic.Data;
 using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
+using Fonbec.Cartas.Logic.Services.Identity;
 using Fonbec.Cartas.Ui.Areas.Identity;
 using Fonbec.Cartas.Ui.Options;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -35,11 +36,13 @@ namespace Fonbec.Cartas.Ui
                 configuration.GetConnectionString("CommunicationServiceConnection");
             services.AddSingleton(_ => new EmailClient(communicationServiceConnectionString));
 
+            services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IFilialService, FilialService>();
             services.AddScoped<UserWithAccountService<Coordinador>, CoordinadorService>();
             services.AddScoped<UserWithAccountService<Mediador>, MediadorService>();
             services.AddScoped<UserWithAccountService<Revisor>, RevisorService>();
 
+            services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped<IFilialesRepository, FilialesRepository>();
             services.AddScoped<UserWithAccountRepositoryBase<Coordinador>, CoordinadorRepository>();
             services.AddScoped<UserWithAccountRepositoryBase<Mediador>, MediadorRepository>();

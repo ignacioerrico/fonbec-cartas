@@ -1,5 +1,6 @@
 using Fonbec.Cartas.DataAccess;
 using Fonbec.Cartas.DataAccess.Identity;
+using Fonbec.Cartas.Ui.Areas.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,9 @@ builder.Services
     .AddDefaultIdentity<FonbecUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<FonbecCartasIdentityDbContext>();
+
+// Overrides registration done internally by AddDefaultIdentity.
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<FonbecUser>, FonbecUserClaimsPrincipalFactory>();
 
 // Google external login
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
