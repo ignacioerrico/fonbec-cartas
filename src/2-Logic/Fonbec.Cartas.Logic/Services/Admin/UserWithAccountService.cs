@@ -114,7 +114,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
             userWithAccount.NickName = string.IsNullOrWhiteSpace(editViewModel.NickName) ? null : editViewModel.NickName;
             userWithAccount.Gender = editViewModel.Gender;
             userWithAccount.Email = editViewModel.Email;
-            userWithAccount.Phone = editViewModel.Phone;
+            userWithAccount.Phone = string.IsNullOrWhiteSpace(editViewModel.Phone) ? null : editViewModel.Phone;
             userWithAccount.Username = editViewModel.Username;
             userWithAccount.AspNetUserId = userId;
 
@@ -142,7 +142,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
             userWithAccount.NickName = string.IsNullOrWhiteSpace(editViewModel.NickName) ? null : editViewModel.NickName;
             userWithAccount.Gender = editViewModel.Gender;
             userWithAccount.Email = editViewModel.Email;
-            userWithAccount.Phone = editViewModel.Phone;
+            userWithAccount.Phone = string.IsNullOrWhiteSpace(editViewModel.Phone) ? null : editViewModel.Phone;
             userWithAccount.Username = editViewModel.Username;
 
             var affectedRows = await _userWithAccountRepository.UpdateAsync(id, userWithAccount);
