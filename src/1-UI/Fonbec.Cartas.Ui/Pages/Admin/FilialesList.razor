@@ -58,8 +58,8 @@ else
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.QtyVoluntarios)">
-                    # Voluntarios
+                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.QtyRevisores)">
+                    # Revisores
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>Acciones</MudTh>
@@ -93,8 +93,8 @@ else
             <MudTd DataLabel="# Padrinos">
                    @context.QtyPadrinos
             </MudTd>
-            <MudTd DataLabel="# Voluntarios">
-                   @context.QtyVoluntarios
+            <MudTd DataLabel="# Revisores">
+                   @context.QtyRevisores
             </MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">

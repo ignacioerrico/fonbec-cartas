@@ -5,6 +5,6 @@
         public const string Admin = "Admin";
         public const string Coordinador = "Coordinador";
         public const string Mediador = "Mediador";
-        public const string Voluntario = "Voluntario";
+        public const string Revisor = "Revisor";
     }
 }

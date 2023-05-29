@@ -84,7 +84,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
             {
                 { } t when t == typeof(Coordinador) => FonbecRoles.Coordinador,
                 { } t when t == typeof(Mediador) => FonbecRoles.Mediador,
-                { } t when t == typeof(Revisor) => FonbecRoles.Voluntario,
+                { } t when t == typeof(Revisor) => FonbecRoles.Revisor,
                 _ => throw new ArgumentOutOfRangeException($"{nameof(UserWithAccountService<T>)}.{nameof(CreateAsync)}: Unsupported type {typeof(T).Name} in switch statement.")
             };
 

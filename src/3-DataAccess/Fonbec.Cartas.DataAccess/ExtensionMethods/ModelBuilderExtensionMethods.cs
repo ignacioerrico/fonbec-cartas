@@ -14,7 +14,7 @@ namespace Fonbec.Cartas.DataAccess.ExtensionMethods
                 FonbecRoles.Admin,
                 FonbecRoles.Coordinador,
                 FonbecRoles.Mediador,
-                FonbecRoles.Voluntario
+                FonbecRoles.Revisor
             };
 
             var fonbecRoles = roles.Select(role =>

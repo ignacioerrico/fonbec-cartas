@@ -15,7 +15,7 @@
         public int QtyMediadores { get; set; }
         public int QtyBecarios { get; set; }
         public int QtyPadrinos { get; set; }
-        public int QtyVoluntarios { get; set; }
+        public int QtyRevisores { get; set; }
 
         public string? CoordinadoresDisplay() =>
             Coordinadores.Any()

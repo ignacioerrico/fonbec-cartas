@@ -4,6 +4,7 @@ using Fonbec.Cartas.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fonbec.Cartas.DataAccess.Migrations.Identity
 {
     [DbContext(typeof(FonbecCartasIdentityDbContext))]
-    partial class FonbecCartasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230529000031_RenameRoleVoluntarioToRevisor")]
+    partial class RenameRoleVoluntarioToRevisor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
