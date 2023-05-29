@@ -1,6 +1,7 @@
 @page "/admin/coordinadores"
-
-@using Fonbec.Cartas.Ui.Components.Admin
+@using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.DataAccess.Entities.Actors
+@using Fonbec.Cartas.Ui.Components.Admin
+@attribute [Authorize(Roles = FonbecRoles.Admin)]
 
 <UsersWithAccountList T="Coordinador" />

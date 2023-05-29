@@ -1,5 +1,6 @@
 ﻿@page "/admin/filiales/{FilialId}"
 @using Fonbec.Cartas.DataAccess.Constants
+@attribute [Authorize(Roles = FonbecRoles.Admin)]
 
 <PageHeader Title="@_pageTitle" />
 

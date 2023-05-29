@@ -1,6 +1,7 @@
 ﻿@page "/admin/filiales"
+@using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Logic.ViewModels.Admin
-@attribute [Authorize(Roles = DataAccess.Constants.FonbecRoles.Admin)]
+@attribute [Authorize(Roles = FonbecRoles.Admin)]
 
 <PageHeader Title="Filiales" />
 

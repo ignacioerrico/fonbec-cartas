@@ -1,7 +1,8 @@
 ﻿@page "/admin/revisores/{UserWithAccountId}"
-
+@using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.DataAccess.Entities.Actors
 @using Fonbec.Cartas.Ui.Components.Admin
+@attribute [Authorize(Roles = FonbecRoles.Admin)]
 
 <UserWithAccountEdit T="Revisor" UserWithAccountId="@UserWithAccountId" />
 
