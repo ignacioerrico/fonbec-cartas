@@ -21,7 +21,7 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
         public UsersWithAccountList()
         {
-            _pageTitle = typeof(T).Name;
+            _pageTitle = $"{typeof(T).Name}es";
 
             switch (typeof(T))
             {
