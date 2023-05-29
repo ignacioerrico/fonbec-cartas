@@ -1,9 +1,10 @@
-﻿@inject InitialState InitialState
+﻿@using Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods
+@inject InitialState InitialState
 @inject NavigationManager NavigationManager
 
 <AuthorizeView>
     <Authorized>
-        <MudText Class="mr-4">¡Hola, @context.User.Identity?.Name!</MudText>
+        <MudText Class="mr-4">¡Hola, @context.User.NickName()!</MudText>
         <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Info" Class="mr-4"
                    OnClick="@(() => NavigateTo("/Identity/Account/Manage"))">
             Tu cuenta
