@@ -2,14 +2,17 @@
 using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Fonbec.Cartas.DataAccess.ExtensionMethods;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Fonbec.Cartas.DataAccess
 {
-    public class ApplicationDbContext : DbContext
+    public sealed class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
         {
+            ChangeTracker.StateChanged += UpdateTimestamps;
+            ChangeTracker.Tracked += UpdateTimestamps;
         }
 
         public DbSet<Filial> Filiales => Set<Filial>();
@@ -32,36 +35,29 @@ namespace Fonbec.Cartas.DataAccess
             modelBuilder.SeedFiliales();
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
+        private static void UpdateTimestamps(object? sender, EntityEntryEventArgs e)
         {
-            var addedEntities = ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added)
-                .Select(e => e.Entity);
-            foreach (var addedEntity in addedEntities)
+            if (e.Entry.Entity is not Auditable auditable)
             {
-                if (addedEntity is Auditable auditableEntity)
-                {
-                    auditableEntity.CreatedOnUtc = DateTimeOffset.UtcNow;
-                }
-            }
-
-            var modifiedEntities = ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Modified)
-                .Select(e => e.Entity);
-            foreach (var modifiedEntity in modifiedEntities)
-            {
-                switch (modifiedEntity)
-                {
-                    case Auditable { IsDeleted: true } auditableEntity:
-                        auditableEntity.SoftDeletedOnUtc = DateTimeOffset.UtcNow;
-                        break;
-                    case Auditable auditableEntity:
-                        auditableEntity.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
-                        break;
-                }
+                return;
             }
             
-            return base.SaveChangesAsync(cancellationToken);
+            switch (e.Entry.State)
+            {
+                case EntityState.Added:
+                    auditable.CreatedOnUtc = DateTimeOffset.UtcNow;
+                    break;
+                case EntityState.Modified:
+                    if (auditable.IsDeleted)
+                    {
+                        auditable.SoftDeletedOnUtc = DateTimeOffset.UtcNow;
+                    }
+                    else
+                    {
+                        auditable.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
+                    }
+                    break;
+            }
         }
     }
 }
