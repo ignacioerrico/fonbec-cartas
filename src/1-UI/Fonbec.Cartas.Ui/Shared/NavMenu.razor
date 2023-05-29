@@ -1,14 +1,32 @@
 ﻿@using Fonbec.Cartas.Ui.Constants
+@using Fonbec.Cartas.DataAccess.Constants
+
 <MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
-    <AuthorizeView>
+    
+    <AuthorizeView Roles="@FonbecRoles.For(FonbecRoles.Admin)">
         <Authorized>
-            <MudNavLink Href="@NavRoutes.AdminFilialesList" Match="NavLinkMatch.Prefix">Filiales</MudNavLink>
-            <MudNavLink Href="@NavRoutes.AdminCoordinadoresList" Match="NavLinkMatch.Prefix">Coordinadores</MudNavLink>
-            <MudNavLink Href="@NavRoutes.AdminMediadoresList" Match="NavLinkMatch.Prefix">Mediadores</MudNavLink>
-            <MudNavLink Href="@NavRoutes.AdminRevisoresList" Match="NavLinkMatch.Prefix">Revisores</MudNavLink>
-            <MudNavLink Href="counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
-            <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix">Fetch data</MudNavLink>
+            <MudText Typo="Typo.h6" Class="my-2 px-4">Admin</MudText>
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="@NavRoutes.AdminFilialesList" Match="NavLinkMatch.Prefix"
+                        Icon="@Icons.Material.Filled.Place">
+                Filiales
+            </MudNavLink>
+            <MudNavLink Href="@NavRoutes.AdminCoordinadoresList" Match="NavLinkMatch.Prefix"
+                        Icon="@Icons.Material.Filled.SupervisorAccount">
+                Coordinadores
+            </MudNavLink>
+            <MudNavLink Href="@NavRoutes.AdminMediadoresList" Match="NavLinkMatch.Prefix"
+                        Icon="@Icons.Material.Filled.DeviceHub">
+                Mediadores
+            </MudNavLink>
+            <MudNavLink Href="@NavRoutes.AdminRevisoresList" Match="NavLinkMatch.Prefix"
+                        Icon="@Icons.Material.Filled.People">
+                Revisores
+            </MudNavLink>
         </Authorized>
     </AuthorizeView>
+    
+    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
+    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix">Fetch data</MudNavLink>
 </MudNavMenu>
