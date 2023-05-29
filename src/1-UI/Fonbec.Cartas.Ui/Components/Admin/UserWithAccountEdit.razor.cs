@@ -91,16 +91,9 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (!firstRender)
+            if (firstRender)
             {
-                return;
-            }
-
-            await _mudTextFieldNombre.FocusAsync();
-
-            if (!_isNew)
-            {
-                await _mudForm.Validate();
+                await _mudTextFieldNombre.FocusAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -154,8 +147,6 @@ namespace Fonbec.Cartas.Ui.Components.Admin
                 _userWithAccount.Username = _originalUserWithAccount.Username = userWithAccount.Username;
 
                 _userWithAccount.AspNetUserId = userWithAccount.AspNetUserId;
-
-                StateHasChanged();
             }
             else
             {
