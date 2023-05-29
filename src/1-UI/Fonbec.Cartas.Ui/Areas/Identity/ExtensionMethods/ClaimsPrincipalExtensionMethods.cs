@@ -4,6 +4,21 @@ namespace Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods
 {
     public static class ClaimsPrincipalExtensionMethods
     {
+        public static int? UserWithAccountId(this ClaimsPrincipal claimsPrincipal)
+        {
+            var userWithAccountIdString = claimsPrincipal.Claims
+                .FirstOrDefault(c => string.Equals(c.Type, FonbecUserCustomClaims.UserWithAccountId, StringComparison.Ordinal));
+
+            if (userWithAccountIdString is null)
+            {
+                return null;
+            }
+
+            return int.TryParse(userWithAccountIdString.Value, out var userWithAccountId)
+                ? userWithAccountId
+                : null;
+        }
+
         public static string NickName(this ClaimsPrincipal claimsPrincipal)
         {
             var nickName = claimsPrincipal.Claims
@@ -24,12 +39,9 @@ namespace Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods
                 return null;
             }
 
-            if (!int.TryParse(filialIdString.Value, out var filialId))
-            {
-                return null;
-            }
-
-            return filialId;
+            return int.TryParse(filialIdString.Value, out var filialId)
+                ? filialId
+                : null;
         }
 
         public static bool IsAdmin(this ClaimsPrincipal claimsPrincipal)

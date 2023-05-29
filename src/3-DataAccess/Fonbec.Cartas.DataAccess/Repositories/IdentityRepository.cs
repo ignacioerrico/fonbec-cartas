@@ -29,6 +29,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
 
             var fonbecUserCustomClaimsModel = new FonbecUserCustomClaimsModel
             {
+                UserWithAccountId = coordinador.Id.ToString(),
                 NickName = coordinador.NickName ?? coordinador.FirstName,
                 FilialId = coordinador.FilialId.ToString(),
             };
@@ -39,15 +40,16 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         public async Task<FonbecUserCustomClaimsModel> GetClaimsForMediadorAsync(string aspNetUserId)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-            var coordinador = await appDbContext.Mediadores
+            var mediador = await appDbContext.Mediadores
                 .Include(c => c.Filial)
                 .Where(c => EF.Functions.Like(c.AspNetUserId, aspNetUserId))
                 .SingleAsync();
 
             var fonbecUserCustomClaimsModel = new FonbecUserCustomClaimsModel
             {
-                NickName = coordinador.NickName ?? coordinador.FirstName,
-                FilialId = coordinador.FilialId.ToString(),
+                UserWithAccountId = mediador.Id.ToString(),
+                NickName = mediador.NickName ?? mediador.FirstName,
+                FilialId = mediador.FilialId.ToString(),
             };
 
             return fonbecUserCustomClaimsModel;
@@ -56,15 +58,16 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         public async Task<FonbecUserCustomClaimsModel> GetClaimsForRevisorAsync(string aspNetUserId)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-            var coordinador = await appDbContext.Revisores
+            var revisor = await appDbContext.Revisores
                 .Include(c => c.Filial)
                 .Where(c => EF.Functions.Like(c.AspNetUserId, aspNetUserId))
                 .SingleAsync();
 
             var fonbecUserCustomClaimsModel = new FonbecUserCustomClaimsModel
             {
-                NickName = coordinador.NickName ?? coordinador.FirstName,
-                FilialId = coordinador.FilialId.ToString(),
+                UserWithAccountId = revisor.Id.ToString(),
+                NickName = revisor.NickName ?? revisor.FirstName,
+                FilialId = revisor.FilialId.ToString(),
             };
 
             return fonbecUserCustomClaimsModel;
