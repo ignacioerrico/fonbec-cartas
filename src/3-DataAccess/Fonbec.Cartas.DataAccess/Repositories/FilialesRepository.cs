@@ -1,11 +1,12 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Projections;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fonbec.Cartas.DataAccess.Repositories
 {
     public interface IFilialesRepository
     {
-        Task<List<Filial>> GetAllFilialesAsync();
+        Task<List<FilialesListProjection>> GetAllFilialesAsync();
         Task<string?> GetFilialNameAsync(int id);
         Task<int> CreateFilialAsync(Filial filial);
         Task<int> UpdateFilialAsync(int id, string newName);
@@ -21,10 +22,26 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             _appDbContextFactory = appDbContextFactory;
         }
 
-        public async Task<List<Filial>> GetAllFilialesAsync()
+        public async Task<List<FilialesListProjection>> GetAllFilialesAsync()
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-            return await appDbContext.Filiales.ToListAsync();
+            return await appDbContext.Filiales
+                .Include(f => f.Coordinadores)
+                .Include(f => f.Mediadores)
+                .Include(f => f.Revisores)
+                .Select(f => new FilialesListProjection
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    Coordinadores = f.Coordinadores
+                        .Select(c => c.FullName(false))
+                        .ToList(),
+                    QtyMediadores = f.Mediadores.Count,
+                    QtyRevisores = f.Revisores.Count,
+                    CreatedOnUtc = f.CreatedOnUtc,
+                    LastUpdatedOnUtc = f.LastUpdatedOnUtc,
+                })
+                .ToListAsync();
         }
 
         public async Task<string?> GetFilialNameAsync(int id)

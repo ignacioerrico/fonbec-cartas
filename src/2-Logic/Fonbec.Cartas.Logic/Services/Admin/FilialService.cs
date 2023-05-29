@@ -30,8 +30,11 @@ namespace Fonbec.Cartas.Logic.Services.Admin
                     new FilialesListViewModel(f.Name)
                     {
                         Id = f.Id,
+                        Coordinadores = f.Coordinadores,
+                        QtyMediadores = f.QtyMediadores,
+                        QtyRevisores = f.QtyRevisores,
                         CreatedOnUtc = f.CreatedOnUtc,
-                        LastUpdatedOnUtc = f.LastUpdatedOnUtc
+                        LastUpdatedOnUtc = f.LastUpdatedOnUtc,
                         // TODO
                     })
                 .ToList();
