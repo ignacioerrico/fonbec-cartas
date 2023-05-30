@@ -11,7 +11,7 @@
                        Class="my-4" />
 }
 
-<MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
+<MudForm @bind-IsValid="_formValidationSucceeded">
     <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_userWithAccount.FirstName" Immediate="true"
                   Required="true" RequiredError="Se debe especificar el nombre."
                   MaxLength="@MaxLength.Actor.FirstName" />

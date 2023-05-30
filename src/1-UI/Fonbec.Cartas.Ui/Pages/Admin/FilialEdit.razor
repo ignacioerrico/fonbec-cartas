@@ -10,7 +10,7 @@
                        Class="my-4" />
 }
 
-<MudForm @ref="_mudForm" @bind-IsValid="@_formValidationSucceeded">
+<MudForm @bind-IsValid="@_formValidationSucceeded">
     <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_filialName" Immediate="true"
                   Required="true" RequiredError="Se debe especificar el nombre."
                   MaxLength="MaxLength.Filial.Name" />

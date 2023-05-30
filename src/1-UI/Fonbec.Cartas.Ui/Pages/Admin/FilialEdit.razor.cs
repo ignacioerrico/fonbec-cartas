@@ -15,7 +15,6 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
         private string _saveButtonText = "Guardar";
         private bool _formValidationSucceeded;
 
-        private MudForm _mudForm = default!;
         private MudTextField<string> _mudTextFieldNombre = default!;
 
         private bool SaveButtonDisabled => _loading

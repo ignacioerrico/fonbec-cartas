@@ -26,7 +26,6 @@ namespace Fonbec.Cartas.Ui.Components.Admin
         private bool _formValidationSucceeded;
         private IEnumerable<string> _createErrors = Enumerable.Empty<string>();
 
-        private MudForm _mudForm = default!;
         private MudTextField<string> _mudTextFieldNombre = default!;
 
         private List<FilialViewModel> _filiales = new();
