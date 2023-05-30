@@ -1,4 +1,6 @@
-﻿<CascadingAuthenticationState>
+﻿@inject NavigationManager NavManager
+
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -11,7 +13,7 @@
 
                         if (user.Identity is null)
                         {
-                            <RedirectToLogin />
+                            NavManager.NavigateTo("Identity/Account/Login", true);
                         }
                         else if (user.Identity.IsAuthenticated)
                         {
@@ -19,7 +21,7 @@
                         }
                         else
                         {
-                            <RedirectToLogin />
+                            NavManager.NavigateTo("Identity/Account/Login", true);
                         }
                     }
                 </NotAuthorized>
