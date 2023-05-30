@@ -2,6 +2,7 @@
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.DataAccess.Entities.Actors
 @using Fonbec.Cartas.Logic.ViewModels.Admin
+@using System.ComponentModel.DataAnnotations
 
 <PageHeader Title="@_pageTitle" />
 
@@ -35,6 +36,7 @@
 
     <MudTextField T="string" Label="Correo electrónico" @bind-Value="_userWithAccount.Email" Immediate="true"
                   Required="true" RequiredError="Se debe especificar una dirección de correo electrónico."
+                  Validation="@(new EmailAddressAttribute { ErrorMessage = "La dirección de correo ingresada no es válida." })"
                   MaxLength="@MaxLength.Actor.Email" />
 
     <MudTextField T="string" Label="Teléfono" @bind-Value="_userWithAccount.Phone" Immediate="true"
