@@ -1,4 +1,5 @@
 ﻿using Fonbec.Cartas.Logic.Services.Admin;
+using Fonbec.Cartas.Ui.Constants;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -65,7 +66,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
                 if (filialName is null)
                 {
                     Snackbar.Add($"No se encontró filial con ID {filialId}.", Severity.Error);
-                    NavigationManager.NavigateTo("/admin/filiales/new");
+                    NavigationManager.NavigateTo(NavRoutes.AdminFilialNew);
                     return;
                 }
 
@@ -73,7 +74,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
             }
             else
             {
-                NavigationManager.NavigateTo("/admin/filiales");
+                NavigationManager.NavigateTo(NavRoutes.AdminFiliales);
             }
         }
 
@@ -97,7 +98,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
                 }
             }
 
-            NavigationManager.NavigateTo("/admin/filiales");
+            NavigationManager.NavigateTo(NavRoutes.AdminFiliales);
         }
     }
 }

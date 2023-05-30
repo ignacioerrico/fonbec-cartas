@@ -1,5 +1,6 @@
 ﻿@page "/admin/filiales/{FilialId}"
 @using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.Ui.Constants
 @attribute [Authorize(Roles = FonbecRoles.Admin)]
 
 <PageHeader Title="@_pageTitle" />
@@ -20,7 +21,7 @@
                    Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
             @_saveButtonText
         </MudButton>
-        <MudButton Href="admin/filiales"
+        <MudButton Href="@NavRoutes.AdminFiliales"
                    Variant="Variant.Filled" Color="Color.Default">
             Cancelar
         </MudButton>

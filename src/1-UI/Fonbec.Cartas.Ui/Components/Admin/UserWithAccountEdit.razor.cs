@@ -50,19 +50,19 @@ namespace Fonbec.Cartas.Ui.Components.Admin
             switch (typeof(T))
             {
                 case { } t when t == typeof(Coordinador):
-                    _pathToList = NavRoutes.AdminCoordinadoresList;
+                    _pathToList = NavRoutes.AdminCoordinadores;
                     _pathToNew = NavRoutes.AdminCoordinadorNew;
                     _pageTitleNew = "Alta de Coordinador";
                     _pageTitleEdit = "Editar Coordinador";
                     break;
                 case { } t when t == typeof(Mediador):
-                    _pathToList = NavRoutes.AdminMediadoresList;
+                    _pathToList = NavRoutes.AdminMediadores;
                     _pathToNew = NavRoutes.AdminMediadorNew;
                     _pageTitleNew = "Alta de Mediador";
                     _pageTitleEdit = "Editar Mediador";
                     break;
                 case { } t when t == typeof(Revisor):
-                    _pathToList = NavRoutes.AdminRevisoresList;
+                    _pathToList = NavRoutes.AdminRevisores;
                     _pathToNew = NavRoutes.AdminRevisorNew;
                     _pageTitleNew = "Alta de Revisor";
                     _pageTitleEdit = "Editar Revisor";
@@ -104,7 +104,7 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
             if (!_filiales.Any())
             {
-                NavigationManager.NavigateTo(NavRoutes.AdminFilialesList);
+                NavigationManager.NavigateTo(NavRoutes.AdminFiliales);
             }
 
             if (string.Equals(UserWithAccountId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
