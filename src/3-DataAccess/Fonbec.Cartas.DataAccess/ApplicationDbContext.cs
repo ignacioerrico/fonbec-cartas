@@ -23,6 +23,10 @@ namespace Fonbec.Cartas.DataAccess
 
         public DbSet<Revisor> Revisores => Set<Revisor>();
 
+        public DbSet<Padrino> Padrinos => Set<Padrino>();
+
+        public DbSet<SendAlsoTo> SendAlsoTo => Set<SendAlsoTo>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -1,0 +1,28 @@
+﻿@using Fonbec.Cartas.DataAccess.Constants
+@using System.ComponentModel.DataAnnotations
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @bind-IsValid="_formValidationSucceeded">
+            <MudTextField T="string" Label="Nombre completo" @ref="_mudTextFieldNombre" @bind-Value="_fullName" Immediate="true"
+                          Required="true" RequiredError="Se debe especificar el nombre."
+                          MaxLength="@MaxLength.SendAlsoTo.FullName" />
+            
+            <MudTextField T="string" Label="Correo electrónico" @bind-Value="_email" Immediate="true"
+                          Required="true" RequiredError="Se debe especificar una dirección de correo electrónico."
+                          Validation="@(new EmailAddressAttribute { ErrorMessage = "La dirección de correo ingresada no es válida." })"
+                          MaxLength="@MaxLength.Actor.Email" />
+                          
+            <MudSwitch @bind-Checked="_sendAsBcc" Color="Color.Primary">Enviar en copia oculta (BCC)</MudSwitch>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">
+            Cancelar
+        </MudButton>
+        <MudButton OnClick="Add" Disabled="AddButtonDisabled"
+                   Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Check">
+            Agregar
+        </MudButton>
+    </DialogActions>
+</MudDialog>

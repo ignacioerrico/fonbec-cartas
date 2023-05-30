@@ -13,5 +13,7 @@ namespace Fonbec.Cartas.DataAccess.Entities
         public List<Mediador> Mediadores { get; set; } = new();
 
         public List<Revisor> Revisores { get; set; } = new();
+
+        public List<Padrino> Padrinos { get; set; } = new();
     }
 }

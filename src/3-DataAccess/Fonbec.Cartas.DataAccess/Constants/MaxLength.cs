@@ -18,5 +18,10 @@
             public const int Username = 20;
             public const int InitialPassword = 20;
         }
+
+        public static class SendAlsoTo
+        {
+            public const int FullName = 50;
+        }
     }
 }

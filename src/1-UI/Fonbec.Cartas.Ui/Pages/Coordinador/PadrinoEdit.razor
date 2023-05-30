@@ -1,0 +1,76 @@
+﻿@page "/coordinador/padrinos/{PadrinoId}"
+@using Fonbec.Cartas.DataAccess.Constants
+@using System.ComponentModel.DataAnnotations
+@using Fonbec.Cartas.Ui.Constants
+@attribute [Authorize(Roles = FonbecRoles.Coordinador)]
+
+<PageHeader Title="@_pageTitle" />
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true"
+                       Class="my-4" />
+}
+
+<MudForm @bind-IsValid="_formValidationSucceeded">
+    <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_padrino.FirstName" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar el nombre."
+                  MaxLength="@MaxLength.Actor.FirstName" />
+
+    <MudTextField T="string" Label="Apellido" @bind-Value="_padrino.LastName" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar el apellido."
+                  MaxLength="@MaxLength.Actor.LastName" />
+
+    <MudTextField T="string" Label="Apodo" @bind-Value="_padrino.NickName" Immediate="true"
+                  MaxLength="@MaxLength.Actor.NickName" />
+
+    <GenderSelector @bind-SelectedGender="_padrino.Gender" />
+
+    <MudTextField T="string" Label="Correo electrónico" @bind-Value="_padrino.Email" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar una dirección de correo electrónico."
+                  Validation="@(new EmailAddressAttribute { ErrorMessage = "La dirección de correo ingresada no es válida." })"
+                  MaxLength="@MaxLength.Actor.Email" />
+
+        @for (var index = 0; index < _sendAlsoTo.Count; index++)
+        {
+            var sendAlsoTo = _sendAlsoTo[index];
+            var ccOrBcc = sendAlsoTo.SendAsBcc ? "BCC" : "CC";
+            var displayText = $"{ccOrBcc}: {sendAlsoTo.FullName} <{sendAlsoTo.Email}>";
+            var currentIndex = index;
+
+            <MudStack Row="@true" Class="mt-2">
+                <MudChip Color="@(sendAlsoTo.SendAsBcc ? Color.Default : Color.Primary)"
+                         OnClick="@(async () => await OpenSendAlsoToDialogAsync((currentIndex)))"
+                         Size="Size.Large">
+                    @displayText
+                </MudChip>
+                <MudTooltip Text="Modificar" Arrow="true" Placement="Placement.Bottom">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   OnClick="@(async () => await OpenSendAlsoToDialogAsync((currentIndex)))" />
+                </MudTooltip>
+                <MudTooltip Text="Quitar" Arrow="true" Placement="Placement.Bottom" Color="Color.Error">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                   OnClick="@(() => _sendAlsoTo.RemoveAt(currentIndex))" />
+                </MudTooltip>
+            </MudStack>
+        }
+    
+    <MudButton OnClick="@(async () => await OpenSendAlsoToDialogAsync())"
+               Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Class="mt-2">
+        Agregar destinatario
+    </MudButton>
+
+    <MudTextField T="string" Label="Teléfono" @bind-Value="_padrino.Phone" Immediate="true"
+                  MaxLength="@MaxLength.Actor.Phone" />
+
+    <MudPaper Elevation="0" Class="pt-4">
+        <MudButton OnClick="Save" Disabled="SaveButtonDisabled"
+                   Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
+            @_saveButtonText
+        </MudButton>
+        <MudButton Href="@NavRoutes.CoordinadorPadrinos"
+                   Variant="Variant.Filled" Color="Color.Default">
+            Cancelar
+        </MudButton>
+    </MudPaper>
+</MudForm>

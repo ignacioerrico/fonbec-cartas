@@ -5,6 +5,7 @@ using Fonbec.Cartas.Logic.Data;
 using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.Services.Identity;
+using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
 using Fonbec.Cartas.Ui.Areas.Identity;
 using Fonbec.Cartas.Ui.Options;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -41,12 +42,14 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<UserWithAccountService<Coordinador>, CoordinadorService>();
             services.AddScoped<UserWithAccountService<Mediador>, MediadorService>();
             services.AddScoped<UserWithAccountService<Revisor>, RevisorService>();
+            services.AddScoped<IPadrinoService, PadrinoService>();
 
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped<IFilialesRepository, FilialesRepository>();
             services.AddScoped<UserWithAccountRepositoryBase<Coordinador>, CoordinadorRepository>();
             services.AddScoped<UserWithAccountRepositoryBase<Mediador>, MediadorRepository>();
             services.AddScoped<UserWithAccountRepositoryBase<Revisor>, RevisorRepository>();
+            services.AddScoped<IPadrinoRepository, PadrinoRepository>();
 
             services.AddSingleton<WeatherForecastService>();
         }
