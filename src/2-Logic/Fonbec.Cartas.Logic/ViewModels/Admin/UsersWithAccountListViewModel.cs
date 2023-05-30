@@ -6,15 +6,15 @@ public class UsersWithAccountListViewModel : AuditableViewModel
 {
     public int Id { get; set; }
     
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
     
-    public string Filial { get; set; }
+    public string Filial { get; set; } = default!;
     
-    public string Email { get; set; }
+    public string Email { get; set; } = default!;
     
-    public string Phone { get; set; }
+    public string Phone { get; set; } = default!;
     
     public Gender Gender { get; set; }
     
-    public string Username { get; set; }
+    public string Username { get; set; } = default!;
 }

@@ -7,7 +7,7 @@ namespace Fonbec.Cartas.DataAccess.Entities.Actors
         public int Id { get; set; }
 
         public int FilialId { get; set; }
-        public Filial Filial { get; set; }
+        public Filial Filial { get; set; } = default!;
 
         public string FirstName { get; set; } = string.Empty;
         
