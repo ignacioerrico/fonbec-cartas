@@ -103,7 +103,7 @@ else
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
                 <MudTooltip Text="Borrar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton OnClick="@(_ => OpenDeleteDialog(context.Id, context.Name))"
+                    <MudIconButton OnClick="@(async () => await OpenDeleteDialogAsync(context.Id, context.Name))"
                                    Disabled="_filiales.Count == 1"
                                    Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>

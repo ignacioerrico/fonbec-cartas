@@ -42,7 +42,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
                            c.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));
         }
 
-        private async Task OpenDeleteDialog(int id, string filialName)
+        private async Task OpenDeleteDialogAsync(int id, string filialName)
         {
             var parameters = new DialogParameters { ["ItemToDelete"] = filialName };
             var options = new DialogOptions
