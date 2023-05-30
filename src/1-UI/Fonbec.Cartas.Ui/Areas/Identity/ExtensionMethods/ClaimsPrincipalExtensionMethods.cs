@@ -43,14 +43,5 @@ namespace Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods
                 ? filialId
                 : null;
         }
-
-        public static bool IsAdmin(this ClaimsPrincipal claimsPrincipal)
-        {
-            var nameIdentifier = claimsPrincipal.Claims
-                .FirstOrDefault(c => string.Equals(c.Type, ClaimTypes.NameIdentifier, StringComparison.Ordinal));
-            
-            return nameIdentifier is not null
-                   && string.Equals(nameIdentifier.Value, "admin", StringComparison.Ordinal);
-        }
     }
 }
