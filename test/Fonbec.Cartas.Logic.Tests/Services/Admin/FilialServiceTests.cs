@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
 using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Projections;
 using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Moq;
@@ -151,9 +152,9 @@ namespace Fonbec.Cartas.Logic.Tests.Services.Admin
             result.Should().Be(1);
         }
 
-        private static List<Filial> GetFiliales()
+        private static List<FilialesListProjection> GetFiliales()
         {
-            var filiales = new List<Filial>
+            var filiales = new List<FilialesListProjection>
             {
                 new()
                 {
