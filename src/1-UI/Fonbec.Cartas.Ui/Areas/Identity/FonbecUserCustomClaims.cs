@@ -7,5 +7,7 @@
         public const string NickName = "NickName";
 
         public const string FilialId = "FilialId";
+        
+        public const string FilialName = "FilialName";
     }
 }

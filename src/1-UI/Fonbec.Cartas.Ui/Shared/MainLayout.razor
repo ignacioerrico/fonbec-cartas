@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods
+@inherits LayoutComponentBase
 
 <PageTitle>FONBEC Cartas</PageTitle>
 
@@ -13,6 +14,18 @@
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">FONBEC Cartas</MudText>
+        <MudSpacer />
+        <AuthorizeView>
+            <Authorized>
+                @{
+                    var filialName = context.User.FilialName();
+                }
+                @if (filialName is not null)
+                {
+                    <MudText>Filial: @context.User.FilialName()</MudText>
+                }
+            </Authorized>
+        </AuthorizeView>
         <MudSpacer />
         <LoginDisplay />
     </MudAppBar>

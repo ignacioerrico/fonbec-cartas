@@ -32,6 +32,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                 UserWithAccountId = coordinador.Id.ToString(),
                 NickName = coordinador.NickName ?? coordinador.FirstName,
                 FilialId = coordinador.FilialId.ToString(),
+                FilialName = coordinador.Filial.Name,
             };
 
             return fonbecUserCustomClaimsModel;
@@ -50,6 +51,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                 UserWithAccountId = mediador.Id.ToString(),
                 NickName = mediador.NickName ?? mediador.FirstName,
                 FilialId = mediador.FilialId.ToString(),
+                FilialName = mediador.Filial.Name,
             };
 
             return fonbecUserCustomClaimsModel;
@@ -68,6 +70,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                 UserWithAccountId = revisor.Id.ToString(),
                 NickName = revisor.NickName ?? revisor.FirstName,
                 FilialId = revisor.FilialId.ToString(),
+                FilialName = revisor.Filial.Name,
             };
 
             return fonbecUserCustomClaimsModel;

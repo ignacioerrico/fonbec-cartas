@@ -43,5 +43,13 @@ namespace Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods
                 ? filialId
                 : null;
         }
+
+        public static string? FilialName(this ClaimsPrincipal claimsPrincipal)
+        {
+            var filialName = claimsPrincipal.Claims
+                .FirstOrDefault(c => string.Equals(c.Type, FonbecUserCustomClaims.FilialName, StringComparison.Ordinal));
+
+            return filialName?.Value;
+        }
     }
 }

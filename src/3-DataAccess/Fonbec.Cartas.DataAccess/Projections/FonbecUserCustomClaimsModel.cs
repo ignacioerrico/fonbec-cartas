@@ -7,4 +7,6 @@ public class FonbecUserCustomClaimsModel
     public string NickName { get; set; } = default!;
 
     public string FilialId { get; set; } = default!;
+    
+    public string FilialName { get; set; } = default!;
 }
