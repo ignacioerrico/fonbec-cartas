@@ -145,9 +145,9 @@ namespace Fonbec.Cartas.Logic.Services.Admin
             userWithAccount.Phone = string.IsNullOrWhiteSpace(editViewModel.Phone) ? null : editViewModel.Phone;
             userWithAccount.Username = editViewModel.Username;
 
-            var affectedRows = await _userWithAccountRepository.UpdateAsync(id, userWithAccount);
+            var rowsAffected = await _userWithAccountRepository.UpdateAsync(id, userWithAccount);
 
-            if (affectedRows == 0)
+            if (rowsAffected == 0)
             {
                 return 0;
             }
@@ -173,7 +173,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
 
             if (!usernameHasChanged && !emailHasChanged)
             {
-                return affectedRows;
+                return rowsAffected;
             }
 
             var result = await _userManager.UpdateAsync(user);
@@ -182,7 +182,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
                 return -1;
             }
 
-            return affectedRows;
+            return rowsAffected;
         }
     }
 }
