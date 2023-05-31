@@ -1,4 +1,4 @@
-﻿namespace Fonbec.Cartas.Ui.Areas.Identity
+﻿namespace Fonbec.Cartas.Logic.Constants
 {
     public static class FonbecUserCustomClaims
     {

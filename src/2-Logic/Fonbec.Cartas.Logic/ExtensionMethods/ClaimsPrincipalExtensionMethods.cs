@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
+using Fonbec.Cartas.Logic.Constants;
 
-namespace Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods
+namespace Fonbec.Cartas.Logic.ExtensionMethods
 {
     public static class ClaimsPrincipalExtensionMethods
     {

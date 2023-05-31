@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
+using Fonbec.Cartas.Logic.ExtensionMethods;
 using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
-using Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods;
 using Fonbec.Cartas.Ui.Components.Dialogs;
 using Fonbec.Cartas.Ui.Constants;
 using Microsoft.AspNetCore.Components;

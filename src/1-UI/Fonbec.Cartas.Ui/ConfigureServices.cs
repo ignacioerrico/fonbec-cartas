@@ -6,7 +6,7 @@ using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.Services.Identity;
 using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
-using Fonbec.Cartas.Ui.Areas.Identity;
+using Fonbec.Cartas.Ui.Identity;
 using Fonbec.Cartas.Ui.Options;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;

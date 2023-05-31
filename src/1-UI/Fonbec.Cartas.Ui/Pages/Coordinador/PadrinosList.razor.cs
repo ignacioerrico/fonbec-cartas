@@ -1,6 +1,6 @@
-﻿using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
+﻿using Fonbec.Cartas.Logic.ExtensionMethods;
+using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
-using Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 

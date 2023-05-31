@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Fonbec.Cartas.Ui.Areas.Identity
+namespace Fonbec.Cartas.Ui.Identity
 {
     public class EmailSender : IEmailSender
     {

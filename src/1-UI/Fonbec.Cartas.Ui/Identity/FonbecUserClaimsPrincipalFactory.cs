@@ -2,11 +2,12 @@
 using Fonbec.Cartas.DataAccess.Constants;
 using Fonbec.Cartas.DataAccess.Identity;
 using Fonbec.Cartas.DataAccess.Projections;
+using Fonbec.Cartas.Logic.Constants;
 using Fonbec.Cartas.Logic.Services.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
-namespace Fonbec.Cartas.Ui.Areas.Identity
+namespace Fonbec.Cartas.Ui.Identity
 {
     public class FonbecUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<FonbecUser, IdentityRole>
     {
@@ -32,21 +33,21 @@ namespace Fonbec.Cartas.Ui.Areas.Identity
             Claim claim;
 
             var isAdmin = await _userManager.IsInRoleAsync(user, FonbecRoles.Admin);
-            
+
             if (isAdmin)
             {
                 claim = new Claim(FonbecUserCustomClaims.NickName, "Admin");
                 claimsIdentity.AddClaim(claim);
-                
+
                 return claimsIdentity;
             }
 
             FonbecUserCustomClaimsModel customClaimsModel;
-            
+
             var isCoordinador = await _userManager.IsInRoleAsync(user, FonbecRoles.Coordinador);
             var isMediador = await _userManager.IsInRoleAsync(user, FonbecRoles.Mediador);
             var isRevisor = await _userManager.IsInRoleAsync(user, FonbecRoles.Revisor);
-            
+
             if (isCoordinador)
             {
                 customClaimsModel = await _identityService.GetClaimsForCoordinadorAsync(user.Id);

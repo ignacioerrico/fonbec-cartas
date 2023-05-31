@@ -1,6 +1,6 @@
 using Fonbec.Cartas.DataAccess;
 using Fonbec.Cartas.DataAccess.Identity;
-using Fonbec.Cartas.Ui.Areas.Identity;
+using Fonbec.Cartas.Ui.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
