@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
+﻿using System.Security.Claims;
+using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Fonbec.Cartas.Ui.Areas.Identity.ExtensionMethods;
 using Fonbec.Cartas.Ui.Components.Dialogs;
@@ -11,6 +12,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
     public partial class PadrinoEdit
     {
+        private ClaimsPrincipal _user = default!;
+
         private readonly PadrinoEditViewModel _padrino = new();
         private readonly PadrinoEditViewModel _originalPadrino = new();
 
@@ -68,6 +71,25 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         protected override async Task OnInitializedAsync()
         {
+            _loading = true;
+
+            if (AuthenticationState is null)
+            {
+                Snackbar.Add("AuthenticationState is null.", Severity.Error);
+                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+                return;
+            }
+
+            var user = (await AuthenticationState).User;
+            if (user.Identity is not { IsAuthenticated: true })
+            {
+                Snackbar.Add("Usuario no está autenticado.", Severity.Error);
+                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+                return;
+            }
+
+            _user = user;
+
             if (string.Equals(PadrinoId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
             {
                 _isNew = true;
@@ -82,9 +104,16 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 _pageTitle = "Editar Padrino";
                 _saveButtonText = "Actualizar";
 
-                _loading = true;
-                var padrino = await PadrinoService.GetPadrinoAsync(padrinoId);
-                _loading = false;
+                var filialId = _user.FilialId();
+
+                if (filialId is null)
+                {
+                    Snackbar.Add("Filial no está en el claim.", Severity.Error);
+                    NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+                    return;
+                }
+
+                var padrino = await PadrinoService.GetPadrinoAsync(padrinoId, filialId.Value);
 
                 if (padrino is null)
                 {
@@ -104,21 +133,12 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             {
                 NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
             }
+
+            _loading = false;
         }
 
         private async Task Save()
         {
-            if (AuthenticationState is null)
-            {
-                return;
-            }
-
-            var user = (await AuthenticationState).User;
-            if (user.Identity is not { IsAuthenticated: true })
-            {
-                return;
-            }
-
             _padrino.SendAlsoTo = _sendAlsoTo.Select(sat =>
                 new PadrinoEditSendAlsoToViewModel
                 {
@@ -129,8 +149,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             if (_isNew)
             {
-                _padrino.FilialId = user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
-                _padrino.CreatedByCoordinadorId = user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+                _padrino.FilialId = _user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
+                _padrino.CreatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
                 var qtyAdded = await PadrinoService.CreateAsync(_padrino);
                 
@@ -142,7 +162,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             else if (ModelHasChanged)
             {
                 var id = int.Parse(PadrinoId);
-                _padrino.UpdatedByCoordinadorId = user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+                _padrino.UpdatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
                 var qtyUpdated = await PadrinoService.UpdateAsync(id, _padrino);
                 
@@ -155,7 +175,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
         }
 
-        private async Task OpenSendAlsoToDialogAsync(string? fullName = null, string? email = null, bool sendAsBcc = false)
+        private async Task OpenSendAlsoToDialogAsync()
         {
             var options = new DialogOptions
             {
@@ -206,6 +226,5 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             _sendAlsoTo[currentIndex] = data;
         }
-
     }
 }

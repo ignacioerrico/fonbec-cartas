@@ -7,7 +7,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
 {
     public interface IPadrinoService
     {
-        Task<PadrinoEditViewModel?> GetPadrinoAsync(int padrinoId);
+        Task<PadrinoEditViewModel?> GetPadrinoAsync(int padrinoId, int filialId);
         Task<int> CreateAsync(PadrinoEditViewModel padrinoEditViewModel);
         Task<int> UpdateAsync(int id, PadrinoEditViewModel padrino);
     }
@@ -21,9 +21,9 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
             _padrinoRepository = padrinoRepository;
         }
 
-        public async Task<PadrinoEditViewModel?> GetPadrinoAsync(int padrinoId)
+        public async Task<PadrinoEditViewModel?> GetPadrinoAsync(int padrinoId, int filialId)
         {
-            var padrino = await _padrinoRepository.GetPadrinoAsync(padrinoId);
+            var padrino = await _padrinoRepository.GetPadrinoAsync(padrinoId, filialId);
 
             if (padrino is null)
             {

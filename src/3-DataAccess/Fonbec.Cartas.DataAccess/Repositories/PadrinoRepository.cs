@@ -5,7 +5,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
 {
     public interface IPadrinoRepository
     {
-        Task<Padrino?> GetPadrinoAsync(int padrinoId);
+        Task<Padrino?> GetPadrinoAsync(int padrinoId, int filialId);
         Task<int> CreateAsync(Padrino padrino);
         Task<int> UpdateAsync(int id, Padrino padrino);
     }
@@ -19,10 +19,11 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             _appDbContextFactory = appDbContextFactory;
         }
 
-        public async Task<Padrino?> GetPadrinoAsync(int padrinoId)
+        public async Task<Padrino?> GetPadrinoAsync(int padrinoId, int filialId)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             var padrino = await appDbContext.Padrinos
+                .Where(p => p.FilialId == filialId)
                 .Include(p => p.SendAlsoTo)
                 .SingleOrDefaultAsync(p => p.Id == padrinoId);
             return padrino;
@@ -50,7 +51,6 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                 return 0;
             }
 
-            padrinoDb.FilialId = padrino.FilialId;
             padrinoDb.FirstName = padrino.FirstName;
             padrinoDb.LastName = padrino.LastName;
             padrinoDb.NickName = padrino.NickName;
