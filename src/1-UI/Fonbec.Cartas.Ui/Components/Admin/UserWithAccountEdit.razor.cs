@@ -100,11 +100,15 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
         protected override async Task OnInitializedAsync()
         {
+            _loading = true;
+
             _filiales = await FilialService.GetAllFilialesForSelectionAsync();
 
             if (!_filiales.Any())
             {
+                Snackbar.Add("No hay filiales.");
                 NavigationManager.NavigateTo(NavRoutes.AdminFiliales);
+                return;
             }
 
             if (string.Equals(UserWithAccountId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
@@ -123,9 +127,7 @@ namespace Fonbec.Cartas.Ui.Components.Admin
                 _pageTitle = _pageTitleEdit;
                 _saveButtonText = "Actualizar";
 
-                _loading = true;
                 var userWithAccount = await UserWithAccountService.GetAsync(userWithAccountId);
-                _loading = false;
 
                 if (userWithAccount is null)
                 {
@@ -151,6 +153,8 @@ namespace Fonbec.Cartas.Ui.Components.Admin
             {
                 NavigationManager.NavigateTo(_pathToList);
             }
+
+            _loading = false;
         }
 
         private async Task Save()
