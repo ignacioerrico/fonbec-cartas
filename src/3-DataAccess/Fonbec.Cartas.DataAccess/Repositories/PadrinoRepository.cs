@@ -5,6 +5,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
 {
     public interface IPadrinoRepository
     {
+        Task<List<Padrino>> GetAllPadrinosAsync(int filialId);
         Task<Padrino?> GetPadrinoAsync(int padrinoId, int filialId);
         Task<int> CreateAsync(Padrino padrino);
         Task<int> UpdateAsync(int id, Padrino padrino);
@@ -17,6 +18,19 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         public PadrinoRepository(IDbContextFactory<ApplicationDbContext> appDbContextFactory)
         {
             _appDbContextFactory = appDbContextFactory;
+        }
+
+        public async Task<List<Padrino>> GetAllPadrinosAsync(int filialId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var all = await appDbContext.Padrinos
+                .Where(p => p.FilialId == filialId)
+                .Include(p => p.SendAlsoTo)
+                .Include(p => p.CreatedByCoordinador)
+                .Include(p => p.UpdatedByCoordinador)
+                .Include(p => p.DeletedByCoordinador)
+                .ToListAsync();
+            return all;
         }
 
         public async Task<Padrino?> GetPadrinoAsync(int padrinoId, int filialId)

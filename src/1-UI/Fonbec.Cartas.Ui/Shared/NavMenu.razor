@@ -27,6 +27,17 @@
         </Authorized>
     </AuthorizeView>
     
+    <AuthorizeView Roles="@FonbecRoles.For(FonbecRoles.Coordinador)">
+        <Authorized>
+            <MudText Typo="Typo.h6" Class="my-2 px-4">Coordinador</MudText>
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="@NavRoutes.CoordinadorPadrinos" Match="NavLinkMatch.Prefix"
+                        Icon="@Icons.Material.Filled.Favorite">
+                Padrinos
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+
     <MudNavLink Href="counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
     <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix">Fetch data</MudNavLink>
 </MudNavMenu>

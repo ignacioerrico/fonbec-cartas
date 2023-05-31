@@ -7,7 +7,7 @@ namespace Fonbec.Cartas.Logic.ViewModels
         public DateTimeOffset CreatedOnUtc { get; set; }
         public DateTimeOffset? LastUpdatedOnUtc { get; set; }
 
-        public IEnumerable<string> AuditDisplay()
+        public virtual IEnumerable<string> AuditDisplay()
         {
             var lines = new List<string>
             {
