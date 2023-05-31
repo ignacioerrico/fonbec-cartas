@@ -1,6 +1,7 @@
 ﻿@page "/admin/filiales"
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Logic.ViewModels.Admin
+@using Fonbec.Cartas.Ui.Constants
 @attribute [Authorize(Roles = FonbecRoles.Admin)]
 
 <PageHeader Title="Filiales" />
@@ -8,7 +9,7 @@
 <MudTooltip Text="Alta filial"
             Arrow="true" Placement="Placement.Right"
             Color="Color.Primary">
-    <MudFab Href="/admin/filiales/new"
+    <MudFab Href="@NavRoutes.AdminFilialNew"
             StartIcon="@Icons.Material.Filled.Add"
             Color="Color.Primary" />
 </MudTooltip>
@@ -99,7 +100,7 @@ else
             </MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@($"admin/filiales/{context.Id}")"
+                    <MudIconButton Href="@(string.Format(NavRoutes.AdminFilialEdit_0, context.Id))"
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
                 <MudTooltip Text="Borrar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">

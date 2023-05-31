@@ -20,6 +20,8 @@
         public const string AdminRevisorNew = $"{AdminRevisores}/{New}";
         public const string CoordinadorPadrinoNew = $"{CoordinadorPadrinos}/{New}";
 
+        public const string AdminFilialEdit_0 = $"{AdminFiliales}/{{0}}";
+
         public const string AdminCoordinadorEdit_0 = $"{AdminCoordinadores}/{{0}}";
         public const string AdminMediadorEdit_0 = $"{AdminMediadores}/{{0}}";
         public const string AdminRevisorEdit_0 = $"{AdminRevisores}/{{0}}";
