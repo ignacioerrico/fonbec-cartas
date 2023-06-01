@@ -21,14 +21,19 @@ namespace Fonbec.Cartas.Ui.Components
             await SelectedGenderChanged.InvokeAsync(selectedGenders.Single().Gender);
         }
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
-            if (SelectedGender == Gender.Female)
+            if (SelectedGender == Gender.Unknown)
+            {
+                // If no gender is selected at invocation time, set it to the default.
+                await SelectedGenderChanged.InvokeAsync(_selectedGender.Gender);
+            }
+            else if (SelectedGender == Gender.Female)
             {
                 _selectedGender = Female;
             }
 
-            base.OnParametersSet();
+            await base.OnParametersSetAsync();
         }
     }
 
