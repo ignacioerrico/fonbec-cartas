@@ -10,7 +10,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
         Task<List<PadrinosListViewModel>> GetAllPadrinosAsync(int filialId);
         Task<PadrinoEditViewModel?> GetPadrinoAsync(int padrinoId, int filialId);
         Task<int> CreateAsync(PadrinoEditViewModel padrinoEditViewModel);
-        Task<int> UpdateAsync(int id, PadrinoEditViewModel padrino);
+        Task<int> UpdateAsync(int padrinoId, PadrinoEditViewModel padrino);
     }
 
     public class PadrinoService : IPadrinoService
@@ -67,6 +67,8 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
                             SendAsBcc = sat.SendAsBcc,
                         }).ToList(),
                 Phone = padrino.Phone ?? string.Empty,
+                CreatedByCoordinadorId = padrino.CreatedByCoordinadorId,
+                UpdatedByCoordinadorId = padrino.UpdatedByCoordinadorId,
             };
 
             return padrinoEditViewModel;
@@ -100,7 +102,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
             return rowsAffected;
         }
 
-        public async Task<int> UpdateAsync(int id, PadrinoEditViewModel padrinoEditViewModel)
+        public async Task<int> UpdateAsync(int padrinoId, PadrinoEditViewModel padrinoEditViewModel)
         {
             var padrino = new Padrino
             {
@@ -123,7 +125,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
                 UpdatedByCoordinadorId = padrinoEditViewModel.UpdatedByCoordinadorId,
             };
 
-            var rowsAffected = await _padrinoRepository.UpdateAsync(id, padrino);
+            var rowsAffected = await _padrinoRepository.UpdateAsync(padrinoId, padrino);
 
             return rowsAffected;
         }
