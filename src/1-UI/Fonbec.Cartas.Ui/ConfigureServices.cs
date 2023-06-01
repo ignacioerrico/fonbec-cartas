@@ -43,6 +43,7 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<UserWithAccountService<Mediador>, MediadorService>();
             services.AddScoped<UserWithAccountService<Revisor>, RevisorService>();
             services.AddScoped<IPadrinoService, PadrinoService>();
+            services.AddScoped<IBecarioService, BecarioService>();
 
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped<IFilialesRepository, FilialesRepository>();
@@ -50,6 +51,7 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<UserWithAccountRepositoryBase<Mediador>, MediadorRepository>();
             services.AddScoped<UserWithAccountRepositoryBase<Revisor>, RevisorRepository>();
             services.AddScoped<IPadrinoRepository, PadrinoRepository>();
+            services.AddScoped<IBecarioRepository, BecarioRepository>();
 
             services.AddSingleton<WeatherForecastService>();
         }

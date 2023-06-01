@@ -15,5 +15,7 @@ namespace Fonbec.Cartas.DataAccess.Entities
         public List<Revisor> Revisores { get; set; } = new();
 
         public List<Padrino> Padrinos { get; set; } = new();
+
+        public List<Becario> Becarios { get; set; } = new();
     }
 }

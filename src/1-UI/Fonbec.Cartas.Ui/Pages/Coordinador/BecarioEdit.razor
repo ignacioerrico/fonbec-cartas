@@ -1,0 +1,61 @@
+﻿@page "/coordinador/becarios/{BecarioId}"
+@using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.DataAccess.Entities.Enums
+@using Fonbec.Cartas.Logic.ViewModels.Coordinador
+@using Fonbec.Cartas.Ui.Constants
+@using System.ComponentModel.DataAnnotations
+@attribute [Authorize(Roles = FonbecRoles.Coordinador)]
+
+<PageHeader Title="@_pageTitle" />
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true"
+                       Class="my-4" />
+}
+
+<MudForm @bind-IsValid="_formValidationSucceeded">
+    <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_becario.FirstName" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar el nombre."
+                  MaxLength="@MaxLength.Actor.FirstName" />
+
+    <MudTextField T="string" Label="Apellido" @bind-Value="_becario.LastName" Immediate="true"
+                  Required="true" RequiredError="Se debe especificar el apellido."
+                  MaxLength="@MaxLength.Actor.LastName" />
+
+    <MudTextField T="string" Label="Apodo" @bind-Value="_becario.NickName" Immediate="true"
+                  MaxLength="@MaxLength.Actor.NickName" />
+
+    <GenderSelector @bind-SelectedGender="_becario.Gender" />
+    
+    <MudField Label="Nivel de estudios" Variant="Variant.Outlined" InnerPadding="false">
+        <MudRadioGroup T="NivelDeEstudio" @bind-SelectedOption="_selectedNivelDeEstudio">
+            <MudRadio Option="NivelDeEstudio.Primario" Color="Color.Primary" UnCheckedColor="Color.Default" Disabled="_disableRadioPrimario">Primario</MudRadio>
+            <MudRadio Option="NivelDeEstudio.Secundario" Color="Color.Primary" UnCheckedColor="Color.Default" Disabled="_disableRadioSecundario">Secundario</MudRadio>
+            <MudRadio Option="NivelDeEstudio.Universitario" Color="Color.Primary" UnCheckedColor="Color.Default">Universitario</MudRadio>
+        </MudRadioGroup>
+    </MudField>
+
+    <MudTextField T="string" Label="Correo electrónico" @bind-Value="_becario.Email" Immediate="true"
+                  Validation="@(new EmailAddressAttribute { ErrorMessage = "La dirección de correo ingresada no es válida." })"
+                  MaxLength="@MaxLength.Actor.Email" />
+
+    <MudTextField T="string" Label="Teléfono" @bind-Value="_becario.Phone" Immediate="true"
+                  MaxLength="@MaxLength.Actor.Phone" />
+
+    <MudAutocomplete T="MediadorViewModel" Label="Mediador" @bind-Value="_selectedMediador" SearchFunc="SearchMediador"
+                     Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+
+    </MudAutocomplete>
+    
+    <MudPaper Elevation="0" Class="pt-4">
+        <MudButton OnClick="Save" Disabled="SaveButtonDisabled"
+                   Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
+            @_saveButtonText
+        </MudButton>
+        <MudButton Href="@NavRoutes.CoordinadorBecarios"
+                   Variant="Variant.Filled" Color="Color.Default">
+            Cancelar
+        </MudButton>
+    </MudPaper>
+</MudForm>
