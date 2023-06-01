@@ -25,6 +25,8 @@ namespace Fonbec.Cartas.DataAccess
 
         public DbSet<Padrino> Padrinos => Set<Padrino>();
 
+        public DbSet<Becario> Becarios => Set<Becario>();
+
         public DbSet<SendAlsoTo> SendAlsoTo => Set<SendAlsoTo>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

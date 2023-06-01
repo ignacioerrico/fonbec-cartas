@@ -5,7 +5,7 @@ namespace Fonbec.Cartas.DataAccess.Entities.Actors
     public class Becario : EntityBase
     {
         public int MediadorId { get; set; }
-        public Mediador Mediador { get; set; } = new();
+        public Mediador Mediador { get; set; } = default!;
 
         public NivelDeEstudio NivelDeEstudio { get; set; }
 
