@@ -24,6 +24,6 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 
         public int CreatedByCoordinadorId { get; set; }
 
-        public int UpdatedByCoordinadorId { get; set; }
+        public int? UpdatedByCoordinadorId { get; set; }
     }
 }

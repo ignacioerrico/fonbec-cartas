@@ -104,6 +104,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
+            _becario.FilialId = filialId.Value;
+
             _mediadores = await BecarioService.GetAllMediadoresForSelectionAsync(filialId.Value);
 
             if (!_mediadores.Any())
@@ -180,9 +182,16 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private async Task Save()
         {
+            if (_selectedMediador is null)
+            {
+                return;
+            }
+            
+            _becario.MediadorId = _selectedMediador.Id;
+            _becario.NivelDeEstudio = _selectedNivelDeEstudio;
+
             if (_isNew)
             {
-                _becario.FilialId = _user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
                 _becario.CreatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
                 var qtyAdded = await BecarioService.CreateAsync(_becario);
@@ -194,10 +203,11 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             }
             else if (ModelHasChanged)
             {
-                var id = int.Parse(BecarioId);
                 _becario.UpdatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
-                var qtyUpdated = await BecarioService.UpdateAsync(id, _becario);
+                var becarioId = int.Parse(BecarioId);
+
+                var qtyUpdated = await BecarioService.UpdateAsync(becarioId, _becario);
 
                 if (qtyUpdated == 0)
                 {
