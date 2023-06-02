@@ -28,7 +28,6 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                 .Include(p => p.SendAlsoTo)
                 .Include(p => p.CreatedByCoordinador)
                 .Include(p => p.UpdatedByCoordinador)
-                .Include(p => p.DeletedByCoordinador)
                 .ToListAsync();
             return all;
         }
