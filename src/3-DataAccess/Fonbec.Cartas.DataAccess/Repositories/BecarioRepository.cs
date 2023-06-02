@@ -7,6 +7,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
     public interface IBecarioRepository
     {
         Task<List<MediadorForSelectionProjection>> GetAllMediadoresForSelectionAsync(int filialId);
+        Task<List<Becario>> GetAllBecariosAsync(int filialId);
         Task<Becario?> GetBecarioAsync(int becarioId, int filialId);
         Task<int> CreateAsync(Becario becario);
         Task<int> UpdateAsync(int becarioId, Becario becario);
@@ -33,6 +34,18 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                         FullName = m.FullName(true)
                     }).ToListAsync();
             return mediadorForSelection;
+        }
+
+        public async Task<List<Becario>> GetAllBecariosAsync(int filialId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var all = await appDbContext.Becarios
+                .Where(b => b.FilialId == filialId)
+                .Include(b => b.Mediador)
+                .Include(b => b.CreatedByCoordinador)
+                .Include(b => b.UpdatedByCoordinador)
+                .ToListAsync();
+            return all;
         }
 
         public async Task<Becario?> GetBecarioAsync(int becarioId, int filialId)

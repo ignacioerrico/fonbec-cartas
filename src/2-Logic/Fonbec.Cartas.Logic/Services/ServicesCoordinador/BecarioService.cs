@@ -7,6 +7,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
     public interface IBecarioService
     {
         Task<List<MediadorViewModel>> GetAllMediadoresForSelectionAsync(int filialId);
+        Task<List<BecariosListViewModel>> GetAllBecariosAsync(int filialId);
         Task<BecarioEditViewModel?> GetBecarioAsync(int becarioId, int filialId);
         Task<int> CreateAsync(BecarioEditViewModel becarioEditViewModel);
         Task<int> UpdateAsync(int becarioId, BecarioEditViewModel becarioEditViewModel);
@@ -25,6 +26,27 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
         {
             var mediadores = await _becarioRepository.GetAllMediadoresForSelectionAsync(filialId);
             return mediadores.Select(m => new MediadorViewModel(m.Id, m.FullName)).ToList();
+        }
+
+        public async Task<List<BecariosListViewModel>> GetAllBecariosAsync(int filialId)
+        {
+            var all = await _becarioRepository.GetAllBecariosAsync(filialId);
+
+            return all.Select(b =>
+                new BecariosListViewModel
+                {
+                    Id = b.Id,
+                    Mediador = b.Mediador.FullName(),
+                    NivelDeEstudio = b.NivelDeEstudio.ToString(),
+                    Name = b.FullName(includeNickName: true),
+                    Gender = b.Gender,
+                    Email = b.Email ?? string.Empty,
+                    Phone = b.Phone ?? string.Empty,
+                    CreatedOnUtc = b.CreatedOnUtc,
+                    LastUpdatedOnUtc = b.LastUpdatedOnUtc,
+                    CreatedBy = b.CreatedByCoordinador.FullName(),
+                    UpdatedBy = b.UpdatedByCoordinador?.FullName(),
+                }).ToList();
         }
 
         public async Task<BecarioEditViewModel?> GetBecarioAsync(int becarioId, int filialId)
