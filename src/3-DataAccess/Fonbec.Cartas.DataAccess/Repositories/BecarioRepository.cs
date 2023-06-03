@@ -75,6 +75,8 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             var all = await appDbContext.Becarios
                 .Where(b => b.FilialId == filialId)
                 .Include(b => b.Mediador)
+                .Include(b => b.Apadrinamientos)
+                .ThenInclude(a => a.Padrino)
                 .Include(b => b.CreatedByCoordinador)
                 .Include(b => b.UpdatedByCoordinador)
                 .ToListAsync();

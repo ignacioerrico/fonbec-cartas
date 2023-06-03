@@ -54,6 +54,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                    || becariosListViewModel.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                    || (_includeAll &&
                        (becariosListViewModel.Mediador.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                        || becariosListViewModel.PadrinosActivos.Any(pa => pa.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                        || becariosListViewModel.PadrinosFuturos.Any(pf => pf.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
                         || becariosListViewModel.Email.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                         || becariosListViewModel.Phone.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));
         }

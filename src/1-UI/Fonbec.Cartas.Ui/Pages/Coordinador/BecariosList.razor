@@ -1,6 +1,7 @@
 ﻿@page "/coordinador/becarios"
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
 @using Fonbec.Cartas.Ui.Constants
+@using System.Globalization
 
 <PageHeader Title="Becarios" />
 
@@ -47,6 +48,14 @@ else
                     Mediador
                 </MudTableSortLabel>
             </MudTh>
+            <MudTh>Padrinos activos</MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.LatestActiveAssignmentEndsOn ?? DateTime.MinValue)"
+                                   InitialDirection="SortDirection.Ascending">
+                    Finaliza
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>Padrinos futuros</MudTh>
             <MudTh>
                 <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.NivelDeEstudio)"
                                    InitialDirection="SortDirection.Ascending">
@@ -76,6 +85,15 @@ else
             </MudTd>
             <MudTd DataLabel="Mediador">
                 @context.Mediador
+            </MudTd>
+            <MudTd DataLabel="Padrinos activos">
+                @(context.PadrinosActivos.Any() ? string.Join(", ", context.PadrinosActivos) : "—")
+            </MudTd>
+            <MudTd DataLabel="Finaliza">
+                @(context.LatestActiveAssignmentEndsOn.HasValue ? context.LatestActiveAssignmentEndsOn.Value.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR")) : "—")
+            </MudTd>
+            <MudTd DataLabel="Padrinos futuros">
+                @(context.PadrinosFuturos.Any() ? string.Join(", ", context.PadrinosFuturos) : "—")
             </MudTd>
             <MudTd DataLabel="Nivel">
                 @context.NivelDeEstudio

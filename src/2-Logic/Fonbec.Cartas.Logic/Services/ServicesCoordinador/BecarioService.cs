@@ -56,6 +56,23 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
                 {
                     Id = b.Id,
                     Mediador = b.Mediador.FullName(),
+                    PadrinosActivos = b.Apadrinamientos
+                            .Where(a => a.EsAsignaciónActiva)
+                            .Select(a => a.Padrino.FullName())
+                            .OrderBy(n => n)
+                            .ToList(),
+                    PadrinosFuturos = b.Apadrinamientos
+                            .Where(a => a.EsAsignaciónFutura)
+                            .Select(a => a.Padrino.FullName())
+                            .OrderBy(n => n)
+                            .ToList(),
+                    LatestActiveAssignmentEndsOn =
+                        !b.Apadrinamientos.Any(a => a.EsAsignaciónActiva)
+                        || b.Apadrinamientos.Where(a => a.EsAsignaciónActiva).Any(a => a.To is null)
+                            ? null
+                            : b.Apadrinamientos
+                                .Where(a => a.EsAsignaciónActiva)
+                                .Max(a => a.To),
                     NivelDeEstudio = b.NivelDeEstudio.ToString(),
                     Name = b.FullName(includeNickName: true),
                     Gender = b.Gender,

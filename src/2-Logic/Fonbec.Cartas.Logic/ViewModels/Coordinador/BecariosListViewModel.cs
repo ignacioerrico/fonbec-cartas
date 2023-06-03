@@ -8,6 +8,12 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 
         public string Mediador { get; set; } = default!;
 
+        public List<string> PadrinosActivos { get; set; } = default!;
+        
+        public List<string> PadrinosFuturos { get; set; } = default!;
+
+        public DateTime? LatestActiveAssignmentEndsOn { get; set; }
+
         public string NivelDeEstudio { get; set; } = default!;
 
         public string Name { get; set; } = default!;
