@@ -14,13 +14,18 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private bool _loading;
         private string? _pageTitle;
 
-        private readonly List<AssignNewPadrinoDialogModel> _padrinosAsignados = new();
+        private List<AssignNewPadrinoDialogModel> _padrinosAsignados = new();
         private string _becarioName = default!;
 
         private List<PadrinoViewModel> _padrinos = new();
+        
+        private int _coordinadorId;
 
         [CascadingParameter]
         private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+        [Inject]
+        public IApadrinamientoService ApadrinamientoService { get; set; } = default!;
 
         [Inject]
         public IBecarioService BecarioService { get; set; } = default!;
@@ -56,6 +61,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
+            _coordinadorId = user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+
             var filialId = user.FilialId();
 
             if (filialId is null)
@@ -79,6 +86,11 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             _pageTitle = $"Padrinos de {becarioName.FullName}";
 
             _padrinos = await BecarioService.GetAllPadrinosForSelectionAsync(filialId.Value);
+
+            var apadrinamientosViewModel = await ApadrinamientoService.GetAllPadrinosForBecario(BecarioId);
+            _padrinosAsignados = apadrinamientosViewModel.Select(a =>
+                    new AssignNewPadrinoDialogModel(new PadrinoViewModel(a.PadrinoId, a.PadrinoFullName), a.From, a.To))
+                .ToList();
 
             _loading = false;
         }
@@ -115,6 +127,23 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             if (overlapWithSamePadrino)
             {
                 Snackbar.Add($"{nuevaAsignación.PadrinoViewModel.Name} ya apadrina a {_becarioName} en ese período.", Severity.Error);
+                return;
+            }
+
+            var assignPadrinoToBecarioViewModel = new AssignPadrinoToBecarioViewModel
+            {
+                BecarioId = BecarioId,
+                PadrinoId = nuevaAsignación.PadrinoViewModel.Id,
+                From = nuevaAsignación.Desde,
+                To = nuevaAsignación.Hasta,
+                CreatedByCoordinadorId = _coordinadorId,
+            };
+
+            var qtyAssigned = await ApadrinamientoService.AssignPadrinoToBecarioAsync(assignPadrinoToBecarioViewModel);
+
+            if (qtyAssigned == 0)
+            {
+                Snackbar.Add("No se pudo almacenar la asignación.", Severity.Error);
                 return;
             }
 
