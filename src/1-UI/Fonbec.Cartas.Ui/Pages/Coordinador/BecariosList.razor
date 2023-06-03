@@ -41,8 +41,18 @@ else
                     Nombre
                 </MudTableSortLabel>
             </MudTh>
-            <MudTh>Mediador</MudTh>
-            <MudTh>Nivel</MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.Mediador)"
+                                   InitialDirection="SortDirection.Ascending">
+                    Mediador
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.NivelDeEstudio)"
+                                   InitialDirection="SortDirection.Ascending">
+                    Nivel
+                </MudTableSortLabel>
+            </MudTh>
             <MudTh>Correo electrónico</MudTh>
             <MudTh>Teléfono</MudTh>
             <MudTh>Acciones</MudTh>

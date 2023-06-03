@@ -10,6 +10,8 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         private bool _sendAsBcc;
 
         private bool _formValidationSucceeded;
+        private bool AddButtonDisabled => !_formValidationSucceeded;
+        
         private MudTextField<string> _mudTextFieldNombre = new();
 
         [CascadingParameter]
@@ -23,8 +25,6 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
 
         [Parameter]
         public bool SendAsBcc { get; set; }
-
-        public bool AddButtonDisabled => !_formValidationSucceeded;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
