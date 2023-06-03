@@ -10,6 +10,10 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 
         public string Email { get; set; } = default!;
 
+        public List<string> Cc { get; set; } = default!;
+
+        public List<string> Bcc { get; set; } = default!;
+
         public string Phone { get; set; } = default!;
 
         public Gender Gender { get; set; }

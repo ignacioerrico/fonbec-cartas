@@ -33,6 +33,8 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
                     Name = p.FullName(includeNickName: true),
                     Gender = p.Gender,
                     Email = p.Email,
+                    Cc = p.SendAlsoTo?.Where(sat => !sat.SendAsBcc).Select(sat => $"{sat.RecipientFullName} <{sat.RecipientEmail}>").ToList() ?? new(),
+                    Bcc = p.SendAlsoTo?.Where(sat => sat.SendAsBcc).Select(sat => $"{sat.RecipientFullName} <{sat.RecipientEmail}>").ToList() ?? new(),
                     Phone = p.Phone ?? string.Empty,
                     CreatedOnUtc = p.CreatedOnUtc,
                     LastUpdatedOnUtc = p.LastUpdatedOnUtc,

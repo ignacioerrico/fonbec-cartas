@@ -42,6 +42,8 @@ else
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>Correo electrónico</MudTh>
+            <MudTh>CC</MudTh>
+            <MudTh>BCC</MudTh>
             <MudTh>Teléfono</MudTh>
             <MudTh>Acciones</MudTh>
         </HeaderContent>
@@ -64,6 +66,12 @@ else
             </MudTd>
             <MudTd DataLabel="Correo electrónico">
                 <MudLink Href="@($"mailto:{context.Email}")">@context.Email</MudLink>
+            </MudTd>
+            <MudTd DataLabel="CC">
+                @(context.Cc.Any() ? string.Join(", ", context.Cc) : "—")
+            </MudTd>
+            <MudTd DataLabel="BCC">
+                @(context.Bcc.Any() ? string.Join(", ", context.Bcc) : "—")
             </MudTd>
             <MudTd DataLabel="Teléfono">
                 @context.Phone
