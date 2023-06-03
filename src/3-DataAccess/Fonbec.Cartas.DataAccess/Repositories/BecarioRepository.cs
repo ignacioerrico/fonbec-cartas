@@ -7,6 +7,8 @@ namespace Fonbec.Cartas.DataAccess.Repositories
     public interface IBecarioRepository
     {
         Task<List<MediadorForSelectionProjection>> GetAllMediadoresForSelectionAsync(int filialId);
+        Task<List<PadrinoForSelectionProjection>> GetAllPadrinosForSelectionAsync(int filialId);
+        Task<BecarioNameProjection?> GetBecarioNameAsync(int filialId, int becarioId);
         Task<List<Becario>> GetAllBecariosAsync(int filialId);
         Task<Becario?> GetBecarioAsync(int becarioId, int filialId);
         Task<int> CreateAsync(Becario becario);
@@ -34,6 +36,37 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                         FullName = m.FullName(true)
                     }).ToListAsync();
             return mediadorForSelection;
+        }
+
+        public async Task<List<PadrinoForSelectionProjection>> GetAllPadrinosForSelectionAsync(int filialId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var padrinosForSelection = await appDbContext.Padrinos
+                .Where(m => m.FilialId == filialId)
+                .Select(p =>
+                    new PadrinoForSelectionProjection
+                    {
+                        Id = p.Id,
+                        FullName = p.FullName(true)
+                    }).ToListAsync();
+            return padrinosForSelection;
+        }
+
+        public async Task<BecarioNameProjection?> GetBecarioNameAsync(int filialId, int becarioId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var becario = await appDbContext.Becarios
+                .SingleOrDefaultAsync(b => b.FilialId == filialId && b.Id == becarioId);
+            if (becario is null)
+            {
+                return null;
+            }
+
+            return new BecarioNameProjection
+            {
+                FullName = becario.FullName(),
+                FirstName = becario.FirstName,
+            };
         }
 
         public async Task<List<Becario>> GetAllBecariosAsync(int filialId)

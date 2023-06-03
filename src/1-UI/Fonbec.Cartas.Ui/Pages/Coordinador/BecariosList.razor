@@ -91,6 +91,10 @@ else
                     <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecariosEdit_0, context.Id))"
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
+                <MudTooltip Text="Asignar padrino" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.Id))"
+                                   Icon="@Icons.Material.Filled.SupervisorAccount" Size="Size.Small" Color="Color.Primary" />
+                </MudTooltip>
             </MudTd>
         </RowTemplate>
         <PagerContent>

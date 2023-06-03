@@ -1,0 +1,84 @@
+﻿@page "/coordinador/becarios/{BecarioId:int}/padrinos"
+@using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.Ui.Constants
+@using System.Globalization
+@using Fonbec.Cartas.Ui.Components.Dialogs
+@attribute [Authorize(Roles = FonbecRoles.Coordinador)]
+
+<PageHeader Title="@_pageTitle" />
+
+<MudStack Row="true">
+    <MudButton OnClick="@(async () => await OpenAssignNewPadrinoDialogAsync())"
+               Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Class="mr-2">
+        Asignarle un nuevo padrino
+    </MudButton>
+    <MudButton Href="@NavRoutes.CoordinadorBecarios"
+               Variant="Variant.Filled" Color="Color.Default">
+        Volver a la lista de becarios
+    </MudButton>
+</MudStack>
+
+@if (_loading)
+{
+    <MudText Class="mt-4"><em>Cargado datos&hellip;</em></MudText>
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+}
+else if (!_padrinosAsignados.Any())
+{
+    <MudText Typo="Typo.h6" Class="mt-4">@_becarioName no tiene ningún padrino asignado.</MudText>
+}
+else
+{
+    <MudTable Items="_padrinosAsignados"
+              Dense="true" Hover="true" Striped="true" Bordered="true"
+              Class="mt-4">
+        <HeaderContent>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<AssignNewPadrinoDialogModel, object>(viewModel => viewModel.PadrinoViewModel.Name)"
+                                   InitialDirection="SortDirection.Ascending">
+                    Padrino
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<AssignNewPadrinoDialogModel, object>(viewModel => viewModel.Estado)"
+                                   InitialDirection="SortDirection.Ascending">
+                    Estado
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<AssignNewPadrinoDialogModel, object>(viewModel => viewModel.Desde)"
+                                   InitialDirection="SortDirection.Ascending">
+                    Desde
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<AssignNewPadrinoDialogModel, object>(viewModel => viewModel.Hasta ?? DateTime.MinValue)"
+                                   InitialDirection="SortDirection.Ascending">
+                    Hasta
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>Acciones</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Padrino">@context.PadrinoViewModel.Name</MudTd>
+            <MudTd DataLabel="Estado">@context.Estado</MudTd>
+            <MudTd DataLabel="Desde">@context.Desde.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR"))</MudTd>
+            <MudTd DataLabel="Hasta">@(context.Hasta.HasValue ? context.Hasta.Value.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR")) : "—")</MudTd>
+            <MudTd>
+                <MudTooltip Text="Terminar hoy" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecariosEdit_0, context.PadrinoViewModel.Id))"
+                                   Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Primary" />
+                </MudTooltip>
+                <MudTooltip Text="Terminal el..." Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.PadrinoViewModel.Id))"
+                                   Icon="@Icons.Material.Filled.Today" Size="Size.Small" Color="Color.Primary"/>
+                </MudTooltip>
+                <MudTooltip Text="Fecha de finalización desconocida" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.PadrinoViewModel.Id))"
+                                   Icon="@Icons.Material.Filled.QuestionMark" Size="Size.Small" Color="Color.Primary"
+                                   Disabled="@(context.Hasta is null)" />
+                </MudTooltip>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}

@@ -29,5 +29,6 @@
         public const string AdminRevisorEdit_0 = $"{AdminRevisores}/{{0}}";
         public const string CoordinadorPadrinoEdit_0 = $"{CoordinadorPadrinos}/{{0}}";
         public const string CoordinadorBecariosEdit_0 = $"{CoordinadorBecarios}/{{0}}";
+        public const string CoordinadorBecario_0_AsignarPadrinos = $"{CoordinadorBecarios}/{{0}}/padrinos";
     }
 }
