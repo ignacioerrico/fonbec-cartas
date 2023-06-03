@@ -2,6 +2,8 @@
 {
     public class Padrino : EntityBase, IHaveEmail
     {
+        public List<Apadrinamiento> Apadrinamientos { get; set; } = default!;
+
         public string Email { get; set; } = string.Empty;
 
         public List<SendAlsoTo>? SendAlsoTo { get; set; }

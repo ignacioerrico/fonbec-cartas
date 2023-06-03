@@ -7,6 +7,8 @@ namespace Fonbec.Cartas.DataAccess.Entities.Actors
         public int MediadorId { get; set; }
         public Mediador Mediador { get; set; } = default!;
 
+        public List<Apadrinamiento> Apadrinamientos { get; set; } = default!;
+
         public NivelDeEstudio NivelDeEstudio { get; set; }
 
         public string? Email { get; set; }
