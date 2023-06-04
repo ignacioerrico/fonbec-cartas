@@ -30,6 +30,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             var fonbecUserCustomClaimsModel = new FonbecUserCustomClaimsModel
             {
                 UserWithAccountId = coordinador.Id.ToString(),
+                Gender = coordinador.Gender.ToString("D"),
                 NickName = coordinador.NickName ?? coordinador.FirstName,
                 FilialId = coordinador.FilialId.ToString(),
                 FilialName = coordinador.Filial.Name,
@@ -49,6 +50,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             var fonbecUserCustomClaimsModel = new FonbecUserCustomClaimsModel
             {
                 UserWithAccountId = mediador.Id.ToString(),
+                Gender = mediador.Gender.ToString("D"),
                 NickName = mediador.NickName ?? mediador.FirstName,
                 FilialId = mediador.FilialId.ToString(),
                 FilialName = mediador.Filial.Name,
@@ -68,6 +70,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             var fonbecUserCustomClaimsModel = new FonbecUserCustomClaimsModel
             {
                 UserWithAccountId = revisor.Id.ToString(),
+                Gender = revisor.Gender.ToString("D"),
                 NickName = revisor.NickName ?? revisor.FirstName,
                 FilialId = revisor.FilialId.ToString(),
                 FilialName = revisor.Filial.Name,

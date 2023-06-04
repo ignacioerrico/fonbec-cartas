@@ -68,6 +68,9 @@ namespace Fonbec.Cartas.Ui.Identity
             claim = new Claim(FonbecUserCustomClaims.UserWithAccountId, customClaimsModel.UserWithAccountId);
             claimsIdentity.AddClaim(claim);
 
+            claim = new Claim(FonbecUserCustomClaims.Gender, customClaimsModel.Gender);
+            claimsIdentity.AddClaim(claim);
+
             claim = new Claim(FonbecUserCustomClaims.NickName, customClaimsModel.NickName);
             claimsIdentity.AddClaim(claim);
 

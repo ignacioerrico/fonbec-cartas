@@ -4,6 +4,8 @@
     {
         public const string UserWithAccountId = "UserWithAccountId";
 
+        public const string Gender = "Gender";
+        
         public const string NickName = "NickName";
 
         public const string FilialId = "FilialId";

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Fonbec.Cartas.DataAccess.Entities.Enums;
 using Fonbec.Cartas.Logic.Constants;
 
 namespace Fonbec.Cartas.Logic.ExtensionMethods
@@ -7,8 +8,7 @@ namespace Fonbec.Cartas.Logic.ExtensionMethods
     {
         public static int? UserWithAccountId(this ClaimsPrincipal claimsPrincipal)
         {
-            var userWithAccountIdString = claimsPrincipal.Claims
-                .FirstOrDefault(c => string.Equals(c.Type, FonbecUserCustomClaims.UserWithAccountId, StringComparison.Ordinal));
+            var userWithAccountIdString = GetClaimByType(claimsPrincipal, FonbecUserCustomClaims.UserWithAccountId);
 
             if (userWithAccountIdString is null)
             {
@@ -20,10 +20,23 @@ namespace Fonbec.Cartas.Logic.ExtensionMethods
                 : null;
         }
 
+        public static Gender Gender(this ClaimsPrincipal claimsPrincipal)
+        {
+            var genderString = GetClaimByType(claimsPrincipal, FonbecUserCustomClaims.Gender);
+
+            if (genderString is null)
+            {
+                return DataAccess.Entities.Enums.Gender.Unknown;
+            }
+
+            return Enum.TryParse(typeof(Gender), genderString.Value, out var gender)
+                ? (Gender)gender
+                : DataAccess.Entities.Enums.Gender.Unknown;
+        }
+
         public static string NickName(this ClaimsPrincipal claimsPrincipal)
         {
-            var nickName = claimsPrincipal.Claims
-                .FirstOrDefault(c => string.Equals(c.Type, FonbecUserCustomClaims.NickName, StringComparison.Ordinal));
+            var nickName = GetClaimByType(claimsPrincipal, FonbecUserCustomClaims.NickName);
             
             return nickName is null
                 ? "desconocido"
@@ -32,8 +45,7 @@ namespace Fonbec.Cartas.Logic.ExtensionMethods
         
         public static int? FilialId(this ClaimsPrincipal claimsPrincipal)
         {
-            var filialIdString = claimsPrincipal.Claims
-                .FirstOrDefault(c => string.Equals(c.Type, FonbecUserCustomClaims.FilialId, StringComparison.Ordinal));
+            var filialIdString = GetClaimByType(claimsPrincipal, FonbecUserCustomClaims.FilialId);
             
             if (filialIdString is null)
             {
@@ -47,10 +59,14 @@ namespace Fonbec.Cartas.Logic.ExtensionMethods
 
         public static string? FilialName(this ClaimsPrincipal claimsPrincipal)
         {
-            var filialName = claimsPrincipal.Claims
-                .FirstOrDefault(c => string.Equals(c.Type, FonbecUserCustomClaims.FilialName, StringComparison.Ordinal));
+            var filialName = GetClaimByType(claimsPrincipal, FonbecUserCustomClaims.FilialName);
 
             return filialName?.Value;
+        }
+
+        private static Claim? GetClaimByType(ClaimsPrincipal claimsPrincipal, string type)
+        {
+            return claimsPrincipal.FindFirst(c => string.Equals(c.Type, type, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
