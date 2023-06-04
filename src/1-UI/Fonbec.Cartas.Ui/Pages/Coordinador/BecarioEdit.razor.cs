@@ -27,8 +27,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private NivelDeEstudio _selectedNivelDeEstudio = NivelDeEstudio.Primario;
 
-        private bool _disableRadioPrimario;
-        private bool _disableRadioSecundario;
         private List<MediadorViewModel> _mediadores = new();
         private MediadorViewModel? _selectedMediador;
 
@@ -140,17 +138,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
                 _selectedNivelDeEstudio = becario.NivelDeEstudio;
                 
-                // The assumption is that you can't go back to a previous level of study.
-                if (becario.NivelDeEstudio >= NivelDeEstudio.Secundario)
-                {
-                    _disableRadioPrimario = true;
-                }
-
-                if (becario.NivelDeEstudio == NivelDeEstudio.Universitario)
-                {
-                    _disableRadioSecundario = true;
-                }
-
                 _selectedMediador = _mediadores.Single(m => m.Id == becario.MediadorId);
 
                 _becario.FirstName = _originalBecario.FirstName = becario.FirstName;
