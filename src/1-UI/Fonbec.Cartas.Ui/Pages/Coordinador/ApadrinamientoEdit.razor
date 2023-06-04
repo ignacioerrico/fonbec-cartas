@@ -2,7 +2,7 @@
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Ui.Constants
 @using System.Globalization
-@using Fonbec.Cartas.Ui.Components.Dialogs
+@using Fonbec.Cartas.Logic.ViewModels.Coordinador
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
 <PageHeader Title="@_pageTitle" />
@@ -34,25 +34,25 @@ else
               Class="mt-4">
         <HeaderContent>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<AssignNewPadrinoDialogModel, object>(viewModel => viewModel.PadrinoViewModel.Name)"
+                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditViewModel, object>(viewModel => viewModel.PadrinoFullName)"
                                    InitialDirection="SortDirection.Ascending">
                     Padrino
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<AssignNewPadrinoDialogModel, object>(viewModel => viewModel.Estado)"
+                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditViewModel, object>(viewModel => viewModel.Status)"
                                    InitialDirection="SortDirection.Ascending">
                     Estado
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<AssignNewPadrinoDialogModel, object>(viewModel => viewModel.Desde)"
+                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditViewModel, object>(viewModel => viewModel.From)"
                                    InitialDirection="SortDirection.Ascending">
                     Desde
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<AssignNewPadrinoDialogModel, object>(viewModel => viewModel.Hasta ?? DateTime.MinValue)"
+                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditViewModel, object>(viewModel => viewModel.To ?? DateTime.MinValue)"
                                    InitialDirection="SortDirection.Ascending">
                     Hasta
                 </MudTableSortLabel>
@@ -60,23 +60,38 @@ else
             <MudTh>Acciones</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Padrino">@context.PadrinoViewModel.Name</MudTd>
-            <MudTd DataLabel="Estado">@context.Estado</MudTd>
-            <MudTd DataLabel="Desde">@context.Desde.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR"))</MudTd>
-            <MudTd DataLabel="Hasta">@(context.Hasta.HasValue ? context.Hasta.Value.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR")) : "—")</MudTd>
+            <MudTd DataLabel="Padrino">
+                <MudTooltip Delay="500" Arrow="true" Placement="Placement.Bottom" Color="Color.Dark">
+                    <ChildContent>
+                        <MudText Color="Color.Primary">
+                            <strong>@context.PadrinoFullName</strong>
+                        </MudText>
+                    </ChildContent>
+                    <TooltipContent>
+                        <MudText Align="Align.Left" Typo="Typo.body1">@context.PadrinoFullName (ID: @context.PadrinoId)</MudText>
+                        @foreach (var line in context.AuditDisplay())
+                        {
+                            <MudText Align="Align.Left" Typo="Typo.body1">@line</MudText>
+                        }
+                    </TooltipContent>
+                </MudTooltip>
+            </MudTd>
+            <MudTd DataLabel="Estado">@context.Status</MudTd>
+            <MudTd DataLabel="Desde">@context.From.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR"))</MudTd>
+            <MudTd DataLabel="Hasta">@(context.To.HasValue ? context.To.Value.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR")) : "—")</MudTd>
             <MudTd>
                 <MudTooltip Text="Terminar hoy" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecariosEdit_0, context.PadrinoViewModel.Id))"
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecariosEdit_0, context.PadrinoId))"
                                    Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
                 <MudTooltip Text="Terminal el..." Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.PadrinoViewModel.Id))"
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.PadrinoId))"
                                    Icon="@Icons.Material.Filled.Today" Size="Size.Small" Color="Color.Primary"/>
                 </MudTooltip>
                 <MudTooltip Text="Fecha de finalización desconocida" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.PadrinoViewModel.Id))"
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.PadrinoId))"
                                    Icon="@Icons.Material.Filled.QuestionMark" Size="Size.Small" Color="Color.Primary"
-                                   Disabled="@(context.Hasta is null)" />
+                                   Disabled="@(context.To is null)" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>

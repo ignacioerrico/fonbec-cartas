@@ -62,19 +62,6 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
             PadrinoViewModel = padrinoViewModel;
             Desde = desde;
             Hasta = hasta;
-
-            if (Desde > DateTime.Today)
-            {
-                Estado = "No comenzó";
-            }
-            else if (Hasta.HasValue && Hasta.Value < DateTime.Today)
-            {
-                Estado = "Finalizó";
-            }
-            else
-            {
-                Estado = "Activa";
-            }
         }
 
         public PadrinoViewModel PadrinoViewModel { get; }
@@ -82,7 +69,5 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         public DateTime Desde { get; }
         
         public DateTime? Hasta { get; }
-
-        public string Estado { get; set; }
     }
 }

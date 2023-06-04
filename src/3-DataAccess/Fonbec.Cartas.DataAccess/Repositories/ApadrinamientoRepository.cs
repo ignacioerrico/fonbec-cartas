@@ -24,6 +24,8 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             var apadrinamientosForBecario = await appDbContext.Apadrinamientos
                 .Where(a => a.BecarioId == becarioId)
                 .Include(a => a.Padrino)
+                .Include(a => a.CreatedByCoordinador)
+                .Include(a => a.UpdatedByCoordinador)
                 .ToListAsync();
             return apadrinamientosForBecario;
         }

@@ -6,7 +6,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
 {
     public interface IApadrinamientoService
     {
-        Task<List<ApadrinamientoViewModel>> GetAllPadrinosForBecario(int becarioId);
+        Task<List<ApadrinamientoEditViewModel>> GetAllPadrinosForBecario(int becarioId);
         Task<int> AssignPadrinoToBecarioAsync(AssignPadrinoToBecarioViewModel viewModel);
     }
 
@@ -19,17 +19,19 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
             _apadrinamientoRepository = apadrinamientoRepository;
         }
 
-        public async Task<List<ApadrinamientoViewModel>> GetAllPadrinosForBecario(int becarioId)
+        public async Task<List<ApadrinamientoEditViewModel>> GetAllPadrinosForBecario(int becarioId)
         {
             var apadrinamientosForBecario = await _apadrinamientoRepository.GetAllPadrinosForBecario(becarioId);
 
             return apadrinamientosForBecario.Select(a =>
-                new ApadrinamientoViewModel
+                new ApadrinamientoEditViewModel(a.From, a.To)
                 {
                     PadrinoId = a.PadrinoId,
                     PadrinoFullName = a.Padrino.FullName(),
-                    From = a.From,
-                    To = a.To,
+                    CreatedOnUtc = a.CreatedOnUtc,
+                    LastUpdatedOnUtc = a.LastUpdatedOnUtc,
+                    CreatedBy = a.CreatedByCoordinador.FullName(),
+                    UpdatedBy = a.UpdatedByCoordinador?.FullName(),
                 }).ToList();
         }
 

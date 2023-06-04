@@ -14,7 +14,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private bool _loading;
         private string? _pageTitle;
 
-        private List<AssignNewPadrinoDialogModel> _padrinosAsignados = new();
+        private List<ApadrinamientoEditViewModel> _padrinosAsignados = new();
         private string _becarioName = default!;
 
         private List<PadrinoViewModel> _padrinos = new();
@@ -87,10 +87,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             _padrinos = await BecarioService.GetAllPadrinosForSelectionAsync(filialId.Value);
 
-            var apadrinamientosViewModel = await ApadrinamientoService.GetAllPadrinosForBecario(BecarioId);
-            _padrinosAsignados = apadrinamientosViewModel.Select(a =>
-                    new AssignNewPadrinoDialogModel(new PadrinoViewModel(a.PadrinoId, a.PadrinoFullName), a.From, a.To))
-                .ToList();
+            _padrinosAsignados = await ApadrinamientoService.GetAllPadrinosForBecario(BecarioId);
 
             _loading = false;
         }
@@ -121,9 +118,9 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             // Is there any overlap with another assignment for the same Padrino?
             var overlapWithSamePadrino = _padrinosAsignados.Any(asignación =>
-                string.Equals(asignación.PadrinoViewModel.Name, nuevaAsignación.PadrinoViewModel.Name, StringComparison.OrdinalIgnoreCase)
-                && ((nuevaAsignación.Desde < asignación.Desde && (!nuevaAsignación.Hasta.HasValue || asignación.Desde < nuevaAsignación.Hasta.Value))
-                    || (asignación.Desde < nuevaAsignación.Desde && (!asignación.Hasta.HasValue || nuevaAsignación.Desde < asignación.Hasta.Value))));
+                string.Equals(asignación.PadrinoFullName, nuevaAsignación.PadrinoViewModel.Name, StringComparison.OrdinalIgnoreCase)
+                && ((nuevaAsignación.Desde < asignación.From && (!nuevaAsignación.Hasta.HasValue || asignación.From < nuevaAsignación.Hasta.Value))
+                    || (asignación.From < nuevaAsignación.Desde && (!asignación.To.HasValue || nuevaAsignación.Desde < asignación.To.Value))));
             if (overlapWithSamePadrino)
             {
                 Snackbar.Add($"{nuevaAsignación.PadrinoViewModel.Name} ya apadrina a {_becarioName} en ese período.", Severity.Error);
@@ -147,7 +144,13 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            _padrinosAsignados.Add(nuevaAsignación);
+            var apadrinamientoEditViewModel = new ApadrinamientoEditViewModel(nuevaAsignación.Desde, nuevaAsignación.Hasta)
+            {
+                PadrinoId = nuevaAsignación.PadrinoViewModel.Id,
+                PadrinoFullName = nuevaAsignación.PadrinoViewModel.Name,
+            };
+
+            _padrinosAsignados.Add(apadrinamientoEditViewModel);
         }
     }
 }
