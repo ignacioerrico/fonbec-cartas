@@ -1,7 +1,6 @@
 ﻿using Azure.Communication.Email;
 using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Fonbec.Cartas.DataAccess.Repositories;
-using Fonbec.Cartas.Logic.Data;
 using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.Services.Identity;
@@ -54,8 +53,6 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<IPadrinoRepository, PadrinoRepository>();
             services.AddScoped<IBecarioRepository, BecarioRepository>();
             services.AddScoped<IApadrinamientoRepository, ApadrinamientoRepository>();
-
-            services.AddSingleton<WeatherForecastService>();
         }
     }
 }

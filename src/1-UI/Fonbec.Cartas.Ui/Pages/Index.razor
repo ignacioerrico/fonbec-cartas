@@ -1,24 +1,20 @@
 ﻿@page "/"
-
-<PageTitle>Index</PageTitle>
-
-<MudText Typo="Typo.h2">Hello, world!</MudText>
-
-<MudText Typo="Typo.body1">Welcome to your new app.</MudText>
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+@using Fonbec.Cartas.Logic.ExtensionMethods
+@using Fonbec.Cartas.DataAccess.Entities.Enums
 
 <AuthorizeView>
     <Authorized>
-        <MudTable Items="context.User.Claims" Hover="true">
-            <HeaderContent>
-                <MudTh>Type</MudTh>
-                <MudTh>Value</MudTh>
-            </HeaderContent>
-            <RowTemplate Context="claim">
-                <MudTd DataLabel="Type">@claim.Type</MudTd>
-                <MudTd DataLabel="Value">@claim.Value</MudTd>
-            </RowTemplate>
-        </MudTable>
+        @{
+            var gender = context.User.Gender();
+            var salutation = gender switch
+            {
+                Gender.Male => "Bienvenido",
+                Gender.Female => "Bienvenida",
+                _ => "Hola"
+                };
+        }
+
+        <PageHeader Title="@($"{salutation}, {context.User.NickName()}")" />
+        
     </Authorized>
 </AuthorizeView>
