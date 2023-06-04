@@ -80,16 +80,17 @@ else
             <MudTd DataLabel="Desde">@context.From.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR"))</MudTd>
             <MudTd DataLabel="Hasta">@(context.To.HasValue ? context.To.Value.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR")) : "—")</MudTd>
             <MudTd>
-                <MudTooltip Text="Terminar hoy" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecariosEdit_0, context.PadrinoId))"
-                                   Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Primary" />
+                <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                    <MudIconButton OnClick="@(_ => OpenAssignNewPadrinoDialogForEditAsync(context.ApadrinamientoId, context.PadrinoId, context.From, context.To))"
+                                   Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
-                <MudTooltip Text="Terminal el..." Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.PadrinoId))"
-                                   Icon="@Icons.Material.Filled.Today" Size="Size.Small" Color="Color.Primary"/>
+                <MudTooltip Text="Terminar hoy" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                    <MudIconButton OnClick="@(_ => SetToDateToToday(context.ApadrinamientoId))"
+                                   Icon="@Icons.Material.Filled.Today" Size="Size.Small" Color="Color.Primary"
+                                   Disabled="@(context.To is not null && context.To.Value.Date == DateTime.Today)" />
                 </MudTooltip>
                 <MudTooltip Text="Fecha de finalización desconocida" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.PadrinoId))"
+                    <MudIconButton OnClick="@(_ => SetToDateToUknown(context.ApadrinamientoId))"
                                    Icon="@Icons.Material.Filled.QuestionMark" Size="Size.Small" Color="Color.Primary"
                                    Disabled="@(context.To is null)" />
                 </MudTooltip>

@@ -7,6 +7,9 @@ namespace Fonbec.Cartas.DataAccess.Repositories
     {
         Task<List<Apadrinamiento>> GetAllPadrinosForBecario(int becarioId);
         Task<int> AssignPadrinoToBecarioAsync(Apadrinamiento apadrinamiento);
+        Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId);
+        Task<int> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId);
+        Task<int> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId);
     }
 
     public class ApadrinamientoRepository : IApadrinamientoRepository
@@ -37,5 +40,50 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             return await appDbContext.SaveChangesAsync();
         }
 
+        public async Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var apadrinamiento = await appDbContext.Apadrinamientos.FindAsync(apadrinamientoId);
+            if (apadrinamiento is null)
+            {
+                return 0;
+            }
+
+            apadrinamiento.From = from;
+            apadrinamiento.To = to;
+            apadrinamiento.UpdatedByCoordinadorId = coordinadorId;
+            appDbContext.Apadrinamientos.Update(apadrinamiento);
+            return await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var apadrinamiento = await appDbContext.Apadrinamientos.FindAsync(apadrinamientoId);
+            if (apadrinamiento is null)
+            {
+                return 0;
+            }
+
+            apadrinamiento.To = null;
+            apadrinamiento.UpdatedByCoordinadorId = coordinadorId;
+            appDbContext.Apadrinamientos.Update(apadrinamiento);
+            return await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var apadrinamiento = await appDbContext.Apadrinamientos.FindAsync(apadrinamientoId);
+            if (apadrinamiento is null)
+            {
+                return 0;
+            }
+
+            apadrinamiento.To = DateTime.Today;
+            apadrinamiento.UpdatedByCoordinadorId = coordinadorId;
+            appDbContext.Apadrinamientos.Update(apadrinamiento);
+            return await appDbContext.SaveChangesAsync();
+        }
     }
 }

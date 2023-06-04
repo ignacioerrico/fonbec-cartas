@@ -20,6 +20,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private List<PadrinoViewModel> _padrinos = new();
         
         private int _coordinadorId;
+        private string _coordinadorName = default!;
 
         [CascadingParameter]
         private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -62,6 +63,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             }
 
             _coordinadorId = user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+            _coordinadorName = user.NickName() ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
             var filialId = user.FilialId();
 
@@ -92,12 +94,21 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             _loading = false;
         }
 
-        private async Task OpenAssignNewPadrinoDialogAsync()
+        private async Task<AssignNewPadrinoDialogModel?> OpenAssignNewPadrinoDialogAndGetDataAsync(bool getNewData, int? padrinoId = null, DateTime? from = null, DateTime? to = null)
         {
             var parameters = new DialogParameters
             {
                 ["Padrinos"] = _padrinos,
+                ["GetNewData"] = getNewData,
             };
+            
+            if (!getNewData && padrinoId.HasValue && from.HasValue)
+            {
+                parameters.Add("PadrinoId", padrinoId.Value);
+                parameters.Add("From", from.Value);
+                parameters.Add("To", to);
+            }
+
             var options = new DialogOptions
             {
                 CloseButton = true,
@@ -108,10 +119,21 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             if (result.Canceled)
             {
-                return;
+                return null;
             }
 
             if (result.Data is not AssignNewPadrinoDialogModel nuevaAsignación)
+            {
+                return null;
+            }
+
+            return nuevaAsignación;
+        }
+
+        private async Task OpenAssignNewPadrinoDialogAsync()
+        {
+            var nuevaAsignación = await OpenAssignNewPadrinoDialogAndGetDataAsync(getNewData: true);
+            if (nuevaAsignación is null)
             {
                 return;
             }
@@ -148,9 +170,68 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             {
                 PadrinoId = nuevaAsignación.PadrinoViewModel.Id,
                 PadrinoFullName = nuevaAsignación.PadrinoViewModel.Name,
+                CreatedOnUtc = DateTimeOffset.UtcNow,
+                CreatedBy = _coordinadorName,
             };
 
             _padrinosAsignados.Add(apadrinamientoEditViewModel);
+        }
+
+        private async Task SetToDateToUknown(int apadrinamientoId)
+        {
+            var qtyChanged = await ApadrinamientoService.SetToDateToUknownAsync(apadrinamientoId, _coordinadorId);
+            if (qtyChanged == 0)
+            {
+                Snackbar.Add("No se pudo almacenar el cambio", Severity.Error);
+                return;
+            }
+
+            var updatedApadrinamiento = _padrinosAsignados.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
+            updatedApadrinamiento.To = null;
+            updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
+            updatedApadrinamiento.UpdatedBy = _coordinadorName;
+        }
+
+        private async Task OpenAssignNewPadrinoDialogForEditAsync(int apadrinamientoId, int padrinoId, DateTime from, DateTime? to)
+        {
+            var asignaciónModificada = await OpenAssignNewPadrinoDialogAndGetDataAsync(getNewData: false, padrinoId, from, to);
+            if (asignaciónModificada is null)
+            {
+                return;
+            }
+
+            var qtyChanged = await ApadrinamientoService.UpdateApadrinamientoAsync(apadrinamientoId, asignaciónModificada.Desde, asignaciónModificada.Hasta, _coordinadorId);
+            if (qtyChanged == 0)
+            {
+                Snackbar.Add("No se pudo almacenar el cambio", Severity.Error);
+                return;
+            }
+
+            var newStatus = new ApadrinamientoEditViewModel(asignaciónModificada.Desde, asignaciónModificada.Hasta)
+                .Status;
+
+            var updatedApadrinamiento = _padrinosAsignados.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
+            updatedApadrinamiento.PadrinoFullName = asignaciónModificada.PadrinoViewModel.Name;
+            updatedApadrinamiento.From = asignaciónModificada.Desde;
+            updatedApadrinamiento.To = asignaciónModificada.Hasta;
+            updatedApadrinamiento.Status = newStatus;
+            updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
+            updatedApadrinamiento.UpdatedBy = _coordinadorName; // TODO: This should be the full name, but we would need to get that in the user's claims
+        }
+
+        private async Task SetToDateToToday(int apadrinamientoId)
+        {
+            var qtyChanged = await ApadrinamientoService.SetToDateToTodayAsync(apadrinamientoId, _coordinadorId);
+            if (qtyChanged == 0)
+            {
+                Snackbar.Add("No se pudo almacenar el cambio", Severity.Error);
+                return;
+            }
+
+            var updatedApadrinamiento = _padrinosAsignados.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
+            updatedApadrinamiento.To = DateTime.Today;
+            updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
+            updatedApadrinamiento.UpdatedBy = _coordinadorName;
         }
     }
 }

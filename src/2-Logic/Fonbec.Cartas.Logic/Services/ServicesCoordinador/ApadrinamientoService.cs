@@ -8,6 +8,9 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
     {
         Task<List<ApadrinamientoEditViewModel>> GetAllPadrinosForBecario(int becarioId);
         Task<int> AssignPadrinoToBecarioAsync(AssignPadrinoToBecarioViewModel viewModel);
+        Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId);
+        Task<int> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId);
+        Task<int> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId);
     }
 
     public class ApadrinamientoService : IApadrinamientoService
@@ -26,6 +29,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
             return apadrinamientosForBecario.Select(a =>
                 new ApadrinamientoEditViewModel(a.From, a.To)
                 {
+                    ApadrinamientoId = a.Id,
                     PadrinoId = a.PadrinoId,
                     PadrinoFullName = a.Padrino.FullName(),
                     CreatedOnUtc = a.CreatedOnUtc,
@@ -51,5 +55,19 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
             return rowsAffected;
         }
 
+        public async Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId)
+        {
+            return await _apadrinamientoRepository.UpdateApadrinamientoAsync(apadrinamientoId, from, to, coordinadorId);
+        }
+
+        public async Task<int> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId)
+        {
+            return await _apadrinamientoRepository.SetToDateToUknownAsync(apadrinamientoId, coordinadorId);
+        }
+
+        public async Task<int> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId)
+        {
+            return await _apadrinamientoRepository.SetToDateToTodayAsync(apadrinamientoId, coordinadorId);
+        }
     }
 }

@@ -21,14 +21,16 @@
             }
         }
 
+        public int ApadrinamientoId { get; set; }
+
         public int PadrinoId { get; set; }
 
         public string PadrinoFullName { get; set; } = default!;
 
-        public DateTime From { get; }
+        public DateTime From { get; set; }
 
-        public DateTime? To { get; }
+        public DateTime? To { get; set; }
 
-        public string Status { get; }
+        public string Status { get; set; }
     }
 }

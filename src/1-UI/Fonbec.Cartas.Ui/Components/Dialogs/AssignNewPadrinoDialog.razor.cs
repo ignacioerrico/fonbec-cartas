@@ -27,6 +27,29 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         [Parameter]
         public List<PadrinoViewModel> Padrinos { get; set; } = default!;
 
+        [Parameter]
+        public bool GetNewData { get; set; }
+
+        [Parameter]
+        public int PadrinoId { get; set; }
+
+        [Parameter]
+        public DateTime From { get; set; }
+
+        [Parameter]
+        public DateTime? To { get; set; }
+
+        protected override void OnParametersSet()
+        {
+            if (!GetNewData)
+            {
+                _selectedPadrino = Padrinos.Single(p => p.Id == PadrinoId);
+                _desde = From;
+                _hasta = To;
+                _knownEndDate = To.HasValue;
+            }
+        }
+
         private async Task<IEnumerable<PadrinoViewModel>> SearchPadrino(string searchString)
         {
             await Task.Delay(5);
