@@ -23,5 +23,12 @@
         {
             public const int FullName = 50;
         }
+
+        public static class Plan
+        {
+            public const int Subject = 120;
+            
+            public const int MessageMarkdown = 4 * 1024; // 4KB
+        }
     }
 }

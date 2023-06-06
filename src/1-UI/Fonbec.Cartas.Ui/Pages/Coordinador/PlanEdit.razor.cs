@@ -2,12 +2,18 @@
 using Fonbec.Cartas.DataAccess.Entities.Enums;
 using Microsoft.AspNetCore.Components;
 using Fonbec.Cartas.Logic.Services.MessageTemplate;
+using MudBlazor;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
     public partial class PlanEdit
     {
         private static readonly CultureInfo EsArCultureInfo = CultureInfo.GetCultureInfo("es-AR");
+
+        private static readonly DateTime FirstDayOfFollowingMonth =
+            DateTime.Today
+                .AddDays(1 - DateTime.Today.Day) // Go back to the first day
+                .AddMonths(1);
 
         private static readonly PersonData Padrino = new("Patricio", Gender.Male);
         private static readonly PersonData Madrina = new("María", Gender.Female);
@@ -18,16 +24,19 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private PersonData _selectedPadrino = Padrino;
         private PersonData _selectedBecario = Ahijado;
 
-        private DateTime? _name;
+        private MudForm _mudForm = default!;
+        private bool _formValidationSucceeded;
 
-        private const string _subject = "Carta de tu {ahijado} {ahijado:nombre} de {mes-de-carta}";
+        private DateTime? _startDate = FirstDayOfFollowingMonth;
+
+        private string _subject = "Carta de tu {ahijado} {ahijado:nombre} de {mes-de-carta}";
         private string _renderedSubject = default!;
 
         private string _messageBody = default!;
         private string _renderedMessageBody = default!;
+        private bool _highlight = false;
 
-        private bool SaveButtonDisabled => !_name.HasValue
-                                           || string.IsNullOrWhiteSpace(_subject)
+        private bool SaveButtonDisabled => !_formValidationSucceeded
                                            || string.IsNullOrWhiteSpace(_messageBody);
 
         private readonly MessageTemplateData _messageTemplateData = new()
@@ -36,6 +45,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             Documents = "la carta y el boletín",
             Padrino = Padrino,
             Becario = Ahijado,
+            RevisorNombre = "Vicente",
+            FilialNombre = "AMBA",
         };
 
         [Inject]
@@ -43,6 +54,11 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         [Inject]
         public IMessageTemplateParser MessageTemplateParser { get; set; } = default!;
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            _mudForm.Validate();
+        }
 
         protected override void OnInitialized()
         {
@@ -62,26 +78,38 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             _selectedPadrino = padrinoData;
             _messageTemplateData.Padrino = padrinoData;
-            OnSubjectChanged(_subject);
-            OnMessageBodyChanged(_messageBody);
+            UpdatePreview();
         }
 
         private void OnSelectedBecarioChanged(PersonData becarioData)
         {
             _selectedBecario = becarioData;
             _messageTemplateData.Becario = becarioData;
+            UpdatePreview();
+        }
+
+        private void OnHighlightChanged(bool highlight)
+        {
+            _highlight = highlight;
+            UpdatePreview();
+        }
+
+        private void UpdatePreview()
+        {
             OnSubjectChanged(_subject);
             OnMessageBodyChanged(_messageBody);
         }
 
-        private void OnMessageBodyChanged(string text)
+        private void OnSubjectChanged(string subject)
         {
-            _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(text, _messageTemplateData);
+            _subject = subject;
+            _renderedSubject = MessageTemplateParser.FillPlaceholders(subject, _messageTemplateData, _highlight);
         }
 
-        private void OnSubjectChanged(string text)
+        private void OnMessageBodyChanged(string messageBody)
         {
-            _renderedSubject = MessageTemplateParser.FillPlaceholders(text, _messageTemplateData);
+            _messageBody = messageBody;
+            _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(messageBody, _messageTemplateData, _highlight);
         }
     }
 }

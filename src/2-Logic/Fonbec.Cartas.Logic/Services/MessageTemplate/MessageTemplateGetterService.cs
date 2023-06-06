@@ -5,11 +5,15 @@ namespace Fonbec.Cartas.Logic.Services.MessageTemplate
     public interface IMessageTemplateGetterService
     {
         string GetDefaultMessage();
-        string GetHtmlMessage(string markdown, MessageTemplateData data);
+        string GetHtmlMessage(string markdown, MessageTemplateData data, bool highlight = false);
     }
 
     public class MessageTemplateGetterService : IMessageTemplateGetterService
     {
+        private const string RevisorNombre = "{revisor:nombre}";
+
+        private const string FilialNombre = "{filial:nombre}";
+
         private const string MessageTemplate = "MessageTemplate.html";
 
         private const string DefaultMessageMarkdown = "DefaultMessageMarkdown.txt";
@@ -35,12 +39,14 @@ namespace Fonbec.Cartas.Logic.Services.MessageTemplate
             return defaultMessage;
         }
 
-        public string GetHtmlMessage(string markdown, MessageTemplateData data)
+        public string GetHtmlMessage(string markdown, MessageTemplateData data, bool highlight = false)
         {
-            var body = _messageTemplateParser.FillPlaceholders(markdown, data);
+            var body = _messageTemplateParser.FillPlaceholders(markdown, data, highlight);
             body = _messageTemplateParser.MarkdownToHtml(body);
 
             var htmlTemplate = Regex.Replace(_htmlTemplate, BodyPlaceholder, body);
+            htmlTemplate = Regex.Replace(htmlTemplate, RevisorNombre, data.RevisorNombre);
+            htmlTemplate = Regex.Replace(htmlTemplate, FilialNombre, data.FilialNombre);
 
             return htmlTemplate;
         }

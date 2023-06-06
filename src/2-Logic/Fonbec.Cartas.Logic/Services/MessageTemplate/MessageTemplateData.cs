@@ -9,4 +9,8 @@ public class MessageTemplateData
     public PersonData Padrino { get; set; } = default!;
 
     public PersonData Becario { get; set; } = default!;
+
+    public string RevisorNombre { get; set; } = default!;
+    
+    public string FilialNombre { get; set; } = default!;
 }

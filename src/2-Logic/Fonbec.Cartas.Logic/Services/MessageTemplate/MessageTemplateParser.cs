@@ -7,7 +7,7 @@ namespace Fonbec.Cartas.Logic.Services.MessageTemplate
 {
     public interface IMessageTemplateParser
     {
-        string FillPlaceholders(string markdown, MessageTemplateData data);
+        string FillPlaceholders(string markdown, MessageTemplateData data, bool highlight = false);
         string MarkdownToHtml(string markdown);
     }
 
@@ -28,19 +28,36 @@ namespace Fonbec.Cartas.Logic.Services.MessageTemplate
         private const string Bold = @"\*(([^*]+))\*";
         private const string Italics = @"_(([^_]+))_";
 
-        public string FillPlaceholders(string markdown, MessageTemplateData data)
+        public string FillPlaceholders(string markdown, MessageTemplateData data, bool highlight = false)
         {
-            var parsedText = Regex.Replace(markdown, MesDeCarta, data.Date.ToString(@"MMMM \d\e yyyy", new CultureInfo("es-AR")));
+            var parsedText = Regex.Replace(markdown, MesDeCarta,
+                WrapInHighlightedSpan(highlight,
+                    data.Date.ToString(@"MMMM \d\e yyyy", new CultureInfo("es-AR"))));
 
-            parsedText = Regex.Replace(parsedText, Documentos, data.Documents);
+            parsedText = Regex.Replace(parsedText, Documentos,
+                WrapInHighlightedSpan(highlight, data.Documents));
 
-            parsedText = Regex.Replace(parsedText, Padrino, data.Padrino.Gender is Gender.Unknown or Gender.Male ? "padrino" : "madrina");
-            parsedText = Regex.Replace(parsedText, PadrinoNombre, data.Padrino.Name);
-            parsedText = Regex.Replace(parsedText, PadrinoPalabra, data.Padrino.Gender is Gender.Unknown or Gender.Male ? "$1" : "$2");
+            parsedText = Regex.Replace(parsedText, Padrino,
+                data.Padrino.Gender is Gender.Unknown or Gender.Male
+                    ? WrapInHighlightedSpan(highlight, "padrino")
+                    : WrapInHighlightedSpan(highlight, "madrina"));
+            parsedText = Regex.Replace(parsedText, PadrinoNombre,
+                WrapInHighlightedSpan(highlight, data.Padrino.Name));
+            parsedText = Regex.Replace(parsedText, PadrinoPalabra,
+                data.Padrino.Gender is Gender.Unknown or Gender.Male
+                    ? WrapInHighlightedSpan(highlight, "$1")
+                    : WrapInHighlightedSpan(highlight, "$2"));
 
-            parsedText = Regex.Replace(parsedText, Becario, data.Becario.Gender is Gender.Unknown or Gender.Male ? "ahijado" : "ahijada");
-            parsedText = Regex.Replace(parsedText, BecarioNombre, data.Becario.Name);
-            parsedText = Regex.Replace(parsedText, BecarioPalabra, data.Becario.Gender is Gender.Unknown or Gender.Male ? "$1" : "$2");
+            parsedText = Regex.Replace(parsedText, Becario,
+                data.Becario.Gender is Gender.Unknown or Gender.Male
+                    ? WrapInHighlightedSpan(highlight, "ahijado")
+                    : WrapInHighlightedSpan(highlight, "ahijada"));
+            parsedText = Regex.Replace(parsedText, BecarioNombre,
+                WrapInHighlightedSpan(highlight, data.Becario.Name));
+            parsedText = Regex.Replace(parsedText, BecarioPalabra,
+                data.Becario.Gender is Gender.Unknown or Gender.Male
+                    ? WrapInHighlightedSpan(highlight, "$1")
+                    : WrapInHighlightedSpan(highlight, "$2"));
 
             return parsedText;
         }
@@ -144,6 +161,16 @@ namespace Fonbec.Cartas.Logic.Services.MessageTemplate
             }
 
             return sb.ToString();
+        }
+
+        private string WrapInHighlightedSpan(bool wrap, string text)
+        {
+            const string spanOpen = "<span style=\"background: yellow;\">";
+            const string spanClose = "</span>";
+
+            return wrap
+                ? $"{spanOpen}{text}{spanClose}"
+                : text;
         }
     }
 }

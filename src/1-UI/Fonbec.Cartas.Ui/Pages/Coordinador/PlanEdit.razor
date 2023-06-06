@@ -6,27 +6,35 @@
 
 <PageHeader Title="Plan nuevo" />
 
-<MudDatePicker @bind-Date="_name" Label="Comienzo de recepción de cartas"
-               Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" />
+<MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
+    <MudDatePicker @bind-Date="_startDate" Label="Mes de recepción de cartas"
+                   FixDay="1"
+                   Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" DateFormat="MMMM \d\e yyyy" />
 
-<MudTextField T="string" ValueChanged="OnSubjectChanged" Value="_subject" Label="Asunto"
-              Immediate="true"
-              Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentText="FONBEC |" Class="mt-2" />
+    <MudTextField T="string" ValueChanged="OnSubjectChanged" Value="_subject" Label="Asunto"
+                  MaxLength="@MaxLength.Plan.Subject"
+                  Required="true" RequiredError="Se debe especificar el asunto."
+                  Immediate="true"
+                  Adornment="Adornment.Start" AdornmentText="FONBEC |"
+                  Variant="Variant.Outlined" Class="mt-2" />
 
-<MudTextField T="string" ValueChanged="OnMessageBodyChanged" Value="_messageBody" Label="Cuerpo del mensaje"
-              DebounceInterval="1500"
-              Variant="Variant.Outlined" Lines="10" Class="mt-2" />
+    <MudTextField T="string" ValueChanged="OnMessageBodyChanged" Value="_messageBody" Label="Cuerpo del mensaje"
+                  MaxLength="@MaxLength.Plan.MessageMarkdown"
+                  Required="true" RequiredError="Se debe especificar el mensaje."
+                  DebounceInterval="1500"
+                  Variant="Variant.Outlined" Lines="10" Class="mt-2" />
 
-<MudPaper Elevation="0" Class="pt-4">
-    <MudButton OnClick="Save" Disabled="SaveButtonDisabled"
-               Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
-        Guardar
-    </MudButton>
-    <MudButton Href="@NavRoutes.CoordinadorBecarios"
-               Variant="Variant.Filled" Color="Color.Default">
-        Cancelar
-    </MudButton>
-</MudPaper>
+    <MudPaper Elevation="0" Class="pt-4">
+        <MudButton OnClick="Save" Disabled="SaveButtonDisabled"
+                   Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
+            Crear
+        </MudButton>
+        <MudButton Href="@NavRoutes.CoordinadorPlanes"
+                   Variant="Variant.Filled" Color="Color.Default">
+            Cancelar
+        </MudButton>
+    </MudPaper>
+</MudForm>
 
 <MudExpansionPanels Class="mt-4">
     <MudExpansionPanel Text="Texto expecial">
@@ -83,10 +91,13 @@
             <MudRadio Option="Ahijada">@Ahijada.Name</MudRadio>
         </MudRadioGroup>
     </MudStack>
+    <MudStack>
+        <MudCheckBox T="bool" CheckedChanged="OnHighlightChanged" Checked="@_highlight">Resaltar el texto especial</MudCheckBox>
+    </MudStack>
 </MudStack>
 
 <MudPaper Outlined="true" Class="mt-4 pa-4">
-    <MudText><strong>Asunto</strong>: FONBEC | @_renderedSubject</MudText>
+    <MudText><strong>Asunto</strong>: FONBEC | @((MarkupString)_renderedSubject)</MudText>
     
     <MudText><strong>Cuerpo del mensaje:</strong>:</MudText>
     

@@ -11,6 +11,7 @@
         public const string AdminRevisores = $"{AdminRoot}/revisores";
         public const string CoordinadorPadrinos = $"{CoordinadorRoot}/padrinos";
         public const string CoordinadorBecarios = $"{CoordinadorRoot}/becarios";
+        public const string CoordinadorPlanes = $"{CoordinadorRoot}/planes";
 
         public const string New = "new";
 
@@ -21,6 +22,7 @@
         public const string AdminRevisorNew = $"{AdminRevisores}/{New}";
         public const string CoordinadorPadrinoNew = $"{CoordinadorPadrinos}/{New}";
         public const string CoordinadorBecariosNew = $"{CoordinadorBecarios}/{New}";
+        public const string CoordinadorPlanNew = $"{CoordinadorPlanes}/{New}";
 
         public const string AdminFilialEdit_0 = $"{AdminFiliales}/{{0}}";
 
@@ -30,5 +32,6 @@
         public const string CoordinadorPadrinoEdit_0 = $"{CoordinadorPadrinos}/{{0}}";
         public const string CoordinadorBecariosEdit_0 = $"{CoordinadorBecarios}/{{0}}";
         public const string CoordinadorBecario_0_AsignarPadrinos = $"{CoordinadorBecarios}/{{0}}/padrinos";
+        public const string CoordinadorPlanEdit_0 = $"{CoordinadorPlanes}/{{0}}";
     }
 }
