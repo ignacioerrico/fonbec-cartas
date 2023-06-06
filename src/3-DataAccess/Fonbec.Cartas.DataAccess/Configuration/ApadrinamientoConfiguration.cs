@@ -8,7 +8,7 @@ namespace Fonbec.Cartas.DataAccess.Configuration
     {
         public void Configure(EntityTypeBuilder<Apadrinamiento> builder)
         {
-            builder.HasKey(b => b.Id);
+            builder.HasKey(a => a.Id);
 
             builder.HasOne(a => a.Becario)
                 .WithMany(b => b.Apadrinamientos)
@@ -37,7 +37,7 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .HasForeignKey(a => a.DeletedByCoordinadorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasQueryFilter(f => !f.SoftDeletedOnUtc.HasValue);
+            builder.HasQueryFilter(a => !a.SoftDeletedOnUtc.HasValue);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿@page "/coordinador/padrinos"
+@using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
 @using Fonbec.Cartas.Ui.Constants
+@attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
 <PageHeader Title="Padrinos" />
 

@@ -9,13 +9,13 @@ namespace Fonbec.Cartas.DataAccess.Configuration
     {
         public void Configure(EntityTypeBuilder<SendAlsoTo> builder)
         {
-            builder.HasKey(c => c.Id);
+            builder.HasKey(sat => sat.Id);
 
-            builder.Property(c => c.RecipientFullName)
+            builder.Property(sat => sat.RecipientFullName)
                 .IsRequired()
                 .HasMaxLength(MaxLength.SendAlsoTo.FullName);
 
-            builder.Property(c => c.RecipientEmail)
+            builder.Property(sat => sat.RecipientEmail)
                 .IsRequired()
                 .HasMaxLength(MaxLength.Actor.Email);
         }

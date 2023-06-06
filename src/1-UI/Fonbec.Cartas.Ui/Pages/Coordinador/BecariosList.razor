@@ -1,7 +1,9 @@
 ﻿@page "/coordinador/becarios"
+@using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
 @using Fonbec.Cartas.Ui.Constants
 @using System.Globalization
+@attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
 <PageHeader Title="Becarios" />
 

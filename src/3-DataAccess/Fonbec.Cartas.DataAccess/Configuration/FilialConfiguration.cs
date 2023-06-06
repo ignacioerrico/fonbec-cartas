@@ -21,23 +21,23 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(f => f.Mediadores)
-                .WithOne(c => c.Filial)
-                .HasForeignKey(c => c.FilialId)
+                .WithOne(m => m.Filial)
+                .HasForeignKey(m => m.FilialId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(f => f.Revisores)
-                .WithOne(c => c.Filial)
-                .HasForeignKey(c => c.FilialId)
+                .WithOne(r => r.Filial)
+                .HasForeignKey(r => r.FilialId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(f => f.Padrinos)
-                .WithOne(c => c.Filial)
-                .HasForeignKey(c => c.FilialId)
+                .WithOne(p => p.Filial)
+                .HasForeignKey(p => p.FilialId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(f => f.Becarios)
-                .WithOne(c => c.Filial)
-                .HasForeignKey(c => c.FilialId)
+                .WithOne(b => b.Filial)
+                .HasForeignKey(b => b.FilialId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasQueryFilter(f => !f.SoftDeletedOnUtc.HasValue);

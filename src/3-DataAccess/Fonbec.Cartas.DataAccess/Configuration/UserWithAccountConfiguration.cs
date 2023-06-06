@@ -10,36 +10,36 @@ namespace Fonbec.Cartas.DataAccess.Configuration
     {
         public void Configure(EntityTypeBuilder<T> builder)
         {
-            builder.HasKey(c => c.Id);
+            builder.HasKey(t => t.Id);
 
-            builder.Property(c => c.FirstName)
+            builder.Property(t => t.FirstName)
                 .IsRequired()
                 .HasMaxLength(MaxLength.Actor.FirstName);
 
-            builder.Property(c => c.LastName)
+            builder.Property(t => t.LastName)
                 .IsRequired()
                 .HasMaxLength(MaxLength.Actor.LastName);
 
-            builder.Property(c => c.NickName)
+            builder.Property(t => t.NickName)
                 .HasMaxLength(MaxLength.Actor.NickName);
 
-            builder.Property(c => c.Email)
+            builder.Property(t => t.Email)
                 .IsRequired()
                 .HasMaxLength(MaxLength.Actor.Email);
 
-            builder.Property(c => c.Phone)
+            builder.Property(t => t.Phone)
                 .HasMaxLength(MaxLength.Actor.Phone);
 
-            builder.Property(c => c.AspNetUserId)
+            builder.Property(t => t.AspNetUserId)
                 .IsRequired()
                 .IsFixedLength()
                 .HasMaxLength(MaxLength.Actor.AspNetUserId);
 
-            builder.Property(c => c.Username)
+            builder.Property(t => t.Username)
                 .IsRequired()
                 .HasMaxLength(MaxLength.Actor.Username);
 
-            builder.HasQueryFilter(f => !f.SoftDeletedOnUtc.HasValue);
+            builder.HasQueryFilter(t => !t.SoftDeletedOnUtc.HasValue);
         }
     }
 }

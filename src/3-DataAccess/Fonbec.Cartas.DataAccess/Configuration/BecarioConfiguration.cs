@@ -53,7 +53,7 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .HasForeignKey(b => b.DeletedByCoordinadorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasQueryFilter(f => !f.SoftDeletedOnUtc.HasValue);
+            builder.HasQueryFilter(b => !b.SoftDeletedOnUtc.HasValue);
         }
     }
 }

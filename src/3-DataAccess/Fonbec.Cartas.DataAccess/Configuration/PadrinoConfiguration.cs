@@ -9,20 +9,20 @@ namespace Fonbec.Cartas.DataAccess.Configuration
     {
         public void Configure(EntityTypeBuilder<Padrino> builder)
         {
-            builder.HasKey(c => c.Id);
+            builder.HasKey(p => p.Id);
 
-            builder.Property(c => c.FirstName)
+            builder.Property(p => p.FirstName)
                 .IsRequired()
                 .HasMaxLength(MaxLength.Actor.FirstName);
 
-            builder.Property(c => c.LastName)
+            builder.Property(p => p.LastName)
                 .IsRequired()
                 .HasMaxLength(MaxLength.Actor.LastName);
 
-            builder.Property(c => c.NickName)
+            builder.Property(p => p.NickName)
                 .HasMaxLength(MaxLength.Actor.NickName);
 
-            builder.Property(c => c.Email)
+            builder.Property(p => p.Email)
                 .IsRequired()
                 .HasMaxLength(MaxLength.Actor.Email);
 
@@ -31,7 +31,7 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(c => c.Phone)
+            builder.Property(p => p.Phone)
                 .HasMaxLength(MaxLength.Actor.Phone);
 
             builder.HasOne(p => p.CreatedByCoordinador)
@@ -51,7 +51,7 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .HasForeignKey(p => p.DeletedByCoordinadorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasQueryFilter(f => !f.SoftDeletedOnUtc.HasValue);
+            builder.HasQueryFilter(p => !p.SoftDeletedOnUtc.HasValue);
         }
     }
 }
