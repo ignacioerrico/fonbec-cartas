@@ -7,7 +7,7 @@
 <PageHeader Title="Plan nuevo" />
 
 <MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
-    <MudDatePicker @bind-Date="_startDate" Label="Mes de recepción de cartas"
+    <MudDatePicker DateChanged="OnStartDateChanged" Date="_startDate" Label="Mes de recepción de cartas"
                    FixDay="1"
                    Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" DateFormat="MMMM \d\e yyyy" />
 

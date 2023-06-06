@@ -41,7 +41,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private readonly MessageTemplateData _messageTemplateData = new()
         {
-            Date = DateTime.Today,
+            Date = FirstDayOfFollowingMonth,
             Documents = "la carta y el boletín",
             Padrino = Padrino,
             Becario = Ahijado,
@@ -74,6 +74,30 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             return Task.CompletedTask;
         }
 
+        private void OnStartDateChanged(DateTime? startDate)
+        {
+            if (startDate is null)
+            {
+                return;
+            }
+
+            _startDate = startDate;
+            _messageTemplateData.Date = startDate.Value;
+            UpdatePreview();
+        }
+
+        private void OnSubjectChanged(string subject)
+        {
+            _subject = subject;
+            _renderedSubject = MessageTemplateParser.FillPlaceholders(subject, _messageTemplateData, _highlight);
+        }
+
+        private void OnMessageBodyChanged(string messageBody)
+        {
+            _messageBody = messageBody;
+            _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(messageBody, _messageTemplateData, _highlight);
+        }
+
         private void OnSelectedPadrinoChanged(PersonData padrinoData)
         {
             _selectedPadrino = padrinoData;
@@ -98,18 +122,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             OnSubjectChanged(_subject);
             OnMessageBodyChanged(_messageBody);
-        }
-
-        private void OnSubjectChanged(string subject)
-        {
-            _subject = subject;
-            _renderedSubject = MessageTemplateParser.FillPlaceholders(subject, _messageTemplateData, _highlight);
-        }
-
-        private void OnMessageBodyChanged(string messageBody)
-        {
-            _messageBody = messageBody;
-            _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(messageBody, _messageTemplateData, _highlight);
         }
     }
 }
