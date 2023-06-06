@@ -14,7 +14,7 @@ namespace Fonbec.Cartas.Logic.Tests.Services.MessageTemplate
             _sut = new MessageTemplateParser();
         }
 
-        #region FillPlaceholders()
+        #region FillPlaceholders(), highligh = false
 
         [Theory]
         [InlineData(Gender.Unknown, Gender.Unknown)]
@@ -246,6 +246,242 @@ namespace Fonbec.Cartas.Logic.Tests.Services.MessageTemplate
 
             // Assert
             result.Should().Be($"First line\nBeginning {word} End\nLast line");
+        }
+
+        #endregion
+
+        #region FillPlaceholders(), highligh = true
+
+        [Theory]
+        [InlineData(Gender.Unknown, Gender.Unknown)]
+        [InlineData(Gender.Unknown, Gender.Male)]
+        [InlineData(Gender.Unknown, Gender.Female)]
+        [InlineData(Gender.Male, Gender.Unknown)]
+        [InlineData(Gender.Male, Gender.Male)]
+        [InlineData(Gender.Male, Gender.Female)]
+        [InlineData(Gender.Female, Gender.Unknown)]
+        [InlineData(Gender.Female, Gender.Male)]
+        [InlineData(Gender.Female, Gender.Female)]
+        public void FillPlaceholders_ShouldParseDate_AndHighlightIt(Gender genderPadrino, Gender genderBecario)
+        {
+            // Arrange
+            const string markdown = "First line\nBeginning {mes-de-carta} End\nLast line";
+            var data = new MessageTemplateData
+            {
+                Date = new DateTime(2023, 06, 12),
+                Documents = "la carta y el boletín",
+                Padrino = new PersonData("Padrino", genderPadrino),
+                Becario = new PersonData("Becario", genderBecario)
+            };
+
+            // Act
+            var result = _sut.FillPlaceholders(markdown, data, true);
+
+            // Assert
+            result.Should().Be("First line\nBeginning <span style=\"background: yellow;\">junio de 2023</span> End\nLast line");
+        }
+
+        [Theory]
+        [InlineData(Gender.Unknown, Gender.Unknown)]
+        [InlineData(Gender.Unknown, Gender.Male)]
+        [InlineData(Gender.Unknown, Gender.Female)]
+        [InlineData(Gender.Male, Gender.Unknown)]
+        [InlineData(Gender.Male, Gender.Male)]
+        [InlineData(Gender.Male, Gender.Female)]
+        [InlineData(Gender.Female, Gender.Unknown)]
+        [InlineData(Gender.Female, Gender.Male)]
+        [InlineData(Gender.Female, Gender.Female)]
+        public void FillPlaceholders_ShouldParseDocuments_AndHighlightIt(Gender genderPadrino, Gender genderBecario)
+        {
+            // Arrange
+            const string markdown = "First line\nBeginning {documentos} End\nLast line";
+            var data = new MessageTemplateData
+            {
+                Date = new DateTime(2023, 06, 12),
+                Documents = "la carta y el boletín",
+                Padrino = new PersonData("Padrino", genderPadrino),
+                Becario = new PersonData("Becario", genderBecario)
+            };
+
+            // Act
+            var result = _sut.FillPlaceholders(markdown, data, true);
+
+            // Assert
+            result.Should().Be("First line\nBeginning <span style=\"background: yellow;\">la carta y el boletín</span> End\nLast line");
+        }
+
+        [Theory]
+        [InlineData(Gender.Unknown, Gender.Unknown, "padrino")]
+        [InlineData(Gender.Unknown, Gender.Male, "padrino")]
+        [InlineData(Gender.Unknown, Gender.Female, "padrino")]
+        [InlineData(Gender.Male, Gender.Unknown, "padrino")]
+        [InlineData(Gender.Male, Gender.Male, "padrino")]
+        [InlineData(Gender.Male, Gender.Female, "padrino")]
+        [InlineData(Gender.Female, Gender.Unknown, "madrina")]
+        [InlineData(Gender.Female, Gender.Male, "madrina")]
+        [InlineData(Gender.Female, Gender.Female, "madrina")]
+        public void FillPlaceholders_ShouldParsePadrino_AndHighlightIt(Gender genderPadrino, Gender genderBecario, string padrinoMadrina)
+        {
+            // Arrange
+            const string markdown = "First line\nBeginning {padrino} End\nLast line";
+            var data = new MessageTemplateData
+            {
+                Date = new DateTime(2023, 06, 12),
+                Documents = "la carta y el boletín",
+                Padrino = new PersonData("Padrino", genderPadrino),
+                Becario = new PersonData("Becario", genderBecario),
+            };
+
+            // Act
+            var result = _sut.FillPlaceholders(markdown, data, true);
+
+            // Assert
+            result.Should().Be($"First line\nBeginning <span style=\"background: yellow;\">{padrinoMadrina}</span> End\nLast line");
+        }
+
+        [Theory]
+        [InlineData(Gender.Unknown, Gender.Unknown, "Male name")]
+        [InlineData(Gender.Unknown, Gender.Male, "Male name")]
+        [InlineData(Gender.Unknown, Gender.Female, "Male name")]
+        [InlineData(Gender.Male, Gender.Unknown, "Male name")]
+        [InlineData(Gender.Male, Gender.Male, "Male name")]
+        [InlineData(Gender.Male, Gender.Female, "Male name")]
+        [InlineData(Gender.Female, Gender.Unknown, "Female name")]
+        [InlineData(Gender.Female, Gender.Male, "Female name")]
+        [InlineData(Gender.Female, Gender.Female, "Female name")]
+        public void FillPlaceholders_ShouldParsePadrinoNombre_AndHighlightIt(Gender genderPadrino, Gender genderBecario, string padrinoNombre)
+        {
+            // Arrange
+            const string markdown = "First line\nBeginning {padrino:nombre} End\nLast line";
+            var data = new MessageTemplateData
+            {
+                Date = new DateTime(2023, 06, 12),
+                Documents = "la carta y el boletín",
+                Padrino = new PersonData(padrinoNombre, genderPadrino),
+                Becario = new PersonData("Becario", genderBecario),
+            };
+
+            // Act
+            var result = _sut.FillPlaceholders(markdown, data, true);
+
+            // Assert
+            result.Should().Be($"First line\nBeginning <span style=\"background: yellow;\">{padrinoNombre}</span> End\nLast line");
+        }
+
+        [Theory]
+        [InlineData(Gender.Unknown, Gender.Unknown, "male noun")]
+        [InlineData(Gender.Unknown, Gender.Male, "male noun")]
+        [InlineData(Gender.Unknown, Gender.Female, "male noun")]
+        [InlineData(Gender.Male, Gender.Unknown, "male noun")]
+        [InlineData(Gender.Male, Gender.Male, "male noun")]
+        [InlineData(Gender.Male, Gender.Female, "male noun")]
+        [InlineData(Gender.Female, Gender.Unknown, "female noun")]
+        [InlineData(Gender.Female, Gender.Male, "female noun")]
+        [InlineData(Gender.Female, Gender.Female, "female noun")]
+        public void FillPlaceholders_ShouldParsePadrinoPalabra_AndHighlightIt(Gender genderPadrino, Gender genderBecario, string word)
+        {
+            // Arrange
+            const string markdown = "First line\nBeginning {padrino:male noun:female noun} End\nLast line";
+            var data = new MessageTemplateData
+            {
+                Date = new DateTime(2023, 06, 12),
+                Documents = "la carta y el boletín",
+                Padrino = new PersonData("Padrino", genderPadrino),
+                Becario = new PersonData("Becario", genderBecario),
+            };
+
+            // Act
+            var result = _sut.FillPlaceholders(markdown, data, true);
+
+            // Assert
+            result.Should().Be($"First line\nBeginning <span style=\"background: yellow;\">{word}</span> End\nLast line");
+        }
+
+        [Theory]
+        [InlineData(Gender.Unknown, Gender.Unknown, "ahijado")]
+        [InlineData(Gender.Unknown, Gender.Male, "ahijado")]
+        [InlineData(Gender.Unknown, Gender.Female, "ahijada")]
+        [InlineData(Gender.Male, Gender.Unknown, "ahijado")]
+        [InlineData(Gender.Male, Gender.Male, "ahijado")]
+        [InlineData(Gender.Male, Gender.Female, "ahijada")]
+        [InlineData(Gender.Female, Gender.Unknown, "ahijado")]
+        [InlineData(Gender.Female, Gender.Male, "ahijado")]
+        [InlineData(Gender.Female, Gender.Female, "ahijada")]
+        public void FillPlaceholders_ShouldParseBecario_AndHighlightIt(Gender genderPadrino, Gender genderBecario, string ahijadoAhijada)
+        {
+            // Arrange
+            const string markdown = "First line\nBeginning {ahijado} End\nLast line";
+            var data = new MessageTemplateData
+            {
+                Date = new DateTime(2023, 06, 12),
+                Documents = "la carta y el boletín",
+                Padrino = new PersonData("Padrino", genderPadrino),
+                Becario = new PersonData("Becario", genderBecario),
+            };
+
+            // Act
+            var result = _sut.FillPlaceholders(markdown, data, true);
+
+            // Assert
+            result.Should().Be($"First line\nBeginning <span style=\"background: yellow;\">{ahijadoAhijada}</span> End\nLast line");
+        }
+
+        [Theory]
+        [InlineData(Gender.Unknown, Gender.Unknown, "Male name")]
+        [InlineData(Gender.Unknown, Gender.Male, "Male name")]
+        [InlineData(Gender.Unknown, Gender.Female, "Female name")]
+        [InlineData(Gender.Male, Gender.Unknown, "Male name")]
+        [InlineData(Gender.Male, Gender.Male, "Male name")]
+        [InlineData(Gender.Male, Gender.Female, "Female name")]
+        [InlineData(Gender.Female, Gender.Unknown, "Male name")]
+        [InlineData(Gender.Female, Gender.Male, "Male name")]
+        [InlineData(Gender.Female, Gender.Female, "Female name")]
+        public void FillPlaceholders_ShouldParseBecarioNombre_AndHighlightIt(Gender genderPadrino, Gender genderBecario, string becarioNombre)
+        {
+            // Arrange
+            const string markdown = "First line\nBeginning {ahijado:nombre} End\nLast line";
+            var data = new MessageTemplateData
+            {
+                Date = new DateTime(2023, 06, 12),
+                Documents = "la carta y el boletín",
+                Padrino = new PersonData("Padrino", genderPadrino),
+                Becario = new PersonData(becarioNombre, genderBecario),
+            };
+
+            // Act
+            var result = _sut.FillPlaceholders(markdown, data, true);
+
+            // Assert
+            result.Should().Be($"First line\nBeginning <span style=\"background: yellow;\">{becarioNombre}</span> End\nLast line");
+        }
+
+        [Theory]
+        [InlineData(Gender.Unknown, Gender.Unknown, "male noun")]
+        [InlineData(Gender.Unknown, Gender.Male, "male noun")]
+        [InlineData(Gender.Unknown, Gender.Female, "female noun")]
+        [InlineData(Gender.Male, Gender.Unknown, "male noun")]
+        [InlineData(Gender.Male, Gender.Male, "male noun")]
+        [InlineData(Gender.Male, Gender.Female, "female noun")]
+        [InlineData(Gender.Female, Gender.Unknown, "male noun")]
+        [InlineData(Gender.Female, Gender.Male, "male noun")]
+        [InlineData(Gender.Female, Gender.Female, "female noun")]
+        public void FillPlaceholders_ShouldParseBecarioPalabra_AndHighlightIt(Gender genderPadrino, Gender genderBecario, string word)
+        {
+            // Arrange
+            const string markdown = "First line\nBeginning {ahijado:male noun:female noun} End\nLast line";
+            var data = new MessageTemplateData
+            {
+                Date = new DateTime(2023, 06, 12),
+                Documents = "la carta y el boletín",
+                Padrino = new PersonData("Padrino", genderPadrino),
+                Becario = new PersonData("Becario", genderBecario),
+            };
+
+            // Act
+            var result = _sut.FillPlaceholders(markdown, data, true);
+
+            // Assert
+            result.Should().Be($"First line\nBeginning <span style=\"background: yellow;\">{word}</span> End\nLast line");
         }
 
         #endregion

@@ -49,23 +49,28 @@ namespace Fonbec.Cartas.Logic.Tests.Services.MessageTemplate
             result.Should().Be("Default message");
         }
 
-        [Fact]
-        public void GetHtmlMessage_ShouldReturnContentsOfFile()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GetHtmlMessage_ShouldReturnContentsOfFile(bool highlight)
         {
             const string markdown = "First Line\nSecond *bold* line\nLast line";
 
             // Arrange
             _messageTemplateParserMock
-                .Setup(x => x.FillPlaceholders(markdown, It.IsAny<MessageTemplateData>()))
-                .Returns("First Line\nSecond <strong>bold</strong> line\nLast line");
+                .Setup(x => x.FillPlaceholders(markdown,
+                    It.Is<MessageTemplateData>(d => d.RevisorNombre == "Revisor" && d.FilialNombre == "Filial"),
+                    It.IsAny<bool>()))
+                .Returns("First Line\nSecond <strong>bold</strong> line\nSigned by {revisor:nombre} in {filial:nombre} just for you\nLast line");
 
             var html = new StringBuilder();
             html.AppendLine("<p>First Line</p>");
             html.AppendLine("<p>Second <strong>bold</strong> line</p>");
+            html.AppendLine("<p>Signed by {revisor:nombre} in {filial:nombre} just for you</p>");
             html.AppendLine("<p>Last line</p>");
 
             _messageTemplateParserMock
-                .Setup(x => x.MarkdownToHtml("First Line\nSecond <strong>bold</strong> line\nLast line"))
+                .Setup(x => x.MarkdownToHtml("First Line\nSecond <strong>bold</strong> line\nSigned by {revisor:nombre} in {filial:nombre} just for you\nLast line"))
                 .Returns(html.ToString);
 
             var expected = new StringBuilder();
@@ -76,13 +81,20 @@ namespace Fonbec.Cartas.Logic.Tests.Services.MessageTemplate
             expected.AppendLine("<body>");
             expected.AppendLine("<p>First Line</p>");
             expected.AppendLine("<p>Second <strong>bold</strong> line</p>");
+            expected.AppendLine("<p>Signed by Revisor in Filial just for you</p>");
             expected.AppendLine("<p>Last line</p>");
             expected.AppendLine();
             expected.AppendLine("</body>");
             expected.AppendLine("</html>");
 
+            var messageTemplateData = new MessageTemplateData
+            {
+                RevisorNombre = "Revisor",
+                FilialNombre = "Filial",
+            };
+
             // Act
-            var result = _sut.GetHtmlMessage(markdown, new MessageTemplateData());
+            var result = _sut.GetHtmlMessage(markdown, messageTemplateData, highlight);
 
             // Assert
             result.Should().Be(expected.ToString());
