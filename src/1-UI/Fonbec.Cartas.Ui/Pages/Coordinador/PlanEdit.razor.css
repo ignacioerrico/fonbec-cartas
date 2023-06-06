@@ -1,0 +1,10 @@
+﻿tt.placeholder {
+    color: black;
+    background-color: #e0e0e0;
+    padding: .3em .5em;
+    margin-right: .5em;
+}
+
+iframe {
+    height: 500px;
+}

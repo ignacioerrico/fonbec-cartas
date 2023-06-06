@@ -4,6 +4,7 @@ using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.Services.Identity;
+using Fonbec.Cartas.Logic.Services.MessageTemplate;
 using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
 using Fonbec.Cartas.Ui.Identity;
 using Fonbec.Cartas.Ui.Options;
@@ -31,6 +32,10 @@ namespace Fonbec.Cartas.Ui
 
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<ICommunicationService, CommunicationService>();
+
+            services.AddScoped<IMessageTemplateGetterService, MessageTemplateGetterService>();
+            services.AddScoped<IMessageTemplateParser, MessageTemplateParser>();
+            services.AddScoped<IEmbeddedResourceFileReader, EmbeddedResourceFileReader>();
 
             var communicationServiceConnectionString =
                 configuration.GetConnectionString("CommunicationServiceConnection");
