@@ -31,6 +31,8 @@ namespace Fonbec.Cartas.DataAccess
 
         public DbSet<SendAlsoTo> SendAlsoTo => Set<SendAlsoTo>();
 
+        public DbSet<Plan> Planes => Set<Plan>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
