@@ -7,18 +7,18 @@
 <PageHeader Title="Plan nuevo" />
 
 <MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
-    <MudDatePicker DateChanged="OnStartDateChanged" Date="_startDate" Label="Mes de recepción de cartas"
+    <MudDatePicker DateChanged="OnStartDateChanged" Date="_plan.StartDate" Label="Mes de recepción de cartas"
                    FixDay="1"
                    Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" DateFormat="MMMM \d\e yyyy" />
 
-    <MudTextField T="string" ValueChanged="OnSubjectChanged" Value="_subject" Label="Asunto"
+    <MudTextField T="string" ValueChanged="OnSubjectChanged" Value="_plan.Subject" Label="Asunto"
                   MaxLength="@MaxLength.Plan.Subject"
                   Required="true" RequiredError="Se debe especificar el asunto."
                   Immediate="true"
                   Adornment="Adornment.Start" AdornmentText="FONBEC |"
                   Variant="Variant.Outlined" Class="mt-2" />
 
-    <MudTextField T="string" ValueChanged="OnMessageBodyChanged" Value="_messageBody" Label="Cuerpo del mensaje"
+    <MudTextField T="string" ValueChanged="OnMessageBodyChanged" Value="_plan.MessageMarkdown" Label="Cuerpo del mensaje"
                   MaxLength="@MaxLength.Plan.MessageMarkdown"
                   Required="true" RequiredError="Se debe especificar el mensaje."
                   DebounceInterval="1500"

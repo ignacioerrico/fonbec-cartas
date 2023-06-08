@@ -1,8 +1,14 @@
-﻿using System.Globalization;
-using Fonbec.Cartas.DataAccess.Entities.Enums;
-using Microsoft.AspNetCore.Components;
+﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
+using Fonbec.Cartas.Logic.ExtensionMethods;
 using Fonbec.Cartas.Logic.Services.MessageTemplate;
+using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
+using Fonbec.Cartas.Logic.ViewModels.Coordinador;
+using Fonbec.Cartas.Ui.Constants;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
+using System.Globalization;
+using System.Security.Claims;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
@@ -21,23 +27,22 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private static readonly PersonData Ahijado = new("Benjamín", Gender.Male);
         private static readonly PersonData Ahijada = new("Beatriz", Gender.Female);
 
+        private readonly PlanEditViewModel _plan = new();
+
+        private ClaimsPrincipal _user = default!;
+
         private PersonData _selectedPadrino = Padrino;
         private PersonData _selectedBecario = Ahijado;
 
         private MudForm _mudForm = default!;
         private bool _formValidationSucceeded;
 
-        private DateTime? _startDate = FirstDayOfFollowingMonth;
-
-        private string _subject = "Carta de tu {ahijado} {ahijado:nombre} de {mes-de-carta}";
         private string _renderedSubject = default!;
-
-        private string _messageBody = default!;
         private string _renderedMessageBody = default!;
-        private bool _highlight = false;
+        private bool _highlight;
 
         private bool SaveButtonDisabled => !_formValidationSucceeded
-                                           || string.IsNullOrWhiteSpace(_messageBody);
+                                           || string.IsNullOrWhiteSpace(_plan.MessageMarkdown);
 
         private readonly MessageTemplateData _messageTemplateData = new()
         {
@@ -49,29 +54,72 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             FilialNombre = "AMBA",
         };
 
+        [CascadingParameter]
+        private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+        [Inject]
+        public IPlanService PlanService { get; set; } = default!;
+
         [Inject]
         public IMessageTemplateGetterService MessageTemplateGetterService { get; set; } = default!;
 
         [Inject]
         public IMessageTemplateParser MessageTemplateParser { get; set; } = default!;
 
+        [Inject]
+        public ISnackbar Snackbar { get; set; } = default!;
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; } = default!;
+
+        public PlanEdit()
+        {
+            _plan.StartDate = FirstDayOfFollowingMonth;
+        }
+
         protected override void OnAfterRender(bool firstRender)
         {
             _mudForm.Validate();
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            OnSubjectChanged(_subject);
+            if (AuthenticationState is null)
+            {
+                Snackbar.Add("AuthenticationState is null.", Severity.Error);
+                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+                return;
+            }
+
+            var user = (await AuthenticationState).User;
+            if (user.Identity is not { IsAuthenticated: true })
+            {
+                Snackbar.Add("Usuario no está autenticado.", Severity.Error);
+                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+                return;
+            }
+
+            _user = user;
+
+            OnSubjectChanged(_plan.Subject);
             
-            _messageBody = MessageTemplateGetterService.GetDefaultMessage();
-            OnMessageBodyChanged(_messageBody);
+            _plan.MessageMarkdown = MessageTemplateGetterService.GetDefaultMessage();
+            OnMessageBodyChanged(_plan.MessageMarkdown);
         }
 
-        private Task Save()
+        private async Task Save()
         {
-            // TODO
-            return Task.CompletedTask;
+            _plan.FilialId = _user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
+            _plan.CreatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+
+            var qtyAdded = await PlanService.CreatePlanAsync(_plan);
+
+            if (qtyAdded == 0)
+            {
+                Snackbar.Add("No se pudo crear el padrino.", Severity.Error);
+            }
+
+            NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanes);
         }
 
         private void OnStartDateChanged(DateTime? startDate)
@@ -81,20 +129,20 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            _startDate = startDate;
+            _plan.StartDate = startDate;
             _messageTemplateData.Date = startDate.Value;
             UpdatePreview();
         }
 
         private void OnSubjectChanged(string subject)
         {
-            _subject = subject;
+            _plan.Subject = subject;
             _renderedSubject = MessageTemplateParser.FillPlaceholders(subject, _messageTemplateData, _highlight);
         }
 
         private void OnMessageBodyChanged(string messageBody)
         {
-            _messageBody = messageBody;
+            _plan.MessageMarkdown = messageBody;
             _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(messageBody, _messageTemplateData, _highlight);
         }
 
@@ -120,8 +168,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private void UpdatePreview()
         {
-            OnSubjectChanged(_subject);
-            OnMessageBodyChanged(_messageBody);
+            OnSubjectChanged(_plan.Subject);
+            OnMessageBodyChanged(_plan.MessageMarkdown);
         }
     }
 }

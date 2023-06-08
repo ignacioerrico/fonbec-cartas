@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Fonbec.Cartas.DataAccess.Entities;
 using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 
@@ -7,6 +8,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
     public interface IPlanService
     {
         Task<List<PlansListViewModel>> GetAllPlansAsync(int filialId);
+        Task<int> CreatePlanAsync(PlanEditViewModel planEditViewModel);
     }
 
     public class PlanService : IPlanService
@@ -29,6 +31,22 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
                 CreatedOnUtc = p.CreatedOnUtc,
                 LastUpdatedOnUtc = p.LastUpdatedOnUtc,
             }).ToList();
+        }
+
+        public async Task<int> CreatePlanAsync(PlanEditViewModel planEditViewModel)
+        {
+            var plan = new Plan
+            {
+                FilialId = planEditViewModel.FilialId,
+                StartDate = planEditViewModel.StartDate!.Value,
+                Subject = planEditViewModel.Subject,
+                MessageMarkdown = planEditViewModel.MessageMarkdown,
+                CreatedByCoordinadorId = planEditViewModel.CreatedByCoordinadorId,
+            };
+
+            var rowsAffected = await _planRepository.CreatePlanAsync(plan);
+
+            return rowsAffected;
         }
     }
 }

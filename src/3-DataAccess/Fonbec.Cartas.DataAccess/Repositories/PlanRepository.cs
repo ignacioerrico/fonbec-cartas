@@ -6,6 +6,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
     public interface IPlanRepository
     {
         Task<List<Plan>> GetAllPlansAsync(int filialId);
+        Task<int> CreatePlanAsync(Plan plan);
     }
 
     public class PlanRepository : IPlanRepository
@@ -29,5 +30,11 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             return all;
         }
 
+        public async Task<int> CreatePlanAsync(Plan plan)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            await appDbContext.Planes.AddAsync(plan);
+            return await appDbContext.SaveChangesAsync();
+        }
     }
 }
