@@ -1,8 +1,10 @@
 ﻿namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 {
-    public class PlansListViewModel : AuditableViewModel
+    public class PlansListViewModel : AuditableWithAuthorNameViewModel
     {
         public int Id { get; set; }
+
+        public DateTime StartDate { get; set; }
 
         public string PlanName { get; set; } = default!;
 

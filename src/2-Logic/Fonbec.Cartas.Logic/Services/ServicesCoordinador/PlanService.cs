@@ -26,10 +26,13 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
             return all.Select(p => new PlansListViewModel
             {
                 Id = p.Id,
+                StartDate = p.StartDate,
                 PlanName = $"Carta de {p.StartDate.ToString(@"MMMM \d\e yyyy", new CultureInfo("es-AR"))}",
                 // TODO
                 CreatedOnUtc = p.CreatedOnUtc,
                 LastUpdatedOnUtc = p.LastUpdatedOnUtc,
+                CreatedBy = p.CreatedByCoordinador.FullName(),
+                UpdatedBy = p.UpdatedByCoordinador?.FullName(),
             }).ToList();
         }
 
