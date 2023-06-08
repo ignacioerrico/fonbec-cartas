@@ -49,6 +49,7 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<IPadrinoService, PadrinoService>();
             services.AddScoped<IBecarioService, BecarioService>();
             services.AddScoped<IApadrinamientoService, ApadrinamientoService>();
+            services.AddScoped<IPlanService, PlanService>();
 
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped<IFilialesRepository, FilialesRepository>();
@@ -58,6 +59,7 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<IPadrinoRepository, PadrinoRepository>();
             services.AddScoped<IBecarioRepository, BecarioRepository>();
             services.AddScoped<IApadrinamientoRepository, ApadrinamientoRepository>();
+            services.AddScoped<IPlanRepository, PlanRepository>();
         }
     }
 }
