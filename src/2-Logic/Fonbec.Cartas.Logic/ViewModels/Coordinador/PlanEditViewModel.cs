@@ -8,7 +8,7 @@
 
         public string Subject { get; set; } = "Carta de tu {ahijado} {ahijado:nombre} de {mes-de-carta}";
 
-        public string MessageMarkdown { get; set; } = default!;
+        public string MessageMarkdown { get; set; } = string.Empty;
 
         public int CreatedByCoordinadorId { get; set; }
     }

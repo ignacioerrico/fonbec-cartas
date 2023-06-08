@@ -6,6 +6,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories
     public interface IPlanRepository
     {
         Task<List<Plan>> GetAllPlansAsync(int filialId);
+        Task<List<DateTime>> GetAllPlansStartDates(int filialId);
         Task<int> CreatePlanAsync(Plan plan);
     }
 
@@ -28,6 +29,16 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                 .OrderByDescending(p => p.StartDate)
                 .ToListAsync();
             return all;
+        }
+
+        public async Task<List<DateTime>> GetAllPlansStartDates(int filialId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var takenStartDates = await appDbContext.Planes
+                .Where(p => p.FilialId == filialId)
+                .Select(p => p.StartDate)
+                .ToListAsync();
+            return takenStartDates;
         }
 
         public async Task<int> CreatePlanAsync(Plan plan)

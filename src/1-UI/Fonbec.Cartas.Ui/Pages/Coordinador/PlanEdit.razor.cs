@@ -31,6 +31,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private ClaimsPrincipal _user = default!;
 
+        private List<DateTime> _takenStartDates = new();
+
         private PersonData _selectedPadrino = Padrino;
         private PersonData _selectedBecario = Ahijado;
 
@@ -101,6 +103,10 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             _user = user;
 
+            var filialId = user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
+
+            _takenStartDates = await PlanService.GetAllPlansStartDates(filialId);
+
             OnSubjectChanged(_plan.Subject);
             
             _plan.MessageMarkdown = MessageTemplateGetterService.GetDefaultMessage();
@@ -109,7 +115,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private async Task Save()
         {
-            _plan.FilialId = _user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
+            _plan.FilialId = _user.FilialId()!.Value;
             _plan.CreatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
             var qtyAdded = await PlanService.CreatePlanAsync(_plan);
@@ -126,6 +132,26 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             if (startDate is null)
             {
+                _plan.StartDate = FirstDayOfFollowingMonth;
+                return;
+            }
+
+            if (startDate.Value.AddDays(9) < DateTime.Today)
+            {
+                Snackbar.Add("La fecha de comienzo debe ser por lo menos el día 10 del mes corriente.", Severity.Error);
+                _plan.StartDate = FirstDayOfFollowingMonth;
+                return;
+            }
+
+            if (_takenStartDates.Contains(startDate.Value))
+            {
+                Snackbar.Add("Ya hay un plan para ese mes.", Severity.Error);
+                _plan.StartDate = startDate;
+                while (_takenStartDates.Contains(_plan.StartDate!.Value))
+                {
+                    _plan.StartDate = _plan.StartDate!.Value.AddMonths(1);
+                }
+
                 return;
             }
 

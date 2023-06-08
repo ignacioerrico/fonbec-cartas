@@ -8,6 +8,7 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
     public interface IPlanService
     {
         Task<List<PlansListViewModel>> GetAllPlansAsync(int filialId);
+        Task<List<DateTime>> GetAllPlansStartDates(int filialId);
         Task<int> CreatePlanAsync(PlanEditViewModel planEditViewModel);
     }
 
@@ -34,6 +35,12 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
                 CreatedBy = p.CreatedByCoordinador.FullName(),
                 UpdatedBy = p.UpdatedByCoordinador?.FullName(),
             }).ToList();
+        }
+
+        public async Task<List<DateTime>> GetAllPlansStartDates(int filialId)
+        {
+            var takenStartDates = await _planRepository.GetAllPlansStartDates(filialId);
+            return takenStartDates;
         }
 
         public async Task<int> CreatePlanAsync(PlanEditViewModel planEditViewModel)
