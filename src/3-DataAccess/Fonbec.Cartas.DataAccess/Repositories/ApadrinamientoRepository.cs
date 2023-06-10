@@ -37,7 +37,10 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             await appDbContext.Apadrinamientos.AddAsync(apadrinamiento);
-            return await appDbContext.SaveChangesAsync();
+            var qtyAdded = await appDbContext.SaveChangesAsync();
+            return qtyAdded == 0
+                ? 0
+                : apadrinamiento.Id;
         }
 
         public async Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId)

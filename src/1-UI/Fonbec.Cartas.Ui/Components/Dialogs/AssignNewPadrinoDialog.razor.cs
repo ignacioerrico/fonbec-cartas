@@ -14,7 +14,7 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
 
         private DateTime? _desde = DateTime.Today;
         
-        private DateTime? _hasta = DateTime.Today.AddMonths(1);
+        private DateTime? _hasta;
 
         private bool _knownEndDate;
 
@@ -64,7 +64,9 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
 
         private void Add()
         {
-            if (_desde >= _hasta)
+            if (_desde.HasValue
+                && _hasta.HasValue
+                && _desde.Value >= _hasta.Value)
             {
                 Snackbar.Add("La fecha de finalización debe ser posterior a la de comienzo", Severity.Error);
                 _hasta = _desde.Value.AddMonths(1);
@@ -76,6 +78,14 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         }
 
         private void Cancel() => MudDialog.Cancel();
+
+        private void OnKnownEndDateChanged(bool knownEndDate)
+        {
+            _knownEndDate = knownEndDate;
+            _hasta = knownEndDate
+                ? _desde!.Value.AddMonths(1)
+                : null;
+        }
     }
 
     public class AssignNewPadrinoDialogModel

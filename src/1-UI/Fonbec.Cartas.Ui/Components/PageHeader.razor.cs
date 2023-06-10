@@ -10,7 +10,7 @@ namespace Fonbec.Cartas.Ui.Components
 
         protected override void OnParametersSet()
         {
-            Title ??= "(Título no especificado)";
+            Title ??= string.Empty;
         }
     }
 }

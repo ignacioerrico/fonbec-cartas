@@ -31,11 +31,11 @@
                   Validation="@(new EmailAddressAttribute { ErrorMessage = "La dirección de correo ingresada no es válida." })"
                   MaxLength="@MaxLength.Actor.Email" />
 
-        @for (var index = 0; index < _sendAlsoTo.Count; index++)
+        @for (var index = 0; index < _padrino.SendAlsoTo.Count; index++)
         {
-            var sendAlsoTo = _sendAlsoTo[index];
+            var sendAlsoTo = _padrino.SendAlsoTo[index];
             var ccOrBcc = sendAlsoTo.SendAsBcc ? "BCC" : "CC";
-            var displayText = $"{ccOrBcc}: {sendAlsoTo.FullName} <{sendAlsoTo.Email}>";
+            var displayText = $"{ccOrBcc}: {sendAlsoTo.RecipientFullName} <{sendAlsoTo.RecipientEmail}>";
             var currentIndex = index;
 
             <MudStack Row="@true" Class="mt-2">
@@ -50,7 +50,7 @@
                 </MudTooltip>
                 <MudTooltip Text="Quitar" Arrow="true" Placement="Placement.Bottom" Color="Color.Error">
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
-                                   OnClick="@(() => _sendAlsoTo.RemoveAt(currentIndex))" />
+                                   OnClick="@(() => _padrino.SendAlsoTo.RemoveAt(currentIndex))" />
                 </MudTooltip>
             </MudStack>
         }

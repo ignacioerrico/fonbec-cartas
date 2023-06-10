@@ -141,8 +141,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             // Is there any overlap with another assignment for the same Padrino?
             var overlapWithSamePadrino = _padrinosAsignados.Any(asignación =>
                 string.Equals(asignación.PadrinoFullName, nuevaAsignación.PadrinoViewModel.Name, StringComparison.OrdinalIgnoreCase)
-                && ((nuevaAsignación.Desde < asignación.From && (!nuevaAsignación.Hasta.HasValue || asignación.From < nuevaAsignación.Hasta.Value))
-                    || (asignación.From < nuevaAsignación.Desde && (!asignación.To.HasValue || nuevaAsignación.Desde < asignación.To.Value))));
+                && ((nuevaAsignación.Desde <= asignación.From && (!nuevaAsignación.Hasta.HasValue || asignación.From <= nuevaAsignación.Hasta.Value))
+                    || (asignación.From <= nuevaAsignación.Desde && (!asignación.To.HasValue || nuevaAsignación.Desde <= asignación.To.Value))));
             if (overlapWithSamePadrino)
             {
                 Snackbar.Add($"{nuevaAsignación.PadrinoViewModel.Name} ya apadrina a {_becarioName} en ese período.", Severity.Error);
@@ -158,9 +158,9 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 CreatedByCoordinadorId = _coordinadorId,
             };
 
-            var qtyAssigned = await ApadrinamientoService.AssignPadrinoToBecarioAsync(assignPadrinoToBecarioViewModel);
+            var apadrinamientoId = await ApadrinamientoService.AssignPadrinoToBecarioAsync(assignPadrinoToBecarioViewModel);
 
-            if (qtyAssigned == 0)
+            if (apadrinamientoId == 0)
             {
                 Snackbar.Add("No se pudo almacenar la asignación.", Severity.Error);
                 return;
@@ -168,6 +168,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             var apadrinamientoEditViewModel = new ApadrinamientoEditViewModel(nuevaAsignación.Desde, nuevaAsignación.Hasta)
             {
+                ApadrinamientoId = apadrinamientoId,
                 PadrinoId = nuevaAsignación.PadrinoViewModel.Id,
                 PadrinoFullName = nuevaAsignación.PadrinoViewModel.Name,
                 CreatedOnUtc = DateTimeOffset.UtcNow,

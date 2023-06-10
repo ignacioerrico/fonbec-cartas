@@ -50,9 +50,9 @@ namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
                 CreatedByCoordinadorId = viewModel.CreatedByCoordinadorId,
             };
 
-            var rowsAffected = await _apadrinamientoRepository.AssignPadrinoToBecarioAsync(apadrinamiento);
+            var apadrinamientoId = await _apadrinamientoRepository.AssignPadrinoToBecarioAsync(apadrinamiento);
 
-            return rowsAffected;
+            return apadrinamientoId;
         }
 
         public async Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId)

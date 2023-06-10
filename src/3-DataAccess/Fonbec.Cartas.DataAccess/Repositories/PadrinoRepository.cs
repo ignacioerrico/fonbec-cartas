@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
+﻿using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fonbec.Cartas.DataAccess.Repositories
@@ -58,7 +59,9 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         public async Task<int> UpdateAsync(int id, Padrino padrino)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-            var padrinoDb = await appDbContext.Padrinos.FindAsync(id);
+            var padrinoDb = await appDbContext.Padrinos
+                .Include(p => p.SendAlsoTo)
+                .SingleOrDefaultAsync(p => p.Id == id);
             if (padrinoDb is null)
             {
                 return 0;
@@ -72,17 +75,14 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             padrinoDb.Phone = padrino.Phone;
             padrinoDb.UpdatedByCoordinadorId = padrino.UpdatedByCoordinadorId;
 
-            appDbContext.Padrinos.Update(padrinoDb);
-
             if (padrinoDb.SendAlsoTo is not null && padrinoDb.SendAlsoTo.Any())
             {
                 appDbContext.SendAlsoTo.RemoveRange(padrinoDb.SendAlsoTo);
             }
 
-            if (padrino.SendAlsoTo is not null && padrino.SendAlsoTo.Any())
-            {
-                await appDbContext.SendAlsoTo.AddRangeAsync(padrino.SendAlsoTo);
-            }
+            padrinoDb.SendAlsoTo = padrino.SendAlsoTo;
+
+            appDbContext.Padrinos.Update(padrinoDb);
 
             return await appDbContext.SaveChangesAsync();
         }

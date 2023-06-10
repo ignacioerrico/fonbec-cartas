@@ -202,7 +202,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 }
             }
 
-            NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+            NavigationManager.NavigateTo(NavRoutes.CoordinadorBecarios);
         }
     }
 }

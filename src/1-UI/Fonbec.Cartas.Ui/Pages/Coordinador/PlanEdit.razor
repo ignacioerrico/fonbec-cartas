@@ -9,6 +9,7 @@
 <MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
     <MudDatePicker DateChanged="OnStartDateChanged" Date="_plan.StartDate" Label="Mes de recepción de cartas"
                    FixDay="1"
+                   PickerVariant="PickerVariant.Dialog"
                    Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" DateFormat="MMMM \d\e yyyy" />
 
     <MudTextField T="string" ValueChanged="OnSubjectChanged" Value="_plan.Subject" Label="Asunto"

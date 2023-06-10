@@ -17,8 +17,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private readonly PadrinoEditViewModel _padrino = new();
         private readonly PadrinoEditViewModel _originalPadrino = new();
 
-        private readonly List<AddSendAlsoToDialogModel> _sendAlsoTo = new();
-
         private bool _loading;
         private bool _isNew;
         private string? _pageTitle;
@@ -37,7 +35,14 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             || !string.Equals(_padrino.NickName, _originalPadrino.NickName, StringComparison.Ordinal)
             || _padrino.Gender != _originalPadrino.Gender
             || !string.Equals(_padrino.Email, _originalPadrino.Email, StringComparison.Ordinal)
-            || !string.Equals(_padrino.Phone, _originalPadrino.Phone, StringComparison.Ordinal);
+            || !string.Equals(_padrino.Phone, _originalPadrino.Phone, StringComparison.Ordinal)
+            || _padrino.SendAlsoTo.Count != _originalPadrino.SendAlsoTo.Count
+            || _padrino.SendAlsoTo.Select(sat =>
+                _originalPadrino.SendAlsoTo.All(orig =>
+                    orig.RecipientFullName != sat.RecipientFullName
+                    || orig.RecipientEmail != sat.RecipientEmail
+                    || orig.SendAsBcc != sat.SendAsBcc))
+                .Any(notFound => notFound);
 
         [CascadingParameter]
         private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -128,6 +133,25 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 _padrino.Gender = _originalPadrino.Gender = padrino.Gender;
                 _padrino.Email = _originalPadrino.Email = padrino.Email;
                 _padrino.Phone = _originalPadrino.Phone = padrino.Phone;
+
+                foreach (var satFromDb in padrino.SendAlsoTo)
+                {
+                    var sat = new PadrinoEditSendAlsoToViewModel
+                    {
+                        RecipientFullName = satFromDb.RecipientFullName,
+                        RecipientEmail = satFromDb.RecipientEmail,
+                        SendAsBcc = satFromDb.SendAsBcc
+                    };
+                    _padrino.SendAlsoTo.Add(sat);
+
+                    var originalSat = new PadrinoEditSendAlsoToViewModel
+                    {
+                        RecipientFullName = satFromDb.RecipientFullName,
+                        RecipientEmail = satFromDb.RecipientEmail,
+                        SendAsBcc = satFromDb.SendAsBcc
+                    };
+                    _originalPadrino.SendAlsoTo.Add(originalSat);
+                }
             }
             else
             {
@@ -139,14 +163,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private async Task Save()
         {
-            _padrino.SendAlsoTo = _sendAlsoTo.Select(sat =>
-                new PadrinoEditSendAlsoToViewModel
-                {
-                    RecipientFullName = sat.FullName,
-                    RecipientEmail = sat.Email,
-                    SendAsBcc = sat.SendAsBcc,
-                }).ToList();
-
             if (_isNew)
             {
                 _padrino.FilialId = _user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
@@ -175,37 +191,18 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
         }
 
-        private async Task OpenSendAlsoToDialogAsync()
+        private async Task OpenSendAlsoToDialogAsync(int? currentIndex = null)
         {
-            var options = new DialogOptions
-            {
-                CloseButton = true,
-                CloseOnEscapeKey = true
-            };
-            var dialog = await DialogService.ShowAsync<AddSendAlsoToDialog>("Enviar también a", options);
-            var result = await dialog.Result;
 
-            if (result.Canceled)
+            var parameters = new DialogParameters();
+
+            if (currentIndex is not null)
             {
-                return;
+                parameters["FullName"] = _padrino.SendAlsoTo[currentIndex.Value].RecipientFullName;
+                parameters["Email"] = _padrino.SendAlsoTo[currentIndex.Value].RecipientEmail;
+                parameters["SendAsBcc"] = _padrino.SendAlsoTo[currentIndex.Value].SendAsBcc;
             }
 
-            if (result.Data is not AddSendAlsoToDialogModel data)
-            {
-                return;
-            }
-
-            _sendAlsoTo.Add(data);
-        }
-
-        private async Task OpenSendAlsoToDialogAsync(int currentIndex)
-        {
-            var parameters = new DialogParameters
-            {
-                { "FullName", _sendAlsoTo[currentIndex].FullName },
-                { "Email", _sendAlsoTo[currentIndex].Email },
-                { "SendAsBcc", _sendAlsoTo[currentIndex].SendAsBcc }
-            };
             var options = new DialogOptions
             {
                 CloseButton = true,
@@ -224,7 +221,21 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            _sendAlsoTo[currentIndex] = data;
+            var sendAlsoTo = new PadrinoEditSendAlsoToViewModel
+            {
+                RecipientFullName = data.FullName,
+                RecipientEmail = data.Email,
+                SendAsBcc = data.SendAsBcc
+            };
+
+            if (currentIndex is null)
+            {
+                _padrino.SendAlsoTo.Add(sendAlsoTo);
+            }
+            else
+            {
+                _padrino.SendAlsoTo[currentIndex.Value] = sendAlsoTo;
+            }
         }
     }
 }
