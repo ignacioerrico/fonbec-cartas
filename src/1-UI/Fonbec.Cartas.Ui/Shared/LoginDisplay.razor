@@ -4,15 +4,37 @@
 
 <AuthorizeView>
     <Authorized>
+        <div class="d-flex d-md-none">
+            <MudText Class="mr-4">@context.User.NickName()</MudText>
+        </div>
+        <div class="d-none d-md-flex">
         <MudText Class="mr-4">¡Hola, @context.User.NickName()!</MudText>
+        </div>
+
+        <div class="d-flex d-md-none">
+            <MudTooltip Text="Tu cuenta" Arrow="true" Placement="Placement.Bottom" Color="Color.Info">
+                <MudIconButton Icon="@Icons.Material.Filled.Person" Variant="Variant.Filled" Color="Color.Info" Class="mr-4"
+                               OnClick="@(() => NavigateTo("/Identity/Account/Manage"))" />
+            </MudTooltip>
+        </div>
+        <div class="d-none d-md-flex">
         <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Info" Class="mr-4"
                    OnClick="@(() => NavigateTo("/Identity/Account/Manage"))">
             Tu cuenta
         </MudButton>
+        </div>
+        
         <form method="post" action="/Identity/Account/LogOut">
+            <div class="d-flex d-md-none">
+                <MudTooltip Text="Cerrar sesión" Arrow="true" Placement="Placement.Bottom" Color="Color.Secondary">
+                    <MudIconButton Icon="@Icons.Material.Filled.ExitToApp" Variant="Variant.Filled" Color="Color.Secondary" />
+                </MudTooltip>
+            </div>
+            <div class="d-none d-md-flex">
             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Secondary">
                 Cerrar sesión
             </MudButton>
+            </div>
             <input type="hidden"
                    name="__RequestVerificationToken"
                    value="@InitialState.XsrfToken" />
