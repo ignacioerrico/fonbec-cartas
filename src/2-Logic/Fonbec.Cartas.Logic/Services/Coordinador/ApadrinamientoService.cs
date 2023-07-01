@@ -2,7 +2,7 @@
 using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 
-namespace Fonbec.Cartas.Logic.Services.ServicesCoordinador
+namespace Fonbec.Cartas.Logic.Services.Coordinador
 {
     public interface IApadrinamientoService
     {

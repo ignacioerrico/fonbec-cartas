@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
 using Fonbec.Cartas.DataAccess.Entities.Enums;
 using Fonbec.Cartas.Logic.ExtensionMethods;
+using Fonbec.Cartas.Logic.Services.Coordinador;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
 using Fonbec.Cartas.Ui.Constants;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using Fonbec.Cartas.Logic.ExtensionMethods;
-using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
+using Fonbec.Cartas.Logic.Services.Coordinador;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {

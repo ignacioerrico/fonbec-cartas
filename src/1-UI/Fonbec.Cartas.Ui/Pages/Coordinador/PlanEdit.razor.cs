@@ -1,7 +1,6 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
 using Fonbec.Cartas.Logic.ExtensionMethods;
 using Fonbec.Cartas.Logic.Services.MessageTemplate;
-using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Fonbec.Cartas.Ui.Constants;
 using Microsoft.AspNetCore.Components;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using System.Globalization;
 using System.Security.Claims;
+using Fonbec.Cartas.Logic.Services.Coordinador;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {

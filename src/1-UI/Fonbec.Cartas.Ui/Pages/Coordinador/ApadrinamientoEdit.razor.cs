@@ -1,5 +1,5 @@
 ﻿using Fonbec.Cartas.Logic.ExtensionMethods;
-using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
+using Fonbec.Cartas.Logic.Services.Coordinador;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Fonbec.Cartas.Ui.Components.Dialogs;
 using Fonbec.Cartas.Ui.Constants;
