@@ -1,4 +1,4 @@
-﻿namespace Fonbec.Cartas.DataAccess.Projections
+﻿namespace Fonbec.Cartas.DataAccess.DataModels
 {
     public class PadrinoForSelectionProjection
     {

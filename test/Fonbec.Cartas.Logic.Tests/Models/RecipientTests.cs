@@ -13,8 +13,8 @@ namespace Fonbec.Cartas.Logic.Tests.Models
 
             using (new AssertionScope())
             {
-                sut.EmailAddress.Should().Be("<john@doe.com>");
                 sut.DisplayName.Should().Be("john@doe.com");
+                sut.EmailAddress.Should().Be("<john@doe.com>");
             }
         }
 
@@ -25,8 +25,8 @@ namespace Fonbec.Cartas.Logic.Tests.Models
 
             using (new AssertionScope())
             {
-                sut.EmailAddress.Should().Be("<john@doe.com>");
                 sut.DisplayName.Should().Be("John Doe");
+                sut.EmailAddress.Should().Be("<john@doe.com>");
             }
         }
     }

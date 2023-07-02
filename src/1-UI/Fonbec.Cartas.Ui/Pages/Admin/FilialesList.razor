@@ -1,5 +1,6 @@
 ﻿@page "/admin/filiales"
 @using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.Logic.ExtensionMethods
 @using Fonbec.Cartas.Logic.ViewModels.Admin
 @using Fonbec.Cartas.Ui.Constants
 @attribute [Authorize(Roles = FonbecRoles.Admin)]
@@ -14,18 +15,12 @@
             Color="Color.Primary" />
 </MudTooltip>
 
-@if (_loading)
+<ActivityIndicator Loading="_loading"
+                   If="!_viewModels.Any()" ThenDisplay="No hay filiales." />
+
+@if (_viewModels.Any())
 {
-    <MudText Class="mt-4"><em>Cargado datos&hellip;</em></MudText>
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
-}
-else if (!_filiales.Any())
-{
-    <MudText Typo="Typo.h6" Class="mt-4">No hay filiales.</MudText>
-}
-else
-{
-    <MudTable Items="_filiales"
+    <MudTable Items="_viewModels"
               Dense="true" Hover="true" Striped="true" Bordered="true"
               Filter="new Func<FilialesListViewModel, bool>(Filter)"
               SortLabel="Ordenar por"
@@ -38,7 +33,7 @@ else
         </ToolBarContent>
         <HeaderContent>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.Name)"
+                <MudTableSortLabel SortBy="new Func<FilialesListViewModel, object>(filial => filial.FilialName)"
                                    InitialDirection="SortDirection.Ascending">
                     Nombre
                 </MudTableSortLabel>
@@ -68,23 +63,10 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nombre">
-                <MudTooltip Delay="500" Arrow="true" Placement="Placement.Bottom" Color="Color.Dark">
-                    <ChildContent>
-                        <MudText Color="Color.Primary">
-                            <strong>@context.Name</strong>
-                        </MudText>
-                    </ChildContent>
-                    <TooltipContent>
-                        <MudText Align="Align.Left" Typo="Typo.body1">@context.Name (ID: @context.Id)</MudText>
-                        @foreach (var line in context.AuditDisplay())
-                        {
-                            <MudText Align="Align.Left" Typo="Typo.body1">@line</MudText>
-                        }
-                    </TooltipContent>
-                </MudTooltip>
+                <AuditableItemDisplay Id="@context.FilialId" Name="@context.FilialName" AuditableViewModel="@context" />
             </MudTd>
             <MudTd DataLabel="Coordinadores">
-                @(context.CoordinadoresDisplay() ?? "—")
+                @context.Coordinadores.ToCommaSeparatedList(useMDashIfEmpty: true)
             </MudTd>
             <MudTd DataLabel="# Mediadores">
                    @context.QtyMediadores
@@ -100,12 +82,12 @@ else
             </MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(NavRoutes.AdminFilialEdit_0, context.Id))"
+                    <MudIconButton Href="@(string.Format(NavRoutes.AdminFilialEdit_0, context.FilialId))"
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
                 <MudTooltip Text="Borrar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton OnClick="@(async () => await OpenDeleteDialogAsync(context.Id, context.Name))"
-                                   Disabled="_filiales.Count == 1"
+                    <MudIconButton OnClick="@(async () => await OpenDeleteDialogAsync(context.FilialId, context.FilialName))"
+                                   Disabled="_viewModels.Count == 1"
                                    Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
             </MudTd>

@@ -15,5 +15,13 @@ namespace Fonbec.Cartas.Logic.ExtensionMethods
 
             return index != -1;
         }
+
+        public static string ToCommaSeparatedList(this List<string> list, bool useMDashIfEmpty = false)
+        {
+            var result = string.Join(", ", list);
+            return string.IsNullOrEmpty(result) && useMDashIfEmpty
+                ? "—"
+                : result;
+        }
     }
 }

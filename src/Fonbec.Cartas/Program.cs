@@ -1,8 +1,10 @@
 using Fonbec.Cartas.DataAccess;
 using Fonbec.Cartas.DataAccess.Identity;
 using Fonbec.Cartas.Ui.Identity;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,11 +46,20 @@ if (googleClientId is not null && googleClientSecret is not null)
         });
 }
 
+// Mapster (each View Model declares its own mapping)
+var logicAssembly = Assembly.Load("Fonbec.Cartas.Logic");
+TypeAdapterConfig.GlobalSettings.Scan(logicAssembly);
+
+// Razor Pages (required by ASP.NET Core Identity)
 builder.Services.AddRazorPages();
+
+// Blazor Server
 builder.Services.AddServerSideBlazor();
 
+// Options
 Fonbec.Cartas.Ui.ConfigureServices.RegisterOptions(builder.Services, builder.Configuration);
 
+// Services
 Fonbec.Cartas.Ui.ConfigureServices.RegisterServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();

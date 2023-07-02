@@ -19,5 +19,46 @@ namespace Fonbec.Cartas.Logic.Tests.ExtensionMethods
             // Assert
             expected.Should().Be(actual);
         }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToCommaSeparatedList_Success(bool useMDashIfEmpty)
+        {
+            // Arrange
+            var list = new List<string> { "one", "two", "three" };
+
+            // Act
+            var result = list.ToCommaSeparatedList(useMDashIfEmpty);
+
+            // Assert
+            result.Should().Be("one, two, three");
+        }
+
+        [Fact]
+        public void ToCommaSeparatedList_Empty_DoNotUseMDash()
+        {
+            // Arrange
+            var list = new List<string>();
+
+            // Act
+            var result = list.ToCommaSeparatedList(useMDashIfEmpty: false);
+
+            // Assert
+            result.Should().Be(string.Empty);
+        }
+        
+        [Fact]
+        public void ToCommaSeparatedList_Empty_UseMDash()
+        {
+            // Arrange
+            var list = new List<string>();
+
+            // Act
+            var result = list.ToCommaSeparatedList(useMDashIfEmpty: true);
+
+            // Assert
+            result.Should().Be("—");
+        }
     }
 }

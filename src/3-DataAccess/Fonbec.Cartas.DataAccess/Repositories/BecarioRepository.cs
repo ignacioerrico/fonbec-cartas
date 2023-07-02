@@ -1,5 +1,5 @@
-﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
-using Fonbec.Cartas.DataAccess.Projections;
+﻿using Fonbec.Cartas.DataAccess.DataModels;
+using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fonbec.Cartas.DataAccess.Repositories

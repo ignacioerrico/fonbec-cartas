@@ -1,0 +1,14 @@
+﻿<MudTooltip Delay="500" Arrow="true" Placement="Placement.Bottom" Color="Color.Dark">
+    <ChildContent>
+        <MudText Color="Color.Primary">
+            <strong>@Name</strong>
+        </MudText>
+    </ChildContent>
+    <TooltipContent>
+        <MudText Align="Align.Left" Typo="Typo.body1">@Name (ID: @Id)</MudText>
+        @foreach (var line in @AuditableViewModel.AuditDisplay())
+        {
+            <MudText Align="Align.Left" Typo="Typo.body1">@line</MudText>
+        }
+    </TooltipContent>
+</MudTooltip>

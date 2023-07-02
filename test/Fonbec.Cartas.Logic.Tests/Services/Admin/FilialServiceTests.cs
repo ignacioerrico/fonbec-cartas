@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
+using Fonbec.Cartas.DataAccess.DataModels.Admin;
 using Fonbec.Cartas.DataAccess.Entities;
-using Fonbec.Cartas.DataAccess.Projections;
-using Fonbec.Cartas.DataAccess.Repositories;
+using Fonbec.Cartas.DataAccess.Repositories.Admin;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Moq;
 
@@ -36,16 +36,16 @@ namespace Fonbec.Cartas.Logic.Tests.Services.Admin
             {
                 result.Count.Should().Be(3);
                 
-                result[0].Id.Should().Be(1);
-                result[0].Name.Should().Be("Filial-1");
+                result[0].FilialId.Should().Be(1);
+                result[0].FilialName.Should().Be("Filial-1");
                 result[0].LastUpdatedOnUtc.Should().BeNull();
 
-                result[1].Id.Should().Be(2);
-                result[1].Name.Should().Be("Filial-2");
+                result[1].FilialId.Should().Be(2);
+                result[1].FilialName.Should().Be("Filial-2");
                 result[1].LastUpdatedOnUtc.Should().NotBeNull();
 
-                result[2].Id.Should().Be(3);
-                result[2].Name.Should().Be("Filial-3");
+                result[2].FilialId.Should().Be(3);
+                result[2].FilialName.Should().Be("Filial-3");
                 result[2].LastUpdatedOnUtc.Should().BeNull();
             }
         }
@@ -152,28 +152,28 @@ namespace Fonbec.Cartas.Logic.Tests.Services.Admin
             result.Should().Be(1);
         }
 
-        private static List<FilialesListProjection> GetFiliales()
+        private static List<FilialesListDataModel> GetFiliales()
         {
-            var filiales = new List<FilialesListProjection>
+            var filiales = new List<FilialesListDataModel>
             {
                 new()
                 {
-                    Id = 1,
-                    Name = "Filial-1",
+                    FilialId = 1,
+                    FilialName = "Filial-1",
                     CreatedOnUtc = DateTimeOffset.UtcNow,
                     LastUpdatedOnUtc = null,
                 },
                 new()
                 {
-                    Id = 2,
-                    Name = "Filial-2",
+                    FilialId = 2,
+                    FilialName = "Filial-2",
                     CreatedOnUtc = DateTimeOffset.UtcNow,
                     LastUpdatedOnUtc = DateTimeOffset.UtcNow,
                 },
                 new()
                 {
-                    Id = 3,
-                    Name = "Filial-3",
+                    FilialId = 3,
+                    FilialName = "Filial-3",
                     CreatedOnUtc = DateTimeOffset.UtcNow,
                     LastUpdatedOnUtc = null,
                 },

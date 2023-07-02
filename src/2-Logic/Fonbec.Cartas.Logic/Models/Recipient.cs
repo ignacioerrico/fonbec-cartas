@@ -4,10 +4,11 @@ public class Recipient
 {
     public Recipient(string emailAddress, string? displayName = null)
     {
-        EmailAddress = $"<{emailAddress}>";
         DisplayName = displayName ?? emailAddress;
+        EmailAddress = $"<{emailAddress}>";
     }
 
-    public string EmailAddress { get; }
     public string DisplayName { get; }
+
+    public string EmailAddress { get; }
 }

@@ -1,6 +1,8 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities;
-using Fonbec.Cartas.DataAccess.Repositories;
+using Fonbec.Cartas.DataAccess.Repositories.Admin;
+using Fonbec.Cartas.Logic.Models.Results;
 using Fonbec.Cartas.Logic.ViewModels.Admin;
+using Mapster;
 
 namespace Fonbec.Cartas.Logic.Services.Admin
 {
@@ -8,10 +10,10 @@ namespace Fonbec.Cartas.Logic.Services.Admin
     {
         Task<List<FilialesListViewModel>> GetAllFilialesAsync();
         Task<List<FilialViewModel>> GetAllFilialesForSelectionAsync();
-        Task<string?> GetFilialNameAsync(int id);
-        Task<int> CreateFilialAsync(string filialName);
-        Task<int> UpdateFilialAsync(int id, string newName);
-        Task<int> SoftDeleteAsync(int id);
+        Task<SearchResult<string>> GetFilialNameAsync(int id);
+        Task<CrudResult> CreateFilialAsync(string filialName);
+        Task<CrudResult> UpdateFilialAsync(int id, string newName);
+        Task<CrudResult> SoftDeleteAsync(int id);
     }
 
     public class FilialService : IFilialService
@@ -25,50 +27,48 @@ namespace Fonbec.Cartas.Logic.Services.Admin
 
         public async Task<List<FilialesListViewModel>> GetAllFilialesAsync()
         {
-            var filiales = await _filialesRepository.GetAllFilialesAsync();
-            return filiales.Select(f =>
-                    new FilialesListViewModel(f.Name)
-                    {
-                        Id = f.Id,
-                        Coordinadores = f.Coordinadores,
-                        QtyMediadores = f.QtyMediadores,
-                        QtyRevisores = f.QtyRevisores,
-                        CreatedOnUtc = f.CreatedOnUtc,
-                        LastUpdatedOnUtc = f.LastUpdatedOnUtc,
-                        // TODO
-                    })
-                .ToList();
+            var filialesDataModel = await _filialesRepository.GetAllFilialesAsync();
+            var filialesListViewModel = filialesDataModel.Adapt<List<FilialesListViewModel>>();
+            return filialesListViewModel;
         }
 
         public async Task<List<FilialViewModel>> GetAllFilialesForSelectionAsync()
         {
             var filiales = await _filialesRepository.GetAllFilialesAsync();
-            return filiales.Select(f => new FilialViewModel(f.Id, f.Name)).ToList();
+            return filiales.Select(f => new FilialViewModel(f.FilialId, f.FilialName)).ToList();
         }
 
-        public async Task<string?> GetFilialNameAsync(int id)
+        public async Task<SearchResult<string>> GetFilialNameAsync(int id)
         {
-            return await _filialesRepository.GetFilialNameAsync(id);
+            var filialName = await _filialesRepository.GetFilialNameAsync(id);
+            return new SearchResult<string>(filialName);
         }
 
-        public async Task<int> CreateFilialAsync(string filialName)
+        public async Task<CrudResult> CreateFilialAsync(string filialName)
         {
             var newFilial = new Filial
             {
                 Name = filialName
             };
 
-            return await _filialesRepository.CreateFilialAsync(newFilial);
+            var rowsAffected = await _filialesRepository.CreateFilialAsync(newFilial);
+            
+            return new CrudResult(rowsAffected);
         }
 
-        public async Task<int> UpdateFilialAsync(int id, string newName)
+        public async Task<CrudResult> UpdateFilialAsync(int id, string newName)
         {
-            return await _filialesRepository.UpdateFilialAsync(id, newName);
+            var rowsAffected = await _filialesRepository.UpdateFilialAsync(id, newName);
+            return new CrudResult(rowsAffected);
         }
 
-        public async Task<int> SoftDeleteAsync(int id)
+        public async Task<CrudResult> SoftDeleteAsync(int id)
         {
-            return await _filialesRepository.SoftDeleteAsync(id);
+            var rowsAffected = await _filialesRepository.SoftDeleteAsync(id);
+
+            // TODO: Local accounts of Coordinadores, Mediadores, and Revisored in this Filial
+
+            return new CrudResult(rowsAffected);
         }
     }
 }

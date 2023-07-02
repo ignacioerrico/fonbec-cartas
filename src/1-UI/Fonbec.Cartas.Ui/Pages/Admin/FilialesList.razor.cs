@@ -8,7 +8,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
 {
     public partial class FilialesList
     {
-        private readonly List<FilialesListViewModel> _filiales = new();
+        private List<FilialesListViewModel> _viewModels = new();
 
         private bool _loading;
         private string _searchString = string.Empty;
@@ -27,8 +27,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
         {
             _loading = true;
 
-            var filiales = await FilialService.GetAllFilialesAsync();
-            _filiales.AddRange(filiales);
+            _viewModels = await FilialService.GetAllFilialesAsync();
 
             _loading = false;
         }
@@ -36,10 +35,9 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
         private bool Filter(FilialesListViewModel filialesListViewModel)
         {
             return string.IsNullOrWhiteSpace(_searchString)
-                   || filialesListViewModel.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                   || filialesListViewModel.FilialName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                    || (_includeCoordinadores
-                       && filialesListViewModel.Coordinadores.Any(c =>
-                           c.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));
+                       && filialesListViewModel.Coordinadores.Any(c => c.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));
         }
 
         private async Task OpenDeleteDialogAsync(int id, string filialName)
@@ -51,15 +49,15 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
                 CloseOnEscapeKey = true
             };
             var dialog = await DialogService.ShowAsync<ConfirmDeleteDialog>("¡Atención!", parameters, options);
-            var result = await dialog.Result;
+            var dialogResult = await dialog.Result;
 
-            if (result.Canceled)
+            if (dialogResult.Canceled)
             {
                 return;
             }
 
-            var qtyFilialesSoftDeleted = await FilialService.SoftDeleteAsync(id);
-            if (qtyFilialesSoftDeleted == 0)
+            var result = await FilialService.SoftDeleteAsync(id);
+            if (!result.IsSuccess)
             {
                 Snackbar.Add($"Error al borrar '{filialName}'", Severity.Error);
                 return;
@@ -67,8 +65,8 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
 
             Snackbar.Add($"'{filialName}' fue borrado", Severity.Success);
 
-            var indexToDelete = _filiales.FindIndex(f => f.Id == id);
-            _filiales.RemoveAt(indexToDelete);
+            var indexToDelete = _viewModels.FindIndex(f => f.FilialId == id);
+            _viewModels.RemoveAt(indexToDelete);
         }
     }
 }

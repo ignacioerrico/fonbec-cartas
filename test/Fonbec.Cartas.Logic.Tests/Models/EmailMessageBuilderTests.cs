@@ -1,8 +1,9 @@
-﻿using Fonbec.Cartas.Logic.Models;
-using Moq;
-using Microsoft.Extensions.Configuration;
+﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using FluentAssertions;
+using Fonbec.Cartas.Logic.Builders;
+using Fonbec.Cartas.Logic.Models;
+using Microsoft.Extensions.Configuration;
+using Moq;
 
 namespace Fonbec.Cartas.Logic.Tests.Models
 {

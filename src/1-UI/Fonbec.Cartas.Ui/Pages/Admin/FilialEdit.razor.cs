@@ -18,14 +18,17 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
 
         private MudTextField<string> _mudTextFieldNombre = default!;
 
+        private bool ModelHasChanged => !string.Equals(_filialName, _originalFilialName, StringComparison.Ordinal);
+
         private bool SaveButtonDisabled => _loading
                                            || !_formValidationSucceeded
-                                           || string.Equals(_filialName, _originalFilialName, StringComparison.Ordinal);
+                                           || !ModelHasChanged;
 
         [Parameter]
         public string FilialId { get; set; } = string.Empty;
 
-        [Inject] public IFilialService FilialService { get; set; } = default!;
+        [Inject]
+        public IFilialService FilialService { get; set; } = default!;
 
         [Inject]
         public ISnackbar Snackbar { get; set; } = default!;
@@ -60,17 +63,19 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
                 _saveButtonText = "Actualizar";
 
                 _loading = true;
-                var filialName = await FilialService.GetFilialNameAsync(filialId);
+
+                var searchResult = await FilialService.GetFilialNameAsync(filialId);
+
                 _loading = false;
 
-                if (filialName is null)
+                if (!searchResult.IsFound)
                 {
                     Snackbar.Add($"No se encontró filial con ID {filialId}.", Severity.Error);
                     NavigationManager.NavigateTo(NavRoutes.AdminFilialNew);
                     return;
                 }
 
-                _filialName = _originalFilialName = filialName;
+                _filialName = _originalFilialName = searchResult.Data!;
             }
             else
             {
@@ -82,17 +87,17 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
         {
             if (_isNewFilial)
             {
-                var filialesAdded = await FilialService.CreateFilialAsync(_filialName);
-                if (filialesAdded == 0)
+                var result = await FilialService.CreateFilialAsync(_filialName);
+                if (!result.IsSuccess)
                 {
                     Snackbar.Add($"No se pudo crear la filial.", Severity.Error);
                 }
             }
-            else if (!string.Equals(_filialName, _originalFilialName, StringComparison.OrdinalIgnoreCase))
+            else if (ModelHasChanged)
             {
                 var id = int.Parse(FilialId);
-                var filialesUpdated = await FilialService.UpdateFilialAsync(id, _filialName);
-                if (filialesUpdated == 0)
+                var result = await FilialService.UpdateFilialAsync(id, _filialName);
+                if (!result.IsSuccess)
                 {
                     Snackbar.Add($"No se pudo actualizar la filial.", Severity.Error);
                 }

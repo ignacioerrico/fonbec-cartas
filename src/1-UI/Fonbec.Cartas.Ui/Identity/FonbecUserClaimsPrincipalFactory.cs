@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Fonbec.Cartas.DataAccess.Constants;
+using Fonbec.Cartas.DataAccess.DataModels;
 using Fonbec.Cartas.DataAccess.Identity;
-using Fonbec.Cartas.DataAccess.Projections;
 using Fonbec.Cartas.Logic.Constants;
 using Fonbec.Cartas.Logic.Services.Identity;
 using Microsoft.AspNetCore.Identity;

@@ -1,4 +1,4 @@
-﻿using Fonbec.Cartas.DataAccess.Projections;
+﻿using Fonbec.Cartas.DataAccess.DataModels;
 using Fonbec.Cartas.DataAccess.Repositories;
 
 namespace Fonbec.Cartas.Logic.Services.Identity

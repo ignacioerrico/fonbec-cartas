@@ -1,11 +1,12 @@
 ﻿using Azure.Communication.Email;
 using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Fonbec.Cartas.DataAccess.Repositories;
+using Fonbec.Cartas.DataAccess.Repositories.Admin;
 using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
+using Fonbec.Cartas.Logic.Services.Coordinador;
 using Fonbec.Cartas.Logic.Services.Identity;
 using Fonbec.Cartas.Logic.Services.MessageTemplate;
-using Fonbec.Cartas.Logic.Services.ServicesCoordinador;
 using Fonbec.Cartas.Ui.Identity;
 using Fonbec.Cartas.Ui.Options;
 using Microsoft.AspNetCore.Identity.UI.Services;

@@ -1,12 +1,12 @@
-﻿using Fonbec.Cartas.DataAccess.Entities;
-using Fonbec.Cartas.DataAccess.Projections;
+﻿using Fonbec.Cartas.DataAccess.DataModels.Admin;
+using Fonbec.Cartas.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fonbec.Cartas.DataAccess.Repositories
+namespace Fonbec.Cartas.DataAccess.Repositories.Admin
 {
     public interface IFilialesRepository
     {
-        Task<List<FilialesListProjection>> GetAllFilialesAsync();
+        Task<List<FilialesListDataModel>> GetAllFilialesAsync();
         Task<string?> GetFilialNameAsync(int id);
         Task<int> CreateFilialAsync(Filial filial);
         Task<int> UpdateFilialAsync(int id, string newName);
@@ -22,26 +22,32 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             _appDbContextFactory = appDbContextFactory;
         }
 
-        public async Task<List<FilialesListProjection>> GetAllFilialesAsync()
+        public async Task<List<FilialesListDataModel>> GetAllFilialesAsync()
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-            return await appDbContext.Filiales
+            var filialesListDataModel = await appDbContext.Filiales
                 .Include(f => f.Coordinadores)
                 .Include(f => f.Mediadores)
                 .Include(f => f.Revisores)
-                .Select(f => new FilialesListProjection
+                .Include(f => f.Padrinos)
+                .Include(f => f.Becarios)
+                .Select(f => new FilialesListDataModel
                 {
-                    Id = f.Id,
-                    Name = f.Name,
+                    FilialId = f.Id,
+                    FilialName = f.Name,
                     Coordinadores = f.Coordinadores
+                        .OrderBy(c => c.FirstName)
                         .Select(c => c.FullName(false))
                         .ToList(),
                     QtyMediadores = f.Mediadores.Count,
                     QtyRevisores = f.Revisores.Count,
+                    QtyPadrinos = f.Padrinos.Count,
+                    QtyBecarios = f.Becarios.Count,
                     CreatedOnUtc = f.CreatedOnUtc,
                     LastUpdatedOnUtc = f.LastUpdatedOnUtc,
                 })
                 .ToListAsync();
+            return filialesListDataModel;
         }
 
         public async Task<string?> GetFilialNameAsync(int id)

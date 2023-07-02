@@ -1,8 +1,9 @@
 ﻿using Azure.Communication.Email;
 using System.Net.Mime;
 using Microsoft.Extensions.Configuration;
+using Fonbec.Cartas.Logic.Models;
 
-namespace Fonbec.Cartas.Logic.Models
+namespace Fonbec.Cartas.Logic.Builders
 {
     public class EmailMessageBuilder
     {
@@ -15,7 +16,7 @@ namespace Fonbec.Cartas.Logic.Models
         {
             _from = configuration.GetSection("Email:From").Value
                     ?? throw new NullReferenceException("Email:From not set.");
-            
+
             var replyToEmail = configuration.GetSection("Email:ReplyToEmail").Value;
             if (replyToEmail is not null && !string.IsNullOrWhiteSpace(replyToEmail))
             {
@@ -30,14 +31,21 @@ namespace Fonbec.Cartas.Logic.Models
             Subject = subject;
             BodyHtml = bodyHtml;
         }
-        
+
         public List<Recipient> To { get; }
+        
         public List<Recipient> Cc { get; } = new();
+        
         public List<Recipient> Bcc { get; } = new();
+        
         public Recipient? ReplyTo { get; }
+        
         public string Subject { get; }
+        
         public string BodyHtml { get; }
+        
         public string? BodyPlainText { get; set; }
+        
         public List<string> FilePaths { get; } = new();
 
         public EmailMessage Build()
@@ -81,7 +89,7 @@ namespace Fonbec.Cartas.Logic.Models
                 var bytes = File.ReadAllBytes(filePath);
                 var binaryData = new BinaryData(bytes);
                 var emailAttachment = new EmailAttachment(fileName, contentType, binaryData);
-                
+
                 emailMessage.Attachments.Add(emailAttachment);
             }
 

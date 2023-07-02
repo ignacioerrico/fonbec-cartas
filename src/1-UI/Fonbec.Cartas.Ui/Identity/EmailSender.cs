@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.Logic.Models;
+﻿using Fonbec.Cartas.Logic.Builders;
+using Fonbec.Cartas.Logic.Models;
 using Fonbec.Cartas.Logic.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
@@ -28,9 +29,11 @@ namespace Fonbec.Cartas.Ui.Identity
                 subject,
                 htmlMessage);
 
+            var recipients = new List<Recipient> { new(email) };
+
             var emailMessageBuilder =
                 new EmailMessageBuilder(_configuration,
-                    new() { new(email) },
+                    recipients,
                     subject,
                     htmlMessage);
 
