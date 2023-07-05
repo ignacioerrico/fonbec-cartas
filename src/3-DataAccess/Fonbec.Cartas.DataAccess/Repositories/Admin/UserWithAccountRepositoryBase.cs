@@ -1,16 +1,34 @@
-﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
+﻿using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Entities.Actors.Abstract;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fonbec.Cartas.DataAccess.Repositories
+namespace Fonbec.Cartas.DataAccess.Repositories.Admin
 {
-    public abstract class UserWithAccountRepositoryBase<T>
-        where T : EntityBase, IAmUserWithAccount, IHaveEmail
+    public interface IUserWithAccountRepositoryBase<T> where T : UserWithAccount
+    {
+        Task<List<Filial>> GetAllFilialesAsync();
+        Task<List<T>> GetAllAsync();
+        Task<T?> GetAsync(int id);
+        Task<int> CreateAsync(T userWithAccount);
+        Task<int> UpdateAsync(int id, T userWithAccount);
+    }
+
+    public abstract class UserWithAccountRepositoryBase<T> : IUserWithAccountRepositoryBase<T> where T : UserWithAccount
     {
         private readonly IDbContextFactory<ApplicationDbContext> _appDbContextFactory;
 
         protected UserWithAccountRepositoryBase(IDbContextFactory<ApplicationDbContext> appDbContextFactory)
         {
             _appDbContextFactory = appDbContextFactory;
+        }
+
+        public async Task<List<Filial>> GetAllFilialesAsync()
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var filiales = await appDbContext.Filiales
+                .OrderBy(f => f.Name)
+                .ToListAsync();
+            return filiales;
         }
 
         public async Task<List<T>> GetAllAsync()
@@ -29,7 +47,6 @@ namespace Fonbec.Cartas.DataAccess.Repositories
                 .Include(e => e.Filial)
                 .SingleOrDefaultAsync(e => e.Id == id);
             return singleWithFilial;
-
         }
 
         public async Task<int> CreateAsync(T userWithAccount)

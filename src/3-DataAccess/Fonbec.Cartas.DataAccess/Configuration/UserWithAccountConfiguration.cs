@@ -1,12 +1,12 @@
 ﻿using Fonbec.Cartas.DataAccess.Constants;
-using Fonbec.Cartas.DataAccess.Entities.Actors;
+using Fonbec.Cartas.DataAccess.Entities.Actors.Abstract;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fonbec.Cartas.DataAccess.Configuration
 {
     public abstract class UserWithAccountConfiguration<T> : IEntityTypeConfiguration<T>
-        where T : EntityBase, IAmUserWithAccount, IHaveEmail
+        where T : UserWithAccount
     {
         public void Configure(EntityTypeBuilder<T> builder)
         {

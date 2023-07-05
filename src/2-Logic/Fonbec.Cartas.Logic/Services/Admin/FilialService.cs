@@ -9,7 +9,6 @@ namespace Fonbec.Cartas.Logic.Services.Admin
     public interface IFilialService
     {
         Task<List<FilialesListViewModel>> GetAllFilialesAsync();
-        Task<List<FilialViewModel>> GetAllFilialesForSelectionAsync();
         Task<SearchResult<string>> GetFilialNameAsync(int id);
         Task<CrudResult> CreateFilialAsync(string filialName);
         Task<CrudResult> UpdateFilialAsync(int id, string newName);
@@ -30,12 +29,6 @@ namespace Fonbec.Cartas.Logic.Services.Admin
             var filialesDataModel = await _filialesRepository.GetAllFilialesAsync();
             var filialesListViewModel = filialesDataModel.Adapt<List<FilialesListViewModel>>();
             return filialesListViewModel;
-        }
-
-        public async Task<List<FilialViewModel>> GetAllFilialesForSelectionAsync()
-        {
-            var filiales = await _filialesRepository.GetAllFilialesAsync();
-            return filiales.Select(f => new FilialViewModel(f.FilialId, f.FilialName)).ToList();
         }
 
         public async Task<SearchResult<string>> GetFilialNameAsync(int id)

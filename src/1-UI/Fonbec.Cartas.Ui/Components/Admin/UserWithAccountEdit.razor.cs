@@ -1,22 +1,25 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
+using Fonbec.Cartas.DataAccess.Entities.Actors.Abstract;
+using Fonbec.Cartas.Logic.Models;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.ViewModels.Admin;
 using Fonbec.Cartas.Ui.Constants;
+using Mapster;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Fonbec.Cartas.Ui.Components.Admin
 {
     public partial class UserWithAccountEdit<T>
-        where T : EntityBase, IAmUserWithAccount, IHaveEmail
+        where T : UserWithAccount
     {
         private readonly string _pathToList;
         private readonly string _pathToNew;
         private readonly string _pageTitleNew;
         private readonly string _pageTitleEdit;
 
-        private readonly UserWithAccountEditViewModel _userWithAccount = new();
-        private readonly UserWithAccountEditViewModel _originalUserWithAccount = new();
+        private UserWithAccountEditViewModel _userWithAccount = new();
+        private UserWithAccountEditViewModel _originalUserWithAccount = new();
         private string _initialPassword = string.Empty;
 
         private bool _loading;
@@ -28,8 +31,8 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
         private MudTextField<string> _mudTextFieldNombre = default!;
 
-        private List<FilialViewModel> _filiales = new();
-        private FilialViewModel? _selectedFilial;
+        private List<SelectableModel> _filiales = new();
+        private SelectableModel? _selectedFilial;
 
         private bool SaveButtonDisabled => _loading
                                            || !_formValidationSucceeded
@@ -77,10 +80,7 @@ namespace Fonbec.Cartas.Ui.Components.Admin
         public string UserWithAccountId { get; set; } = string.Empty;
 
         [Inject]
-        public UserWithAccountService<T> UserWithAccountService { get; set; } = default!;
-
-        [Inject]
-        public IFilialService FilialService { get; set; } = default!;
+        public IUserWithAccountService<T> UserWithAccountService { get; set; } = default!;
 
         [Inject]
         public ISnackbar Snackbar { get; set; } = default!;
@@ -102,7 +102,7 @@ namespace Fonbec.Cartas.Ui.Components.Admin
         {
             _loading = true;
 
-            _filiales = await FilialService.GetAllFilialesForSelectionAsync();
+            _filiales = await UserWithAccountService.GetAllFilialesAsSelectableAsync();
 
             if (!_filiales.Any())
             {
@@ -127,27 +127,19 @@ namespace Fonbec.Cartas.Ui.Components.Admin
                 _pageTitle = _pageTitleEdit;
                 _saveButtonText = "Actualizar";
 
-                var userWithAccount = await UserWithAccountService.GetAsync(userWithAccountId);
+                var result = await UserWithAccountService.GetUserWithAccountAsync(userWithAccountId);
 
-                if (userWithAccount is null)
+                if (!result.IsFound)
                 {
                     Snackbar.Add($"No se encontró {typeof(T).Name} con ID {userWithAccountId}.", Severity.Error);
                     NavigationManager.NavigateTo(_pathToNew);
                     return;
                 }
 
-                _selectedFilial = _filiales.Single(f => f.Id == userWithAccount.FilialId);
+                _selectedFilial = _filiales.Single(f => f.Id == result.Data!.FilialId);
 
-                _userWithAccount.FilialId = _originalUserWithAccount.FilialId = userWithAccount.FilialId;
-                _userWithAccount.FirstName = _originalUserWithAccount.FirstName = userWithAccount.FirstName;
-                _userWithAccount.LastName = _originalUserWithAccount.LastName = userWithAccount.LastName;
-                _userWithAccount.NickName = _originalUserWithAccount.NickName = userWithAccount.NickName;
-                _userWithAccount.Gender = _originalUserWithAccount.Gender = userWithAccount.Gender;
-                _userWithAccount.Email = _originalUserWithAccount.Email = userWithAccount.Email;
-                _userWithAccount.Phone = _originalUserWithAccount.Phone = userWithAccount.Phone;
-                _userWithAccount.Username = _originalUserWithAccount.Username = userWithAccount.Username;
-
-                _userWithAccount.AspNetUserId = userWithAccount.AspNetUserId;
+                _userWithAccount = result.Data!.Adapt<UserWithAccountEditViewModel>();
+                _originalUserWithAccount = result.Data!.Adapt<UserWithAccountEditViewModel>();
             }
             else
             {
@@ -168,13 +160,16 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
             if (_isNew)
             {
-                (var qtyAdded, _createErrors) = await UserWithAccountService.CreateAsync(_userWithAccount, _initialPassword);
-                if (_createErrors.Any())
+                var result = await UserWithAccountService.CreateUserWithAccountAsync(_userWithAccount, _initialPassword);
+
+                _createErrors = result.Errors;
+
+                if (result.AnyErrors)
                 {
                     return;
                 }
 
-                if (qtyAdded == 0)
+                if (!result.AnyRowsAffected)
                 {
                     Snackbar.Add($"No se pudo crear el {typeof(T).Name}.", Severity.Error);
                 }
@@ -182,14 +177,11 @@ namespace Fonbec.Cartas.Ui.Components.Admin
             else if (ModelHasChanged)
             {
                 var id = int.Parse(UserWithAccountId);
-                var qtyUpdated = await UserWithAccountService.UpdateAsync(id, _userWithAccount);
-                if (qtyUpdated == 0)
+                var result = await UserWithAccountService.UpdateUserWithAccountAsync(id, _userWithAccount);
+                
+                foreach (var error in result.Errors)
                 {
-                    Snackbar.Add($"No se pudo actualizar el {typeof(T).Name}.", Severity.Error);
-                }
-                else if (qtyUpdated == -1)
-                {
-                    Snackbar.Add($"Se actualizó el {typeof(T).Name}, pero no se pudo actualizar su identidad.", Severity.Error);
+                    Snackbar.Add(error, Severity.Error);
                 }
             }
 

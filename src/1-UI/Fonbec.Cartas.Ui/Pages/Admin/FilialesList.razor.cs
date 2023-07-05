@@ -57,7 +57,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
             }
 
             var result = await FilialService.SoftDeleteAsync(id);
-            if (!result.IsSuccess)
+            if (!result.AnyRowsAffected)
             {
                 Snackbar.Add($"Error al borrar '{filialName}'", Severity.Error);
                 return;

@@ -3,22 +3,11 @@ using FluentAssertions.Execution;
 using Fonbec.Cartas.DataAccess.DataModels.Admin;
 using Fonbec.Cartas.Logic.ViewModels.Admin;
 using Mapster;
-using System.Reflection;
 
-namespace Fonbec.Cartas.Logic.Tests
+namespace Fonbec.Cartas.Logic.Tests.ViewModels.Amin
 {
-    public class MapsterTests
+    public class FilialesListViewModelTests : MapsterTests
     {
-        private readonly TypeAdapterConfig _config;
-
-        public MapsterTests()
-        {
-            _config = new TypeAdapterConfig();
-            
-            var logicAssembly = Assembly.Load("Fonbec.Cartas.Logic");
-            _config.Scan(logicAssembly);
-        }
-
         [Fact]
         public void Map_FilialesListDataModel_To_FilialesListViewModel()
         {
@@ -40,7 +29,7 @@ namespace Fonbec.Cartas.Logic.Tests
             };
 
             // Act
-            var result = filialesListDataModel.Adapt<FilialesListViewModel>(_config);
+            var result = filialesListDataModel.Adapt<FilialesListDataModel, FilialesListViewModel>();
 
             // Assert
             using (new AssertionScope())

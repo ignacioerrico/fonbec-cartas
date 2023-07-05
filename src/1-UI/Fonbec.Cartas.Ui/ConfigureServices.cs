@@ -44,9 +44,9 @@ namespace Fonbec.Cartas.Ui
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IFilialService, FilialService>();
-            services.AddScoped<UserWithAccountService<Coordinador>, CoordinadorService>();
-            services.AddScoped<UserWithAccountService<Mediador>, MediadorService>();
-            services.AddScoped<UserWithAccountService<Revisor>, RevisorService>();
+            services.AddScoped<IUserWithAccountService<Coordinador>, CoordinadorService>();
+            services.AddScoped<IUserWithAccountService<Mediador>, MediadorService>();
+            services.AddScoped<IUserWithAccountService<Revisor>, RevisorService>();
             services.AddScoped<IPadrinoService, PadrinoService>();
             services.AddScoped<IBecarioService, BecarioService>();
             services.AddScoped<IApadrinamientoService, ApadrinamientoService>();
@@ -54,9 +54,9 @@ namespace Fonbec.Cartas.Ui
 
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped<IFilialesRepository, FilialesRepository>();
-            services.AddScoped<UserWithAccountRepositoryBase<Coordinador>, CoordinadorRepository>();
-            services.AddScoped<UserWithAccountRepositoryBase<Mediador>, MediadorRepository>();
-            services.AddScoped<UserWithAccountRepositoryBase<Revisor>, RevisorRepository>();
+            services.AddScoped<IUserWithAccountRepositoryBase<Coordinador>, CoordinadorRepository>();
+            services.AddScoped<IUserWithAccountRepositoryBase<Mediador>, MediadorRepository>();
+            services.AddScoped<IUserWithAccountRepositoryBase<Revisor>, RevisorRepository>();
             services.AddScoped<IPadrinoRepository, PadrinoRepository>();
             services.AddScoped<IBecarioRepository, BecarioRepository>();
             services.AddScoped<IApadrinamientoRepository, ApadrinamientoRepository>();

@@ -88,7 +88,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
             if (_isNewFilial)
             {
                 var result = await FilialService.CreateFilialAsync(_filialName);
-                if (!result.IsSuccess)
+                if (!result.AnyRowsAffected)
                 {
                     Snackbar.Add($"No se pudo crear la filial.", Severity.Error);
                 }
@@ -97,7 +97,7 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
             {
                 var id = int.Parse(FilialId);
                 var result = await FilialService.UpdateFilialAsync(id, _filialName);
-                if (!result.IsSuccess)
+                if (!result.AnyRowsAffected)
                 {
                     Snackbar.Add($"No se pudo actualizar la filial.", Severity.Error);
                 }

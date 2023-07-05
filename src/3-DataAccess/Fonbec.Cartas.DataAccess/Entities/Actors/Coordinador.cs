@@ -1,11 +1,8 @@
-﻿namespace Fonbec.Cartas.DataAccess.Entities.Actors
+﻿using Fonbec.Cartas.DataAccess.Entities.Actors.Abstract;
+
+namespace Fonbec.Cartas.DataAccess.Entities.Actors
 {
-    public class Coordinador : EntityBase, IAmUserWithAccount, IHaveEmail
+    public class Coordinador : UserWithAccount
     {
-        public string Email { get; set; } = string.Empty;
-
-        public string AspNetUserId { get; set; } = Guid.Empty.ToString();
-
-        public string Username { get; set; } = string.Empty;
     }
 }

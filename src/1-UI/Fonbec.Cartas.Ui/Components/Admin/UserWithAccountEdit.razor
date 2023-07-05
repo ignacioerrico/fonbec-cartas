@@ -1,16 +1,13 @@
-﻿@typeparam T where T : EntityBase, IAmUserWithAccount, IHaveEmail
+﻿@typeparam T
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.DataAccess.Entities.Actors
+@using Fonbec.Cartas.Logic.Models
 @using Fonbec.Cartas.Logic.ViewModels.Admin
 @using System.ComponentModel.DataAnnotations
 
 <PageHeader Title="@_pageTitle" />
 
-@if (_loading)
-{
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true"
-                       Class="my-4" />
-}
+<ActivityIndicator Loading="_loading" />
 
 <MudForm @bind-IsValid="_formValidationSucceeded">
     <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_userWithAccount.FirstName" Immediate="true"
@@ -26,7 +23,7 @@
 
     <GenderSelector @bind-SelectedGender="_userWithAccount.Gender" />
 
-    <MudSelect T="FilialViewModel" Label="Filial" @bind-Value="_selectedFilial"
+    <MudSelect T="SelectableModel" Label="Filial" @bind-Value="_selectedFilial"
                Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
         @foreach (var filial in _filiales)
         {

@@ -1,4 +1,5 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
+using Fonbec.Cartas.DataAccess.Entities.Actors.Abstract;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.ViewModels.Admin;
 using Fonbec.Cartas.Ui.Constants;
@@ -7,13 +8,13 @@ using Microsoft.AspNetCore.Components;
 namespace Fonbec.Cartas.Ui.Components.Admin
 {
     public partial class UsersWithAccountList<T>
-        where T : EntityBase, IAmUserWithAccount, IHaveEmail
+        where T : UserWithAccount
     {
+        private List<UsersWithAccountListViewModel> _viewModels = new();
+
         private readonly string _pageTitle;
         private readonly string _pathToNew;
         private readonly string _pathToEdit_0;
-
-        private readonly List<UsersWithAccountListViewModel> _usersWithAccount = new();
 
         private bool _loading;
         private string _searchString = string.Empty;
@@ -44,14 +45,13 @@ namespace Fonbec.Cartas.Ui.Components.Admin
         }
 
         [Inject]
-        public UserWithAccountService<T> UserWithAccountService { get; set; } = default!;
+        public IUserWithAccountService<T> UserWithAccountService { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
             _loading = true;
 
-            var all = await UserWithAccountService.GetAllAsync();
-            _usersWithAccount.AddRange(all);
+            _viewModels = await UserWithAccountService.GetAllUsersWithAccountAsync();
 
             _loading = false;
         }
@@ -59,9 +59,9 @@ namespace Fonbec.Cartas.Ui.Components.Admin
         private bool Filter(UsersWithAccountListViewModel usersWithAccountListViewModel)
         {
             return string.IsNullOrWhiteSpace(_searchString)
-                   || usersWithAccountListViewModel.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                   || usersWithAccountListViewModel.UserWithAccountFullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                    || (_includeAll &&
-                       (usersWithAccountListViewModel.Filial.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                       (usersWithAccountListViewModel.FilialName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                         || usersWithAccountListViewModel.Email.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                         || usersWithAccountListViewModel.Phone.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                         || usersWithAccountListViewModel.Username.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));

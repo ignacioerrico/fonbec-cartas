@@ -1,4 +1,4 @@
-﻿@typeparam T where T : EntityBase, IAmUserWithAccount, IHaveEmail
+﻿@typeparam T
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.DataAccess.Entities.Actors
 @using Fonbec.Cartas.Logic.ViewModels.Admin
@@ -13,18 +13,13 @@
             Color="Color.Primary" />
 </MudTooltip>
 
-@if (_loading)
+<ActivityIndicator Loading="_loading"
+                   If="!_viewModels.Any()"
+                   ThenDisplay="@($"No hay {_pageTitle.ToLowerInvariant()}es.")" />
+
+@if (_viewModels.Any())
 {
-    <MudText Class="mt-4"><em>Cargado datos&hellip;</em></MudText>
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
-}
-else if (!_usersWithAccount.Any())
-{
-    <MudText Typo="Typo.h6" Class="mt-4">No hay @_pageTitle.ToLowerInvariant()es.</MudText>
-}
-else
-{
-    <MudTable Items="_usersWithAccount"
+    <MudTable Items="_viewModels"
               Dense="true" Hover="true" Striped="true" Bordered="true"
               Filter="new Func<UsersWithAccountListViewModel, bool>(Filter)"
               SortLabel="Ordenar por"
@@ -37,13 +32,13 @@ else
         </ToolBarContent>
         <HeaderContent>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<UsersWithAccountListViewModel, object>(usersWithAccount => usersWithAccount.Name)"
+                <MudTableSortLabel SortBy="new Func<UsersWithAccountListViewModel, object>(usersWithAccount => usersWithAccount.UserWithAccountFullName)"
                                InitialDirection="SortDirection.Ascending">
                     Nombre
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<UsersWithAccountListViewModel, object>(usersWithAccount => usersWithAccount.Filial)">
+                <MudTableSortLabel SortBy="new Func<UsersWithAccountListViewModel, object>(usersWithAccount => usersWithAccount.FilialName)">
                     Filial
                 </MudTableSortLabel>
             </MudTh>
@@ -58,23 +53,10 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nombre">
-                <MudTooltip Delay="500" Arrow="true" Placement="Placement.Bottom" Color="Color.Dark">
-                    <ChildContent>
-                        <MudText Color="Color.Primary">
-                            <strong>@context.Name</strong>
-                        </MudText>
-                    </ChildContent>
-                    <TooltipContent>
-                        <MudText Align="Align.Left" Typo="Typo.body1">@context.Name (ID: @context.Id)</MudText>
-                        @foreach (var line in context.AuditDisplay())
-                        {
-                            <MudText Align="Align.Left" Typo="Typo.body1">@line</MudText>
-                        }
-                    </TooltipContent>
-                </MudTooltip>
+                <AuditableItemDisplay Id="@context.UserWithAccountId" Name="@context.UserWithAccountFullName" AuditableViewModel="@context" />
             </MudTd>
             <MudTd DataLabel="Filial">
-                @context.Filial
+                @context.FilialName
             </MudTd>
             <MudTd DataLabel="Correo electrónico">
                 <MudLink Href="@($"mailto:{context.Email}")">@context.Email</MudLink>
@@ -87,7 +69,7 @@ else
             </MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(_pathToEdit_0, context.Id))"
+                    <MudIconButton Href="@(string.Format(_pathToEdit_0, context.UserWithAccountId))"
                                Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
             </MudTd>
