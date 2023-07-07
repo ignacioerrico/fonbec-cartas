@@ -1,7 +1,7 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Text;
+using Fonbec.Cartas.Logic.ExtensionMethods;
 
 namespace Fonbec.Cartas.Logic.Services.MessageTemplate
 {
@@ -32,7 +32,7 @@ namespace Fonbec.Cartas.Logic.Services.MessageTemplate
         {
             var parsedText = Regex.Replace(markdown, MesDeCarta,
                 WrapInHighlightedSpan(highlight,
-                    data.Date.ToString(@"MMMM \d\e yyyy", new CultureInfo("es-AR"))));
+                    data.Date.ToPlanName()));
 
             parsedText = Regex.Replace(parsedText, Documentos,
                 WrapInHighlightedSpan(highlight, data.Documents));

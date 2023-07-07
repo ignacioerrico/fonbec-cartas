@@ -1,7 +1,8 @@
-﻿using System.Globalization;
-using Fonbec.Cartas.DataAccess.Entities;
-using Fonbec.Cartas.DataAccess.Repositories;
+﻿using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
+using Fonbec.Cartas.Logic.Models.Results;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
+using Mapster;
 
 namespace Fonbec.Cartas.Logic.Services.Coordinador
 {
@@ -9,7 +10,7 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
     {
         Task<List<PlansListViewModel>> GetAllPlansAsync(int filialId);
         Task<List<DateTime>> GetAllPlansStartDates(int filialId);
-        Task<int> CreatePlanAsync(PlanEditViewModel planEditViewModel);
+        Task<CrudResult> CreatePlanAsync(PlanEditViewModel planEditViewModel);
     }
 
     public class PlanService : IPlanService
@@ -24,17 +25,7 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
         public async Task<List<PlansListViewModel>> GetAllPlansAsync(int filialId)
         {
             var all = await _planRepository.GetAllPlansAsync(filialId);
-            return all.Select(p => new PlansListViewModel
-            {
-                Id = p.Id,
-                StartDate = p.StartDate,
-                PlanName = $"Carta de {p.StartDate.ToString(@"MMMM \d\e yyyy", new CultureInfo("es-AR"))}",
-                // TODO
-                CreatedOnUtc = p.CreatedOnUtc,
-                LastUpdatedOnUtc = p.LastUpdatedOnUtc,
-                CreatedBy = p.CreatedByCoordinador.FullName(),
-                UpdatedBy = p.UpdatedByCoordinador?.FullName(),
-            }).ToList();
+            return all.Adapt<List<PlansListViewModel>>();
         }
 
         public async Task<List<DateTime>> GetAllPlansStartDates(int filialId)
@@ -43,20 +34,11 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
             return takenStartDates;
         }
 
-        public async Task<int> CreatePlanAsync(PlanEditViewModel planEditViewModel)
+        public async Task<CrudResult> CreatePlanAsync(PlanEditViewModel planEditViewModel)
         {
-            var plan = new Plan
-            {
-                FilialId = planEditViewModel.FilialId,
-                StartDate = planEditViewModel.StartDate!.Value,
-                Subject = planEditViewModel.Subject,
-                MessageMarkdown = planEditViewModel.MessageMarkdown,
-                CreatedByCoordinadorId = planEditViewModel.CreatedByCoordinadorId,
-            };
-
+            var plan = planEditViewModel.Adapt<Plan>();
             var rowsAffected = await _planRepository.CreatePlanAsync(plan);
-
-            return rowsAffected;
+            return new CrudResult(rowsAffected);
         }
     }
 }

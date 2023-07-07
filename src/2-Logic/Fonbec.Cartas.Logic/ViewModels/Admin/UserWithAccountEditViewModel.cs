@@ -26,7 +26,7 @@ public class UserWithAccountEditViewModel
     public string AspNetUserId { get; set; } = default!;
 }
 
-public class MapUserWithAccountToUserWithAccountEditViewModel : IRegister
+public class UserWithAccountEditViewModelMappingDefinitions : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

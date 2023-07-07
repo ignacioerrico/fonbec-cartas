@@ -1,25 +1,25 @@
-﻿@using Fonbec.Cartas.Logic.ViewModels.Coordinador
+﻿@using Fonbec.Cartas.Logic.Models
 
 <MudDialog>
     <DialogContent>
-        <MudAutocomplete T="PadrinoViewModel" Label="Padrino" @bind-Value="_selectedPadrino" SearchFunc="SearchPadrino"
+        <MudAutocomplete T="SelectableModel" Label="Padrino" @bind-Value="_viewModel.SelectedPadrino" SearchFunc="SearchPadrino"
                          Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
         </MudAutocomplete>
         
-        <MudDatePicker Label="Desde" @bind-Date="_desde" OpenTo="OpenTo.Month" Culture="EsArCultureInfo"
+        <MudDatePicker Label="Desde" @bind-Date="_viewModel.Desde" OpenTo="OpenTo.Month" Culture="EsArCultureInfo"
                        PickerVariant="PickerVariant.Dialog" />
         
-        <MudDatePicker Label="Hasta" @bind-Date="_hasta" OpenTo="OpenTo.Month" Culture="EsArCultureInfo"
-                       Disabled="@(!_knownEndDate)"
+        <MudDatePicker Label="Hasta" @bind-Date="_viewModel.Hasta" OpenTo="OpenTo.Month" Culture="EsArCultureInfo"
+                       Disabled="!_viewModel.KnownEndDate"
                        PickerVariant="PickerVariant.Dialog" />
         
-        <MudCheckBox T="bool" CheckedChanged="OnKnownEndDateChanged" Checked="@_knownEndDate" Label="Sé hasta cuándo va a apadrinar" Color="Color.Primary"></MudCheckBox>
+        <MudCheckBox T="bool" CheckedChanged="OnKnownEndDateChanged" Checked="_viewModel.KnownEndDate" Label="Sé hasta cuándo va a apadrinar" Color="Color.Primary"></MudCheckBox>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">
             Cancelar
         </MudButton>
-        <MudButton OnClick="Add" Disabled="@(_selectedPadrino is null)"
+        <MudButton OnClick="Add" Disabled="_viewModel.SelectedPadrino is null"
                    Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Check">
             Asignar
         </MudButton>

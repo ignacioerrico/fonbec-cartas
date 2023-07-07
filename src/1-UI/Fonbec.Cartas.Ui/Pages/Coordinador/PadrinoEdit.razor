@@ -2,15 +2,12 @@
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Ui.Constants
 @using System.ComponentModel.DataAnnotations
+@inherits PerFilialComponentBase
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
 <PageHeader Title="@_pageTitle" />
 
-@if (_loading)
-{
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true"
-                       Class="my-4" />
-}
+<ActivityIndicator Loading="_loading" />
 
 <MudForm @bind-IsValid="_formValidationSucceeded">
     <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_padrino.FirstName" Immediate="true"

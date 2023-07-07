@@ -2,6 +2,7 @@
 using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.DataAccess.Repositories.Admin;
+using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
 using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.Services.Coordinador;

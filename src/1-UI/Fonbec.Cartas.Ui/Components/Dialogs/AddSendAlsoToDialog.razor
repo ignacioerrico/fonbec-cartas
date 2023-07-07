@@ -4,16 +4,16 @@
 <MudDialog>
     <DialogContent>
         <MudForm @bind-IsValid="_formValidationSucceeded">
-            <MudTextField T="string" Label="Nombre completo" @ref="_mudTextFieldNombre" @bind-Value="_fullName" Immediate="true"
+            <MudTextField T="string" Label="Nombre completo" @ref="_mudTextFieldNombre" @bind-Value="_viewModel.FullName" Immediate="true"
                           Required="true" RequiredError="Se debe especificar el nombre."
                           MaxLength="@MaxLength.SendAlsoTo.FullName" />
             
-            <MudTextField T="string" Label="Correo electrónico" @bind-Value="_email" Immediate="true"
+            <MudTextField T="string" Label="Correo electrónico" @bind-Value="_viewModel.Email" Immediate="true"
                           Required="true" RequiredError="Se debe especificar una dirección de correo electrónico."
                           Validation="@(new EmailAddressAttribute { ErrorMessage = "La dirección de correo ingresada no es válida." })"
                           MaxLength="@MaxLength.Actor.Email" />
                           
-            <MudSwitch @bind-Checked="_sendAsBcc" Color="Color.Primary">Enviar en copia oculta (BCC)</MudSwitch>
+            <MudSwitch @bind-Checked="_viewModel.SendAsBcc" Color="Color.Primary">Enviar en copia oculta (BCC)</MudSwitch>
         </MudForm>
     </DialogContent>
     <DialogActions>

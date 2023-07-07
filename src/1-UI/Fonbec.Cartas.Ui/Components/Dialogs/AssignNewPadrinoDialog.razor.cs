@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Fonbec.Cartas.Logic.ExtensionMethods;
-using Fonbec.Cartas.Logic.ViewModels.Coordinador;
+using Fonbec.Cartas.Logic.Models;
+using Fonbec.Cartas.Logic.ViewModels.Components.Dialogs;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -10,13 +11,7 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
     {
         private static readonly CultureInfo EsArCultureInfo = CultureInfo.GetCultureInfo("es-AR");
 
-        private PadrinoViewModel? _selectedPadrino;
-
-        private DateTime? _desde = DateTime.Today;
-        
-        private DateTime? _hasta;
-
-        private bool _knownEndDate;
+        private readonly AssignNewPadrinoDialogViewModel _viewModel = new();
 
         [CascadingParameter]
         private MudDialogInstance MudDialog { get; set; } = default!;
@@ -25,7 +20,7 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         public ISnackbar Snackbar { get; set; } = default!;
 
         [Parameter]
-        public List<PadrinoViewModel> Padrinos { get; set; } = default!;
+        public List<SelectableModel> Padrinos { get; set; } = default!;
 
         [Parameter]
         public bool GetNewData { get; set; }
@@ -41,16 +36,18 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
 
         protected override void OnParametersSet()
         {
-            if (!GetNewData)
+            if (GetNewData)
             {
-                _selectedPadrino = Padrinos.Single(p => p.Id == PadrinoId);
-                _desde = From;
-                _hasta = To;
-                _knownEndDate = To.HasValue;
+                return;
             }
+
+            _viewModel.SelectedPadrino = Padrinos.Single(p => p.Id == PadrinoId);
+            _viewModel.Desde = From;
+            _viewModel.Hasta = To;
+            _viewModel.KnownEndDate = To.HasValue;
         }
 
-        private async Task<IEnumerable<PadrinoViewModel>> SearchPadrino(string searchString)
+        private async Task<IEnumerable<SelectableModel>> SearchPadrino(string searchString)
         {
             await Task.Delay(5);
 
@@ -59,48 +56,34 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
                 return Padrinos;
             }
 
-            return Padrinos.Where(m => m.Name.ContainsIgnoringAccents(searchString));
+            return Padrinos.Where(m => m.DisplayName.ContainsIgnoringAccents(searchString));
+        }
+
+        private void OnKnownEndDateChanged(bool knownEndDate)
+        {
+            _viewModel.KnownEndDate = knownEndDate;
+            _viewModel.Hasta = knownEndDate
+                ? _viewModel.Desde!.Value.AddMonths(1)
+                : null;
         }
 
         private void Add()
         {
-            if (_desde.HasValue
-                && _hasta.HasValue
-                && _desde.Value >= _hasta.Value)
+            if (_viewModel.Hasta.HasValue && _viewModel.Desde >= _viewModel.Hasta)
             {
                 Snackbar.Add("La fecha de finalización debe ser posterior a la de comienzo", Severity.Error);
-                _hasta = _desde.Value.AddMonths(1);
+                _viewModel.Hasta = _viewModel.Desde!.Value.AddMonths(1);
                 return;
             }
 
-            var assignNewPadrinoDialogModel = new AssignNewPadrinoDialogModel(_selectedPadrino!, _desde!.Value, _knownEndDate ? _hasta!.Value : null);
-            MudDialog.Close(DialogResult.Ok(assignNewPadrinoDialogModel));
+            if (!_viewModel.KnownEndDate)
+            {
+                _viewModel.Hasta = null;
+            }
+
+            MudDialog.Close(DialogResult.Ok(_viewModel));
         }
 
         private void Cancel() => MudDialog.Cancel();
-
-        private void OnKnownEndDateChanged(bool knownEndDate)
-        {
-            _knownEndDate = knownEndDate;
-            _hasta = knownEndDate
-                ? _desde!.Value.AddMonths(1)
-                : null;
-        }
-    }
-
-    public class AssignNewPadrinoDialogModel
-    {
-        public AssignNewPadrinoDialogModel(PadrinoViewModel padrinoViewModel, DateTime desde, DateTime? hasta)
-        {
-            PadrinoViewModel = padrinoViewModel;
-            Desde = desde;
-            Hasta = hasta;
-        }
-
-        public PadrinoViewModel PadrinoViewModel { get; }
-        
-        public DateTime Desde { get; }
-        
-        public DateTime? Hasta { get; }
     }
 }

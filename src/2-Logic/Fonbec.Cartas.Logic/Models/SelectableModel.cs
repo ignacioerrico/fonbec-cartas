@@ -1,4 +1,7 @@
-﻿namespace Fonbec.Cartas.Logic.Models
+﻿using Fonbec.Cartas.DataAccess.DataModels;
+using Mapster;
+
+namespace Fonbec.Cartas.Logic.Models
 {
     public sealed class SelectableModel : IEquatable<SelectableModel>
     {
@@ -14,7 +17,13 @@
 
         public bool Equals(SelectableModel? other)
         {
-            return other?.Id == Id && other?.DisplayName == DisplayName;
+            if (other is null)
+            {
+                return false;
+            }
+
+            return other.Id == Id
+                   && string.Equals(other.DisplayName, DisplayName, StringComparison.Ordinal);
         }
 
         public override bool Equals(object? obj)
@@ -30,5 +39,14 @@
         public override int GetHashCode() => Id.GetHashCode();
 
         public override string ToString() => DisplayName;
+    }
+
+    public class SelectableModelMappingDefinitions : IRegister
+    {
+        public void Register(TypeAdapterConfig config)
+        {
+            config.NewConfig<SelectableDataModel, SelectableModel>()
+                .ConstructUsing(dm => new SelectableModel(dm.Id, dm.DisplayName));
+        }
     }
 }

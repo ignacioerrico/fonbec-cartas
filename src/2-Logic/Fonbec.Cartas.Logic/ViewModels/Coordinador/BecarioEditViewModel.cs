@@ -1,4 +1,6 @@
-﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
+﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
+using Fonbec.Cartas.DataAccess.Entities.Enums;
+using Mapster;
 
 namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 {
@@ -25,5 +27,24 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
         public int CreatedByCoordinadorId { get; set; }
 
         public int? UpdatedByCoordinadorId { get; set; }
+    }
+
+    public class BecarioEditViewModelMappingDefinitions : IRegister
+    {
+        public void Register(TypeAdapterConfig config)
+        {
+            config.NewConfig<Becario, BecarioEditViewModel>()
+                .Map(dest => dest.FilialId, src => src.FilialId)
+                .Map(dest => dest.MediadorId, src => src.MediadorId)
+                .Map(dest => dest.NivelDeEstudio, src => src.NivelDeEstudio)
+                .Map(dest => dest.FirstName, src => src.FirstName)
+                .Map(dest => dest.LastName, src => src.LastName)
+                .Map(dest => dest.NickName, src => src.NickName ?? string.Empty)
+                .Map(dest => dest.Gender, src => src.Gender)
+                .Map(dest => dest.Email, src => src.Email ?? string.Empty)
+                .Map(dest => dest.Phone, src => src.Phone ?? string.Empty)
+                .Map(dest => dest.CreatedByCoordinadorId, src => src.CreatedByCoordinadorId)
+                .Map(dest => dest.UpdatedByCoordinadorId, src => src.UpdatedByCoordinadorId);
+        }
     }
 }

@@ -2,6 +2,8 @@
 {
     public static class NavRoutes
     {
+        public const string Root = "/";
+
         public const string AdminRoot = "/admin";
         public const string CoordinadorRoot = "/coordinador";
 
@@ -24,14 +26,14 @@
         public const string CoordinadorBecariosNew = $"{CoordinadorBecarios}/{New}";
         public const string CoordinadorPlanNew = $"{CoordinadorPlanes}/{New}";
 
-        public const string AdminFilialEdit_0 = $"{AdminFiliales}/{{0}}";
+        public const string AdminFilialEdit0 = $"{AdminFiliales}/{{0}}";
 
-        public const string AdminCoordinadorEdit_0 = $"{AdminCoordinadores}/{{0}}";
-        public const string AdminMediadorEdit_0 = $"{AdminMediadores}/{{0}}";
-        public const string AdminRevisorEdit_0 = $"{AdminRevisores}/{{0}}";
-        public const string CoordinadorPadrinoEdit_0 = $"{CoordinadorPadrinos}/{{0}}";
-        public const string CoordinadorBecariosEdit_0 = $"{CoordinadorBecarios}/{{0}}";
-        public const string CoordinadorBecario_0_AsignarPadrinos = $"{CoordinadorBecarios}/{{0}}/padrinos";
-        public const string CoordinadorPlanEdit_0 = $"{CoordinadorPlanes}/{{0}}";
+        public const string AdminCoordinadorEdit0 = $"{AdminCoordinadores}/{{0}}";
+        public const string AdminMediadorEdit0 = $"{AdminMediadores}/{{0}}";
+        public const string AdminRevisorEdit0 = $"{AdminRevisores}/{{0}}";
+        public const string CoordinadorPadrinoEdit0 = $"{CoordinadorPadrinos}/{{0}}";
+        public const string CoordinadorBecariosEdit0 = $"{CoordinadorBecarios}/{{0}}";
+        public const string CoordinadorBecario0AsignarPadrinos = $"{CoordinadorBecarios}/{{0}}/padrinos";
+        public const string CoordinadorPlanEdit0 = $"{CoordinadorPlanes}/{{0}}";
     }
 }

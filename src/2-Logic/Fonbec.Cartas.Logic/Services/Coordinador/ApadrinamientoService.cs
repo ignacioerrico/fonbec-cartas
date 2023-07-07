@@ -1,16 +1,19 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities;
-using Fonbec.Cartas.DataAccess.Repositories;
+using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
+using Fonbec.Cartas.Logic.Models.Coordinador;
+using Fonbec.Cartas.Logic.Models.Results;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
+using Mapster;
 
 namespace Fonbec.Cartas.Logic.Services.Coordinador
 {
     public interface IApadrinamientoService
     {
-        Task<List<ApadrinamientoEditViewModel>> GetAllPadrinosForBecario(int becarioId);
-        Task<int> AssignPadrinoToBecarioAsync(AssignPadrinoToBecarioViewModel viewModel);
-        Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId);
-        Task<int> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId);
-        Task<int> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId);
+        Task<ApadrinamientoEditViewModel> GetApadrinamientoEditDataAsync(int filialId, int becarioId);
+        Task<CrudDataResult<int>> AssignPadrinoToBecarioAsync(ApadrinamientoEditAssignPadrinoToBecarioModel model);
+        Task<CrudResult> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId);
+        Task<CrudResult> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId);
+        Task<CrudResult> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId);
     }
 
     public class ApadrinamientoService : IApadrinamientoService
@@ -22,52 +25,35 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
             _apadrinamientoRepository = apadrinamientoRepository;
         }
 
-        public async Task<List<ApadrinamientoEditViewModel>> GetAllPadrinosForBecario(int becarioId)
+        public async Task<ApadrinamientoEditViewModel> GetApadrinamientoEditDataAsync(int filialId, int becarioId)
         {
-            var apadrinamientosForBecario = await _apadrinamientoRepository.GetAllPadrinosForBecario(becarioId);
-
-            return apadrinamientosForBecario.Select(a =>
-                new ApadrinamientoEditViewModel(a.From, a.To)
-                {
-                    ApadrinamientoId = a.Id,
-                    PadrinoId = a.PadrinoId,
-                    PadrinoFullName = a.Padrino.FullName(),
-                    CreatedOnUtc = a.CreatedOnUtc,
-                    LastUpdatedOnUtc = a.LastUpdatedOnUtc,
-                    CreatedBy = a.CreatedByCoordinador.FullName(),
-                    UpdatedBy = a.UpdatedByCoordinador?.FullName(),
-                }).ToList();
+            var apadrinamientosForBecario = await _apadrinamientoRepository.GetApadrinamientoEditDataAsync(filialId, becarioId);
+            return apadrinamientosForBecario.Adapt<ApadrinamientoEditViewModel>();
         }
 
-        public async Task<int> AssignPadrinoToBecarioAsync(AssignPadrinoToBecarioViewModel viewModel)
+        public async Task<CrudDataResult<int>> AssignPadrinoToBecarioAsync(ApadrinamientoEditAssignPadrinoToBecarioModel model)
         {
-            var apadrinamiento = new Apadrinamiento
-            {
-                BecarioId = viewModel.BecarioId,
-                PadrinoId = viewModel.PadrinoId,
-                From = viewModel.From,
-                To = viewModel.To,
-                CreatedByCoordinadorId = viewModel.CreatedByCoordinadorId,
-            };
-
-            var apadrinamientoId = await _apadrinamientoRepository.AssignPadrinoToBecarioAsync(apadrinamiento);
-
-            return apadrinamientoId;
+            var apadrinamiento = model.Adapt<Apadrinamiento>();
+            var dataModel = await _apadrinamientoRepository.AssignPadrinoToBecarioAsync(apadrinamiento);
+            return new CrudDataResult<int>(dataModel.ApadrinamientoId, dataModel.RowsAffected);
         }
 
-        public async Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId)
+        public async Task<CrudResult> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId)
         {
-            return await _apadrinamientoRepository.UpdateApadrinamientoAsync(apadrinamientoId, from, to, coordinadorId);
+            var rowsAffected = await _apadrinamientoRepository.UpdateApadrinamientoAsync(apadrinamientoId, from, to, coordinadorId);
+            return new CrudResult(rowsAffected);
         }
 
-        public async Task<int> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId)
+        public async Task<CrudResult> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId)
         {
-            return await _apadrinamientoRepository.SetToDateToUknownAsync(apadrinamientoId, coordinadorId);
+            var rowsAffected = await _apadrinamientoRepository.SetToDateToUknownAsync(apadrinamientoId, coordinadorId);
+            return new CrudResult(rowsAffected);
         }
 
-        public async Task<int> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId)
+        public async Task<CrudResult> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId)
         {
-            return await _apadrinamientoRepository.SetToDateToTodayAsync(apadrinamientoId, coordinadorId);
+            var rowsAffected = await _apadrinamientoRepository.SetToDateToTodayAsync(apadrinamientoId, coordinadorId);
+            return new CrudResult(rowsAffected);
         }
     }
 }

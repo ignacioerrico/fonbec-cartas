@@ -28,15 +28,15 @@ namespace Fonbec.Cartas.Ui.Components.Admin
             {
                 case { } t when t == typeof(Coordinador):
                     _pathToNew = NavRoutes.AdminCoordinadorNew;
-                    _pathToEdit_0 = NavRoutes.AdminCoordinadorEdit_0;
+                    _pathToEdit_0 = NavRoutes.AdminCoordinadorEdit0;
                     break;
                 case { } t when t == typeof(Mediador):
                     _pathToNew = NavRoutes.AdminMediadorNew;
-                    _pathToEdit_0 = NavRoutes.AdminMediadorEdit_0;
+                    _pathToEdit_0 = NavRoutes.AdminMediadorEdit0;
                     break;
                 case { } t when t == typeof(Revisor):
                     _pathToNew = NavRoutes.AdminRevisorNew;
-                    _pathToEdit_0 = NavRoutes.AdminRevisorEdit_0;
+                    _pathToEdit_0 = NavRoutes.AdminRevisorEdit0;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(

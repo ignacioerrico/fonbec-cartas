@@ -2,7 +2,8 @@
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
 @using Fonbec.Cartas.Ui.Constants
-@using System.Globalization
+@using Fonbec.Cartas.Logic.ExtensionMethods
+@inherits PerFilialComponentBase
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
 <PageHeader Title="Becarios" />
@@ -15,18 +16,13 @@
             Color="Color.Primary" />
 </MudTooltip>
 
-@if (_loading)
+<ActivityIndicator Loading="_loading"
+                   If="!_viewModels.Any()"
+                   ThenDisplay="No hay becarios." />
+
+@if (_viewModels.Any())
 {
-    <MudText Class="mt-4"><em>Cargado datos&hellip;</em></MudText>
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
-}
-else if (!_becarios.Any())
-{
-    <MudText Typo="Typo.h6" Class="mt-4">No hay becarios.</MudText>
-}
-else
-{
-    <MudTable Items="_becarios"
+    <MudTable Items="_viewModels"
               Dense="true" Hover="true" Striped="true" Bordered="true"
               Filter="new Func<BecariosListViewModel, bool>(Filter)"
               SortLabel="Ordenar por"
@@ -70,20 +66,7 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nombre">
-                <MudTooltip Delay="500" Arrow="true" Placement="Placement.Bottom" Color="Color.Dark">
-                    <ChildContent>
-                        <MudText Color="Color.Primary">
-                            <strong>@context.Name</strong>
-                        </MudText>
-                    </ChildContent>
-                    <TooltipContent>
-                        <MudText Align="Align.Left" Typo="Typo.body1">@context.Name (ID: @context.Id)</MudText>
-                        @foreach (var line in context.AuditDisplay())
-                        {
-                            <MudText Align="Align.Left" Typo="Typo.body1">@line</MudText>
-                        }
-                    </TooltipContent>
-                </MudTooltip>
+                <AuditableItemDisplay Id="@context.Id" Name="@context.Name" AuditableViewModel="@context" />
             </MudTd>
             <MudTd DataLabel="Mediador">
                 @context.Mediador
@@ -92,7 +75,7 @@ else
                 @(context.PadrinosActivos.Any() ? string.Join(", ", context.PadrinosActivos) : "—")
             </MudTd>
             <MudTd DataLabel="Finaliza">
-                @(context.LatestActiveAssignmentEndsOn.HasValue ? context.LatestActiveAssignmentEndsOn.Value.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR")) : "—")
+                @(context.LatestActiveAssignmentEndsOn.HasValue ? context.LatestActiveAssignmentEndsOn.Value.ToLocalizedDate() : "—")
             </MudTd>
             <MudTd DataLabel="Padrinos futuros">
                 @(context.PadrinosFuturos.Any() ? string.Join(", ", context.PadrinosFuturos) : "—")
@@ -108,11 +91,11 @@ else
             </MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecariosEdit_0, context.Id))"
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecariosEdit0, context.Id))"
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
                 <MudTooltip Text="Asignar padrino" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario_0_AsignarPadrinos, context.Id))"
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario0AsignarPadrinos, context.Id))"
                                    Icon="@Icons.Material.Filled.SupervisorAccount" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
             </MudTd>

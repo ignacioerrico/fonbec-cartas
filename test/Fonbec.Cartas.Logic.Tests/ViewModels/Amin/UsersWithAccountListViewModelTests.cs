@@ -53,7 +53,7 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Amin
         }
     }
 
-    public class CoordinadorUsersWithAccountListViewModelTests : UsersWithAccountListViewModelTests<Coordinador>
+    public class CoordinadorUsersWithAccountListViewModelTests : UsersWithAccountListViewModelTests<DataAccess.Entities.Actors.Coordinador>
     {
     }
 

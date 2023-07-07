@@ -2,7 +2,7 @@
 using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fonbec.Cartas.DataAccess.Repositories
+namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
 {
     public interface IPadrinoRepository
     {
@@ -25,10 +25,10 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             var all = await appDbContext.Padrinos
-                .Where(p => p.FilialId == filialId)
                 .Include(p => p.SendAlsoTo)
                 .Include(p => p.CreatedByCoordinador)
                 .Include(p => p.UpdatedByCoordinador)
+                .Where(p => p.FilialId == filialId)
                 .ToListAsync();
             return all;
         }
@@ -37,8 +37,8 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             var padrino = await appDbContext.Padrinos
-                .Where(p => p.FilialId == filialId)
                 .Include(p => p.SendAlsoTo)
+                .Where(p => p.FilialId == filialId)
                 .SingleOrDefaultAsync(p => p.Id == padrinoId);
             return padrino;
         }

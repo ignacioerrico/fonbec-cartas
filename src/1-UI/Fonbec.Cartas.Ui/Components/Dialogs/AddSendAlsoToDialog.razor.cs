@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Fonbec.Cartas.Logic.ViewModels.Components.Dialogs;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Fonbec.Cartas.Ui.Components.Dialogs
 {
     public partial class AddSendAlsoToDialog
     {
-        private string _fullName = string.Empty;
-        private string _email = string.Empty;
-        private bool _sendAsBcc;
+        private readonly AddSendAlsoToDialogViewModel _viewModel = new();
 
         private bool _formValidationSucceeded;
         private bool AddButtonDisabled => !_formValidationSucceeded;
@@ -42,41 +41,21 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         {
             if (FullName is not null)
             {
-                _fullName = FullName;
+                _viewModel.FullName = FullName;
             }
 
             if (Email is not null)
             {
-                _email = Email;
+                _viewModel.Email = Email;
             }
 
-            _sendAsBcc = SendAsBcc;
+            _viewModel.SendAsBcc = SendAsBcc;
 
             base.OnParametersSet();
         }
 
-        private void Add()
-        {
-            var addSendAlsoToDialogModel = new AddSendAlsoToDialogModel(_fullName, _email, _sendAsBcc);
-            MudDialog.Close(DialogResult.Ok(addSendAlsoToDialogModel));
-        }
+        private void Add() => MudDialog.Close(DialogResult.Ok(_viewModel));
 
         private void Cancel() => MudDialog.Cancel();
-    }
-
-    public class AddSendAlsoToDialogModel
-    {
-        public AddSendAlsoToDialogModel(string fullName, string email, bool sendAsBcc)
-        {
-            FullName = fullName;
-            Email = email;
-            SendAsBcc = sendAsBcc;
-        }
-
-        public string FullName { get; }
-
-        public string Email { get; }
-
-        public bool SendAsBcc { get; }
     }
 }

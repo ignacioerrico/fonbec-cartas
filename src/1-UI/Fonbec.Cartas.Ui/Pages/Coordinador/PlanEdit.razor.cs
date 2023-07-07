@@ -4,15 +4,13 @@ using Fonbec.Cartas.Logic.Services.MessageTemplate;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Fonbec.Cartas.Ui.Constants;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using System.Globalization;
-using System.Security.Claims;
 using Fonbec.Cartas.Logic.Services.Coordinador;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
-    public partial class PlanEdit
+    public partial class PlanEdit : PerFilialComponentBase
     {
         private static readonly CultureInfo EsArCultureInfo = CultureInfo.GetCultureInfo("es-AR");
 
@@ -29,7 +27,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private readonly PlanEditViewModel _plan = new();
 
-        private ClaimsPrincipal _user = default!;
+        private bool _loading;
 
         private List<DateTime> _takenStartDates = new();
 
@@ -56,9 +54,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             FilialNombre = "AMBA",
         };
 
-        [CascadingParameter]
-        private Task<AuthenticationState>? AuthenticationState { get; set; }
-
         [Inject]
         public IPlanService PlanService { get; set; } = default!;
 
@@ -67,12 +62,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         [Inject]
         public IMessageTemplateParser MessageTemplateParser { get; set; } = default!;
-
-        [Inject]
-        public ISnackbar Snackbar { get; set; } = default!;
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; } = default!;
 
         public PlanEdit()
         {
@@ -86,41 +75,35 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         protected override async Task OnInitializedAsync()
         {
-            if (AuthenticationState is null)
+            _loading = true;
+
+            var authenticatedUserData = await GetAuthenticatedUserDataAsync();
+            if (!authenticatedUserData.DataObtainedSuccessfully)
             {
-                Snackbar.Add("AuthenticationState is null.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+                _loading = false;
                 return;
             }
 
-            var user = (await AuthenticationState).User;
-            if (user.Identity is not { IsAuthenticated: true })
-            {
-                Snackbar.Add("Usuario no está autenticado.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
-                return;
-            }
+            _plan.CreatedByCoordinadorId = authenticatedUserData.User.UserWithAccountId()
+                                           ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
-            _user = user;
+            _plan.FilialId = authenticatedUserData.FilialId;
 
-            var filialId = user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
-
-            _takenStartDates = await PlanService.GetAllPlansStartDates(filialId);
+            _takenStartDates = await PlanService.GetAllPlansStartDates(authenticatedUserData.FilialId);
 
             OnSubjectChanged(_plan.Subject);
             
             _plan.MessageMarkdown = MessageTemplateGetterService.GetDefaultMessage();
             OnMessageBodyChanged(_plan.MessageMarkdown);
+
+            _loading = false;
         }
 
         private async Task Save()
         {
-            _plan.FilialId = _user.FilialId()!.Value;
-            _plan.CreatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+            var result = await PlanService.CreatePlanAsync(_plan);
 
-            var qtyAdded = await PlanService.CreatePlanAsync(_plan);
-
-            if (qtyAdded == 0)
+            if (!result.AnyRowsAffected)
             {
                 Snackbar.Add("No se pudo crear el padrino.", Severity.Error);
             }
@@ -145,17 +128,17 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             if (_takenStartDates.Contains(startDate.Value))
             {
-                Snackbar.Add("Ya hay un plan para ese mes.", Severity.Error);
-                _plan.StartDate = startDate;
-                while (_takenStartDates.Contains(_plan.StartDate!.Value))
+                Snackbar.Add("Ya hay un plan para ese mes en esta filial.", Severity.Error);
+                _plan.StartDate = startDate.Value.AddMonths(1);
+                while (_takenStartDates.Contains(_plan.StartDate))
                 {
-                    _plan.StartDate = _plan.StartDate!.Value.AddMonths(1);
+                    _plan.StartDate = _plan.StartDate.AddMonths(1);
                 }
 
                 return;
             }
 
-            _plan.StartDate = startDate;
+            _plan.StartDate = startDate.Value;
             _messageTemplateData.Date = startDate.Value;
             UpdatePreview();
         }

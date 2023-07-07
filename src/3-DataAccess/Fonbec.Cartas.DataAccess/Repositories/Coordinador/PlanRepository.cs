@@ -1,7 +1,7 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fonbec.Cartas.DataAccess.Repositories
+namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
 {
     public interface IPlanRepository
     {
@@ -23,9 +23,9 @@ namespace Fonbec.Cartas.DataAccess.Repositories
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             var all = await appDbContext.Planes
-                .Where(p => p.FilialId == filialId)
                 .Include(p => p.CreatedByCoordinador)
                 .Include(p => p.UpdatedByCoordinador)
+                .Where(p => p.FilialId == filialId)
                 .OrderByDescending(p => p.StartDate)
                 .ToListAsync();
             return all;

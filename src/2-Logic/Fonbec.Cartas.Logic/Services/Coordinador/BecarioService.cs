@@ -1,18 +1,19 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
-using Fonbec.Cartas.DataAccess.Repositories;
+using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
+using Fonbec.Cartas.Logic.Models;
+using Fonbec.Cartas.Logic.Models.Results;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
+using Mapster;
 
 namespace Fonbec.Cartas.Logic.Services.Coordinador
 {
     public interface IBecarioService
     {
-        Task<List<MediadorViewModel>> GetAllMediadoresForSelectionAsync(int filialId);
-        Task<List<PadrinoViewModel>> GetAllPadrinosForSelectionAsync(int filialId);
-        Task<BecarioNameViewModel?> GetBecarioNameAsync(int filialId, int becarioId);
+        Task<List<SelectableModel>> GetAllMediadoresForSelectionAsync(int filialId);
         Task<List<BecariosListViewModel>> GetAllBecariosAsync(int filialId);
-        Task<BecarioEditViewModel?> GetBecarioAsync(int becarioId, int filialId);
-        Task<int> CreateAsync(BecarioEditViewModel becarioEditViewModel);
-        Task<int> UpdateAsync(int becarioId, BecarioEditViewModel becarioEditViewModel);
+        Task<SearchResult<BecarioEditViewModel>> GetBecarioAsync(int becarioId, int filialId);
+        Task<CrudResult> CreateAsync(BecarioEditViewModel becarioEditViewModel);
+        Task<CrudResult> UpdateAsync(int becarioId, BecarioEditViewModel becarioEditViewModel);
     }
 
     public class BecarioService : IBecarioService
@@ -24,95 +25,26 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
             _becarioRepository = becarioRepository;
         }
 
-        public async Task<List<MediadorViewModel>> GetAllMediadoresForSelectionAsync(int filialId)
+        public async Task<List<SelectableModel>> GetAllMediadoresForSelectionAsync(int filialId)
         {
             var mediadores = await _becarioRepository.GetAllMediadoresForSelectionAsync(filialId);
-            return mediadores.Select(m => new MediadorViewModel(m.Id, m.FullName)).ToList();
-        }
-
-        public async Task<List<PadrinoViewModel>> GetAllPadrinosForSelectionAsync(int filialId)
-        {
-            var padrinos = await _becarioRepository.GetAllPadrinosForSelectionAsync(filialId);
-            return padrinos.Select(p => new PadrinoViewModel(p.Id, p.FullName)).ToList();
-        }
-
-        public async Task<BecarioNameViewModel?> GetBecarioNameAsync(int filialId, int becarioId)
-        {
-            var becarioName = await _becarioRepository.GetBecarioNameAsync(filialId, becarioId);
-            if (becarioName is null)
-            {
-                return null;
-            }
-
-            return new BecarioNameViewModel(becarioName.FullName, becarioName.FirstName);
+            return mediadores.Adapt<List<SelectableModel>>();
         }
 
         public async Task<List<BecariosListViewModel>> GetAllBecariosAsync(int filialId)
         {
-            var all = await _becarioRepository.GetAllBecariosAsync(filialId);
-
-            return all.Select(b =>
-                new BecariosListViewModel
-                {
-                    Id = b.Id,
-                    Mediador = b.Mediador.FullName(),
-                    PadrinosActivos = b.Apadrinamientos
-                            .Where(a => a.EsAsignaciónActiva)
-                            .Select(a => a.Padrino.FullName())
-                            .OrderBy(n => n)
-                            .ToList(),
-                    PadrinosFuturos = b.Apadrinamientos
-                            .Where(a => a.EsAsignaciónFutura)
-                            .Select(a => a.Padrino.FullName())
-                            .OrderBy(n => n)
-                            .ToList(),
-                    LatestActiveAssignmentEndsOn =
-                        !b.Apadrinamientos.Any(a => a.EsAsignaciónActiva)
-                        || b.Apadrinamientos.Where(a => a.EsAsignaciónActiva).Any(a => a.To is null)
-                            ? null
-                            : b.Apadrinamientos
-                                .Where(a => a.EsAsignaciónActiva)
-                                .Max(a => a.To),
-                    NivelDeEstudio = b.NivelDeEstudio.ToString(),
-                    Name = b.FullName(includeNickName: true),
-                    Gender = b.Gender,
-                    Email = b.Email ?? string.Empty,
-                    Phone = b.Phone ?? string.Empty,
-                    CreatedOnUtc = b.CreatedOnUtc,
-                    LastUpdatedOnUtc = b.LastUpdatedOnUtc,
-                    CreatedBy = b.CreatedByCoordinador.FullName(),
-                    UpdatedBy = b.UpdatedByCoordinador?.FullName(),
-                }).ToList();
+            var becarios = await _becarioRepository.GetAllBecariosAsync(filialId);
+            return becarios.Adapt<List<BecariosListViewModel>>();
         }
 
-        public async Task<BecarioEditViewModel?> GetBecarioAsync(int becarioId, int filialId)
+        public async Task<SearchResult<BecarioEditViewModel>> GetBecarioAsync(int becarioId, int filialId)
         {
             var becario = await _becarioRepository.GetBecarioAsync(becarioId, filialId);
-
-            if (becario is null)
-            {
-                return null;
-            }
-
-            var becarioEditViewModel = new BecarioEditViewModel
-            {
-                FilialId = becario.FilialId,
-                MediadorId = becario.MediadorId,
-                NivelDeEstudio = becario.NivelDeEstudio,
-                FirstName = becario.FirstName,
-                LastName = becario.LastName,
-                NickName = becario.NickName ?? string.Empty,
-                Gender = becario.Gender,
-                Email = becario.Email ?? string.Empty,
-                Phone = becario.Phone ?? string.Empty,
-                CreatedByCoordinadorId = becario.CreatedByCoordinadorId,
-                UpdatedByCoordinadorId = becario.UpdatedByCoordinadorId,
-            };
-
-            return becarioEditViewModel;
+            var editViewModel = becario?.Adapt<BecarioEditViewModel>();
+            return new SearchResult<BecarioEditViewModel>(editViewModel);
         }
 
-        public async Task<int> CreateAsync(BecarioEditViewModel becarioEditViewModel)
+        public async Task<CrudResult> CreateAsync(BecarioEditViewModel becarioEditViewModel)
         {
             var becario = new Becario
             {
@@ -130,10 +62,10 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
 
             var rowsAffected = await _becarioRepository.CreateAsync(becario);
 
-            return rowsAffected;
+            return new CrudResult(rowsAffected);
         }
 
-        public async Task<int> UpdateAsync(int becarioId, BecarioEditViewModel becarioEditViewModel)
+        public async Task<CrudResult> UpdateAsync(int becarioId, BecarioEditViewModel becarioEditViewModel)
         {
             var becario = new Becario
             {
@@ -151,7 +83,7 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
 
             var rowsAffected = await _becarioRepository.UpdateAsync(becarioId, becario);
 
-            return rowsAffected;
+            return new CrudResult(rowsAffected);
         }
     }
 }

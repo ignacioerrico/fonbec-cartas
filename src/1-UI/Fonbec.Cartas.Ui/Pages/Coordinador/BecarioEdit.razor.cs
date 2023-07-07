@@ -1,21 +1,22 @@
-﻿using System.Security.Claims;
-using Fonbec.Cartas.DataAccess.Entities.Enums;
+﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
 using Fonbec.Cartas.Logic.ExtensionMethods;
+using Fonbec.Cartas.Logic.Models;
 using Fonbec.Cartas.Logic.Services.Coordinador;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
-using Microsoft.AspNetCore.Components.Authorization;
+using Fonbec.Cartas.Ui.Constants;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Fonbec.Cartas.Ui.Constants;
+using Mapster;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
-    public partial class BecarioEdit
+    public partial class BecarioEdit : PerFilialComponentBase
     {
-        private ClaimsPrincipal _user = default!;
+        private BecarioEditViewModel _becario = new();
+        private BecarioEditViewModel _originalBecario = new();
+        private int _becarioId;
 
-        private readonly BecarioEditViewModel _becario = new();
-        private readonly BecarioEditViewModel _originalBecario = new();
+        private int _coordinadorId;
 
         private bool _loading;
         private bool _isNew;
@@ -27,8 +28,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private NivelDeEstudio _selectedNivelDeEstudio = NivelDeEstudio.Primario;
 
-        private List<MediadorViewModel> _mediadores = new();
-        private MediadorViewModel? _selectedMediador;
+        private List<SelectableModel> _mediadores = new();
+        private SelectableModel? _selectedMediador;
 
         private bool SaveButtonDisabled => _loading
                                            || !_formValidationSucceeded
@@ -42,9 +43,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             || !string.Equals(_becario.Email, _originalBecario.Email, StringComparison.Ordinal)
             || !string.Equals(_becario.Phone, _originalBecario.Phone, StringComparison.Ordinal);
 
-        [CascadingParameter]
-        private Task<AuthenticationState>? AuthenticationState { get; set; }
-
         [Parameter]
         public string BecarioId { get; set; } = string.Empty;
 
@@ -53,12 +51,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         [Inject]
         public IDialogService DialogService { get; set; } = default!;
-
-        [Inject]
-        public ISnackbar Snackbar { get; set; } = default!;
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; } = default!;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -76,35 +68,19 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             _loading = true;
 
-            if (AuthenticationState is null)
+            var authenticatedUserData = await GetAuthenticatedUserDataAsync();
+            if (!authenticatedUserData.DataObtainedSuccessfully)
             {
-                Snackbar.Add("AuthenticationState is null.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+                _loading = false;
                 return;
             }
 
-            var user = (await AuthenticationState).User;
-            if (user.Identity is not { IsAuthenticated: true })
-            {
-                Snackbar.Add("Usuario no está autenticado.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
-                return;
-            }
+            _coordinadorId = authenticatedUserData.User.UserWithAccountId()
+                             ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
-            _user = user;
+            _becario.FilialId = authenticatedUserData.FilialId;
 
-            var filialId = user.FilialId();
-
-            if (filialId is null)
-            {
-                Snackbar.Add("Filial no está en el claim.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
-                return;
-            }
-
-            _becario.FilialId = filialId.Value;
-
-            _mediadores = await BecarioService.GetAllMediadoresForSelectionAsync(filialId.Value);
+            _mediadores = await BecarioService.GetAllMediadoresForSelectionAsync(authenticatedUserData.FilialId);
 
             if (!_mediadores.Any())
             {
@@ -120,32 +96,28 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 _pageTitle = "Alta de Becario";
                 _saveButtonText = "Crear";
             }
-            else if (int.TryParse(BecarioId, out var becarioId) && becarioId > 0)
+            else if (int.TryParse(BecarioId, out _becarioId) && _becarioId > 0)
             {
                 _isNew = false;
 
                 _pageTitle = "Editar Becario";
                 _saveButtonText = "Actualizar";
 
-                var becario = await BecarioService.GetBecarioAsync(becarioId, filialId.Value);
+                var result = await BecarioService.GetBecarioAsync(_becarioId, authenticatedUserData.FilialId);
 
-                if (becario is null)
+                if (!result.IsFound || result.Data is null)
                 {
-                    Snackbar.Add($"No se encontró becario con ID {becarioId}.", Severity.Error);
+                    Snackbar.Add($"No se encontró becario con ID {_becarioId}.", Severity.Error);
                     NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinoNew);
                     return;
                 }
 
-                _selectedNivelDeEstudio = becario.NivelDeEstudio;
+                _becario = result.Data.Adapt<BecarioEditViewModel>();
+                _originalBecario = result.Data.Adapt<BecarioEditViewModel>();
                 
-                _selectedMediador = _mediadores.Single(m => m.Id == becario.MediadorId);
+                _selectedNivelDeEstudio = result.Data.NivelDeEstudio;
 
-                _becario.FirstName = _originalBecario.FirstName = becario.FirstName;
-                _becario.LastName = _originalBecario.LastName = becario.LastName;
-                _becario.NickName = _originalBecario.NickName = becario.NickName;
-                _becario.Gender = _originalBecario.Gender = becario.Gender;
-                _becario.Email = _originalBecario.Email = becario.Email;
-                _becario.Phone = _originalBecario.Phone = becario.Phone;
+                _selectedMediador = _mediadores.Single(m => m.Id == result.Data.MediadorId);
             }
             else
             {
@@ -153,18 +125,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             }
 
             _loading = false;
-        }
-
-        private async Task<IEnumerable<MediadorViewModel>> SearchMediador(string searchString)
-        {
-            await Task.Delay(5);
-
-            if (string.IsNullOrWhiteSpace(searchString))
-            {
-                return _mediadores;
-            }
-
-            return _mediadores.Where(m => m.Name.ContainsIgnoringAccents(searchString));
         }
 
         private async Task Save()
@@ -179,30 +139,40 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             if (_isNew)
             {
-                _becario.CreatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+                _becario.CreatedByCoordinadorId = _coordinadorId;
 
-                var qtyAdded = await BecarioService.CreateAsync(_becario);
+                var result = await BecarioService.CreateAsync(_becario);
 
-                if (qtyAdded == 0)
+                if (!result.AnyRowsAffected)
                 {
                     Snackbar.Add("No se pudo crear el padrino.", Severity.Error);
                 }
             }
             else if (ModelHasChanged)
             {
-                _becario.UpdatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+                _becario.UpdatedByCoordinadorId = _coordinadorId;
 
-                var becarioId = int.Parse(BecarioId);
+                var result = await BecarioService.UpdateAsync(_becarioId, _becario);
 
-                var qtyUpdated = await BecarioService.UpdateAsync(becarioId, _becario);
-
-                if (qtyUpdated == 0)
+                if (!result.AnyRowsAffected)
                 {
                     Snackbar.Add("No se pudo actualizar el padrino.", Severity.Error);
                 }
             }
 
             NavigationManager.NavigateTo(NavRoutes.CoordinadorBecarios);
+        }
+
+        private async Task<IEnumerable<SelectableModel>> SearchMediador(string searchString)
+        {
+            await Task.Delay(5);
+
+            if (string.IsNullOrWhiteSpace(searchString))
+            {
+                return _mediadores;
+            }
+
+            return _mediadores.Where(m => m.DisplayName.ContainsIgnoringAccents(searchString));
         }
     }
 }

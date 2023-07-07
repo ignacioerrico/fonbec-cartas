@@ -1,12 +1,14 @@
-﻿using Fonbec.Cartas.DataAccess.Entities;
+﻿using Fonbec.Cartas.DataAccess.DataModels;
+using Fonbec.Cartas.DataAccess.DataModels.Coordinador;
+using Fonbec.Cartas.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fonbec.Cartas.DataAccess.Repositories
+namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
 {
     public interface IApadrinamientoRepository
     {
-        Task<List<Apadrinamiento>> GetAllPadrinosForBecario(int becarioId);
-        Task<int> AssignPadrinoToBecarioAsync(Apadrinamiento apadrinamiento);
+        Task<ApadrinamientoEditDataModel> GetApadrinamientoEditDataAsync(int filialId, int becarioId);
+        Task<ApadrinamientoAssignPadrinoToBecarioDataModel> AssignPadrinoToBecarioAsync(Apadrinamiento apadrinamiento);
         Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId);
         Task<int> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId);
         Task<int> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId);
@@ -21,26 +23,53 @@ namespace Fonbec.Cartas.DataAccess.Repositories
             _appDbContextFactory = appDbContextFactory;
         }
 
-        public async Task<List<Apadrinamiento>> GetAllPadrinosForBecario(int becarioId)
+        public async Task<ApadrinamientoEditDataModel> GetApadrinamientoEditDataAsync(int filialId, int becarioId)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            
+            var becario = await appDbContext.Becarios
+                .SingleOrDefaultAsync(b =>
+                    b.FilialId == filialId
+                    && b.Id == becarioId);
+
+            var selectablePadrinos = await appDbContext.Padrinos
+                .Where(p => p.FilialId == filialId)
+                .OrderBy(p => p.FirstName)
+                .Select(p => new SelectableDataModel(p.Id, p.FullName(true)))
+                .ToListAsync();
+
             var apadrinamientosForBecario = await appDbContext.Apadrinamientos
                 .Where(a => a.BecarioId == becarioId)
                 .Include(a => a.Padrino)
                 .Include(a => a.CreatedByCoordinador)
                 .Include(a => a.UpdatedByCoordinador)
                 .ToListAsync();
-            return apadrinamientosForBecario;
+
+            var apadrinamientoEditDataModel = new ApadrinamientoEditDataModel
+            {
+                BecarioExists = becario is not null,
+                BecarioFullName = becario?.FullName(),
+                BecarioFirstName = becario?.FirstName,
+                SelectablePadrinos = selectablePadrinos,
+                Apadrinamientos = apadrinamientosForBecario,
+            };
+
+            return apadrinamientoEditDataModel;
         }
 
-        public async Task<int> AssignPadrinoToBecarioAsync(Apadrinamiento apadrinamiento)
+        public async Task<ApadrinamientoAssignPadrinoToBecarioDataModel> AssignPadrinoToBecarioAsync(Apadrinamiento apadrinamiento)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             await appDbContext.Apadrinamientos.AddAsync(apadrinamiento);
-            var qtyAdded = await appDbContext.SaveChangesAsync();
-            return qtyAdded == 0
-                ? 0
-                : apadrinamiento.Id;
+            var rowsAffected = await appDbContext.SaveChangesAsync();
+
+            var apadrinamientoAssignPadrinoToBecarioDataModel = new ApadrinamientoAssignPadrinoToBecarioDataModel
+            {
+                RowsAffected = rowsAffected,
+                ApadrinamientoId = apadrinamiento.Id,
+            };
+
+            return apadrinamientoAssignPadrinoToBecarioDataModel;
         }
 
         public async Task<int> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId)

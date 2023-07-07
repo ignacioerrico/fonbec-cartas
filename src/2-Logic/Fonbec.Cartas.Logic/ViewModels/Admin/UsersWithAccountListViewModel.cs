@@ -22,7 +22,7 @@ public class UsersWithAccountListViewModel : AuditableViewModel
     public string Username { get; set; } = default!;
 }
 
-public class MapUserWithAccountToUsersWithAccountListViewModel : IRegister
+public class UsersWithAccountListViewModelMappingDefinitions : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

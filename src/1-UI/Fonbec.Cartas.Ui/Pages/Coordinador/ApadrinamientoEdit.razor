@@ -1,15 +1,17 @@
 ﻿@page "/coordinador/becarios/{BecarioId:int}/padrinos"
 @using Fonbec.Cartas.DataAccess.Constants
-@using Fonbec.Cartas.Ui.Constants
-@using System.Globalization
+@using Fonbec.Cartas.Logic.ExtensionMethods
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
+@using Fonbec.Cartas.Ui.Constants
+@inherits PerFilialComponentBase
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
 <PageHeader Title="@_pageTitle" />
 
 <MudStack Row="true">
     <MudButton OnClick="@(async () => await OpenAssignNewPadrinoDialogAsync())"
-               Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Class="mr-2">
+               Variant="Variant.Filled" Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.Add" Class="mr-2">
         Asignarle un nuevo padrino
     </MudButton>
     <MudButton Href="@NavRoutes.CoordinadorBecarios"
@@ -18,42 +20,34 @@
     </MudButton>
 </MudStack>
 
-@if (_loading)
+<ActivityIndicator Loading="_loading"
+                   If="!_viewModel.ApadrinamientosViewModel.Any()"
+                   ThenDisplay="@($"{_becarioFirstName} no tiene ningún padrino asignado.")" />
+
+@if (_viewModel.ApadrinamientosViewModel.Any())
 {
-    <MudText Class="mt-4"><em>Cargado datos&hellip;</em></MudText>
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
-}
-else if (!_padrinosAsignados.Any())
-{
-    <MudText Typo="Typo.h6" Class="mt-4">@_becarioName no tiene ningún padrino asignado.</MudText>
-}
-else
-{
-    <MudTable Items="_padrinosAsignados"
+    <MudTable Items="_viewModel.ApadrinamientosViewModel"
               Dense="true" Hover="true" Striped="true" Bordered="true"
               Class="mt-4">
         <HeaderContent>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditViewModel, object>(viewModel => viewModel.PadrinoFullName)"
+                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditApadrinamientoViewModel, object>(viewModel => viewModel.PadrinoFullName)"
                                    InitialDirection="SortDirection.Ascending">
                     Padrino
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditViewModel, object>(viewModel => viewModel.Status)"
-                                   InitialDirection="SortDirection.Ascending">
+                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditApadrinamientoViewModel, object>(viewModel => viewModel.Status)">
                     Estado
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditViewModel, object>(viewModel => viewModel.From)"
-                                   InitialDirection="SortDirection.Ascending">
+                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditApadrinamientoViewModel, object>(viewModel => viewModel.From)">
                     Desde
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditViewModel, object>(viewModel => viewModel.To ?? DateTime.MinValue)"
-                                   InitialDirection="SortDirection.Ascending">
+                <MudTableSortLabel SortBy="new Func<ApadrinamientoEditApadrinamientoViewModel, object>(viewModel => viewModel.To ?? DateTime.MinValue)">
                     Hasta
                 </MudTableSortLabel>
             </MudTh>
@@ -61,24 +55,11 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Padrino">
-                <MudTooltip Delay="500" Arrow="true" Placement="Placement.Bottom" Color="Color.Dark">
-                    <ChildContent>
-                        <MudText Color="Color.Primary">
-                            <strong>@context.PadrinoFullName</strong>
-                        </MudText>
-                    </ChildContent>
-                    <TooltipContent>
-                        <MudText Align="Align.Left" Typo="Typo.body1">@context.PadrinoFullName (ID: @context.PadrinoId)</MudText>
-                        @foreach (var line in context.AuditDisplay())
-                        {
-                            <MudText Align="Align.Left" Typo="Typo.body1">@line</MudText>
-                        }
-                    </TooltipContent>
-                </MudTooltip>
+                <AuditableItemDisplay Id="@context.PadrinoId" Name="@context.PadrinoFullName" AuditableViewModel="@context" />
             </MudTd>
             <MudTd DataLabel="Estado">@context.Status</MudTd>
-            <MudTd DataLabel="Desde">@context.From.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR"))</MudTd>
-            <MudTd DataLabel="Hasta">@(context.To.HasValue ? context.To.Value.ToString(@"d \d\e MMMM \d\e yyyy", new CultureInfo("es-AR")) : "—")</MudTd>
+            <MudTd DataLabel="Desde">@context.From.ToLocalizedDate()</MudTd>
+            <MudTd DataLabel="Hasta">@(context.To.HasValue ? context.To.Value.ToLocalizedDate() : "—")</MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
                     <MudIconButton OnClick="@(_ => OpenAssignNewPadrinoDialogForEditAsync(context.ApadrinamientoId, context.PadrinoId, context.From, context.To))"

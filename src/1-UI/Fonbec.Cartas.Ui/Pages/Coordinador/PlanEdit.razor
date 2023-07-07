@@ -2,9 +2,12 @@
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Logic.Services.MessageTemplate
 @using Fonbec.Cartas.Ui.Constants
+@inherits PerFilialComponentBase
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
 <PageHeader Title="Plan nuevo" />
+
+<ActivityIndicator Loading="_loading" />
 
 <MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
     <MudDatePicker DateChanged="OnStartDateChanged" Date="_plan.StartDate" Label="Mes de recepción de cartas"

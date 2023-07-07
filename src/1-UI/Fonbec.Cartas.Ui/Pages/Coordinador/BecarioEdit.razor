@@ -1,18 +1,15 @@
 ﻿@page "/coordinador/becarios/{BecarioId}"
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.DataAccess.Entities.Enums
-@using Fonbec.Cartas.Logic.ViewModels.Coordinador
+@using Fonbec.Cartas.Logic.Models
 @using Fonbec.Cartas.Ui.Constants
 @using System.ComponentModel.DataAnnotations
+@inherits PerFilialComponentBase
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
 <PageHeader Title="@_pageTitle" />
 
-@if (_loading)
-{
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true"
-                       Class="my-4" />
-}
+<ActivityIndicator Loading="_loading" />
 
 <MudForm @bind-IsValid="_formValidationSucceeded">
     <MudTextField T="string" Label="Nombre" @ref="_mudTextFieldNombre" @bind-Value="_becario.FirstName" Immediate="true"
@@ -43,7 +40,7 @@
     <MudTextField T="string" Label="Teléfono" @bind-Value="_becario.Phone" Immediate="true"
                   MaxLength="@MaxLength.Actor.Phone" />
 
-    <MudAutocomplete T="MediadorViewModel" Label="Mediador" @bind-Value="_selectedMediador" SearchFunc="SearchMediador"
+    <MudAutocomplete T="SelectableModel" Label="Mediador" @bind-Value="_selectedMediador" SearchFunc="SearchMediador"
                      Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
     </MudAutocomplete>
     

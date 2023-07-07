@@ -6,7 +6,7 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
     public partial class ConfirmDeleteDialog
     {
         [CascadingParameter]
-        MudDialogInstance MudDialog { get; set; } = default!;
+        public MudDialogInstance MudDialog { get; set; } = default!;
 
         [Parameter]
         public string ItemToDelete { get; set; } = default!;

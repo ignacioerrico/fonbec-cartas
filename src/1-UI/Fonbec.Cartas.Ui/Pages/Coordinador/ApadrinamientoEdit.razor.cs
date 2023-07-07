@@ -1,44 +1,34 @@
 ﻿using Fonbec.Cartas.Logic.ExtensionMethods;
+using Fonbec.Cartas.Logic.Models;
+using Fonbec.Cartas.Logic.Models.Coordinador;
 using Fonbec.Cartas.Logic.Services.Coordinador;
+using Fonbec.Cartas.Logic.ViewModels.Components.Dialogs;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Fonbec.Cartas.Ui.Components.Dialogs;
 using Fonbec.Cartas.Ui.Constants;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
-    public partial class ApadrinamientoEdit
+    public partial class ApadrinamientoEdit : PerFilialComponentBase
     {
-        private bool _loading;
-        private string? _pageTitle;
-
-        private List<ApadrinamientoEditViewModel> _padrinosAsignados = new();
-        private string _becarioName = default!;
-
-        private List<PadrinoViewModel> _padrinos = new();
+        private ApadrinamientoEditViewModel _viewModel = new();
         
+        private bool _loading;
+
         private int _coordinadorId;
         private string _coordinadorName = default!;
-
-        [CascadingParameter]
-        private Task<AuthenticationState>? AuthenticationState { get; set; }
+        
+        private string? _pageTitle;
+        private string _becarioFirstName = default!;
+        private List<SelectableModel> _padrinos = new();
 
         [Inject]
         public IApadrinamientoService ApadrinamientoService { get; set; } = default!;
 
         [Inject]
-        public IBecarioService BecarioService { get; set; } = default!;
-
-        [Inject]
         public IDialogService DialogService { get; set; } = default!;
-
-        [Inject]
-        public ISnackbar Snackbar { get; set; } = default!;
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; } = default!;
 
         [Parameter]
         public int BecarioId { get; set; }
@@ -47,65 +37,60 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             _loading = true;
 
-            if (AuthenticationState is null)
+            var authenticatedUserData = await GetAuthenticatedUserDataAsync();
+            if (!authenticatedUserData.DataObtainedSuccessfully)
             {
-                Snackbar.Add("AuthenticationState is null.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorBecarios);
+                _loading = false;
                 return;
             }
 
-            var user = (await AuthenticationState).User;
-            if (user.Identity is not { IsAuthenticated: true })
+            _coordinadorId = authenticatedUserData.User.UserWithAccountId()
+                             ?? throw new NullReferenceException("No claim UserWithAccountId found");
+            
+            _coordinadorName = authenticatedUserData.User.NickName()
+                               ?? throw new NullReferenceException("No claim NickName found");
+
+            _viewModel = await ApadrinamientoService.GetApadrinamientoEditDataAsync(authenticatedUserData.FilialId, BecarioId);
+
+            if (!_viewModel.BecarioExists)
             {
-                Snackbar.Add("Usuario no está autenticado.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorBecarios);
-                return;
-            }
-
-            _coordinadorId = user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
-            _coordinadorName = user.NickName() ?? throw new NullReferenceException("No claim UserWithAccountId found");
-
-            var filialId = user.FilialId();
-
-            if (filialId is null)
-            {
-                Snackbar.Add("Filial no está en el claim.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorBecarios);
-                return;
-            }
-
-            var becarioName = await BecarioService.GetBecarioNameAsync(filialId.Value, BecarioId);
-
-            if (becarioName is null)
-            {
+                _loading = false;
                 Snackbar.Add("No existe el becario en esta filial.", Severity.Error);
                 NavigationManager.NavigateTo(NavRoutes.CoordinadorBecarios);
                 return;
             }
 
-            _becarioName = becarioName.FirstName;
+            _pageTitle = $"Padrinos de {_viewModel.BecarioFullName}";
 
-            _pageTitle = $"Padrinos de {becarioName.FullName}";
+            _becarioFirstName = _viewModel.BecarioFirstName!;
 
-            _padrinos = await BecarioService.GetAllPadrinosForSelectionAsync(filialId.Value);
-
-            _padrinosAsignados = await ApadrinamientoService.GetAllPadrinosForBecario(BecarioId);
+            _padrinos = _viewModel.PadrinosForBecario;
 
             _loading = false;
         }
 
-        private async Task<AssignNewPadrinoDialogModel?> OpenAssignNewPadrinoDialogAndGetDataAsync(bool getNewData, int? padrinoId = null, DateTime? from = null, DateTime? to = null)
+        private async Task<AssignNewPadrinoDialogViewModel?> OpenAssignNewPadrinoDialogAndGetDataAsync(bool getNewData, int? padrinoId = null, DateTime? from = null, DateTime? to = null)
         {
+            if (!getNewData && padrinoId is null)
+            {
+                throw new ArgumentNullException(nameof(padrinoId));
+            }
+
+            if (!getNewData && from is null)
+            {
+                throw new ArgumentNullException(nameof(from));
+            }
+
             var parameters = new DialogParameters
             {
                 ["Padrinos"] = _padrinos,
                 ["GetNewData"] = getNewData,
             };
             
-            if (!getNewData && padrinoId.HasValue && from.HasValue)
+            if (!getNewData)
             {
-                parameters.Add("PadrinoId", padrinoId.Value);
-                parameters.Add("From", from.Value);
+                parameters.Add("PadrinoId", padrinoId!.Value);
+                parameters.Add("From", from!.Value);
                 parameters.Add("To", to);
             }
 
@@ -122,12 +107,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return null;
             }
 
-            if (result.Data is not AssignNewPadrinoDialogModel nuevaAsignación)
-            {
-                return null;
-            }
-
-            return nuevaAsignación;
+            return result.Data as AssignNewPadrinoDialogViewModel;
         }
 
         private async Task OpenAssignNewPadrinoDialogAsync()
@@ -139,58 +119,43 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             }
 
             // Is there any overlap with another assignment for the same Padrino?
-            var overlapWithSamePadrino = _padrinosAsignados.Any(asignación =>
-                string.Equals(asignación.PadrinoFullName, nuevaAsignación.PadrinoViewModel.Name, StringComparison.OrdinalIgnoreCase)
+            var overlapWithSamePadrino = _viewModel.ApadrinamientosViewModel.Any(asignación =>
+                string.Equals(asignación.PadrinoFullName, nuevaAsignación.SelectedPadrino!.DisplayName, StringComparison.OrdinalIgnoreCase)
                 && ((nuevaAsignación.Desde <= asignación.From && (!nuevaAsignación.Hasta.HasValue || asignación.From <= nuevaAsignación.Hasta.Value))
                     || (asignación.From <= nuevaAsignación.Desde && (!asignación.To.HasValue || nuevaAsignación.Desde <= asignación.To.Value))));
             if (overlapWithSamePadrino)
             {
-                Snackbar.Add($"{nuevaAsignación.PadrinoViewModel.Name} ya apadrina a {_becarioName} en ese período.", Severity.Error);
+                Snackbar.Add($"{nuevaAsignación.SelectedPadrino!.DisplayName} ya apadrina a {_becarioFirstName} en ese período.", Severity.Error);
                 return;
             }
 
-            var assignPadrinoToBecarioViewModel = new AssignPadrinoToBecarioViewModel
+            var apadrinamientoEditAssignPadrinoToBecarioModel = new ApadrinamientoEditAssignPadrinoToBecarioModel
             {
                 BecarioId = BecarioId,
-                PadrinoId = nuevaAsignación.PadrinoViewModel.Id,
-                From = nuevaAsignación.Desde,
+                PadrinoId = nuevaAsignación.SelectedPadrino!.Id,
+                From = nuevaAsignación.Desde!.Value,
                 To = nuevaAsignación.Hasta,
                 CreatedByCoordinadorId = _coordinadorId,
             };
 
-            var apadrinamientoId = await ApadrinamientoService.AssignPadrinoToBecarioAsync(assignPadrinoToBecarioViewModel);
+            var dataResult = await ApadrinamientoService.AssignPadrinoToBecarioAsync(apadrinamientoEditAssignPadrinoToBecarioModel);
 
-            if (apadrinamientoId == 0)
+            if (!dataResult.AnyRowsAffected)
             {
                 Snackbar.Add("No se pudo almacenar la asignación.", Severity.Error);
                 return;
             }
 
-            var apadrinamientoEditViewModel = new ApadrinamientoEditViewModel(nuevaAsignación.Desde, nuevaAsignación.Hasta)
+            var apadrinamientoEditViewModel = new ApadrinamientoEditApadrinamientoViewModel(nuevaAsignación.Desde!.Value, nuevaAsignación.Hasta)
             {
-                ApadrinamientoId = apadrinamientoId,
-                PadrinoId = nuevaAsignación.PadrinoViewModel.Id,
-                PadrinoFullName = nuevaAsignación.PadrinoViewModel.Name,
+                ApadrinamientoId = dataResult.Data,
+                PadrinoId = nuevaAsignación.SelectedPadrino.Id,
+                PadrinoFullName = nuevaAsignación.SelectedPadrino.DisplayName,
                 CreatedOnUtc = DateTimeOffset.UtcNow,
                 CreatedBy = _coordinadorName,
             };
 
-            _padrinosAsignados.Add(apadrinamientoEditViewModel);
-        }
-
-        private async Task SetToDateToUknown(int apadrinamientoId)
-        {
-            var qtyChanged = await ApadrinamientoService.SetToDateToUknownAsync(apadrinamientoId, _coordinadorId);
-            if (qtyChanged == 0)
-            {
-                Snackbar.Add("No se pudo almacenar el cambio", Severity.Error);
-                return;
-            }
-
-            var updatedApadrinamiento = _padrinosAsignados.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
-            updatedApadrinamiento.To = null;
-            updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
-            updatedApadrinamiento.UpdatedBy = _coordinadorName;
+            _viewModel.ApadrinamientosViewModel.Add(apadrinamientoEditViewModel);
         }
 
         private async Task OpenAssignNewPadrinoDialogForEditAsync(int apadrinamientoId, int padrinoId, DateTime from, DateTime? to)
@@ -201,19 +166,19 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            var qtyChanged = await ApadrinamientoService.UpdateApadrinamientoAsync(apadrinamientoId, asignaciónModificada.Desde, asignaciónModificada.Hasta, _coordinadorId);
-            if (qtyChanged == 0)
+            var result = await ApadrinamientoService.UpdateApadrinamientoAsync(apadrinamientoId, asignaciónModificada.Desde!.Value, asignaciónModificada.Hasta, _coordinadorId);
+            if (!result.AnyRowsAffected)
             {
                 Snackbar.Add("No se pudo almacenar el cambio", Severity.Error);
                 return;
             }
 
-            var newStatus = new ApadrinamientoEditViewModel(asignaciónModificada.Desde, asignaciónModificada.Hasta)
+            var newStatus = new ApadrinamientoEditApadrinamientoViewModel(asignaciónModificada.Desde!.Value, asignaciónModificada.Hasta)
                 .Status;
 
-            var updatedApadrinamiento = _padrinosAsignados.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
-            updatedApadrinamiento.PadrinoFullName = asignaciónModificada.PadrinoViewModel.Name;
-            updatedApadrinamiento.From = asignaciónModificada.Desde;
+            var updatedApadrinamiento = _viewModel.ApadrinamientosViewModel.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
+            updatedApadrinamiento.PadrinoFullName = asignaciónModificada.SelectedPadrino!.DisplayName;
+            updatedApadrinamiento.From = asignaciónModificada.Desde!.Value;
             updatedApadrinamiento.To = asignaciónModificada.Hasta;
             updatedApadrinamiento.Status = newStatus;
             updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
@@ -222,15 +187,30 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private async Task SetToDateToToday(int apadrinamientoId)
         {
-            var qtyChanged = await ApadrinamientoService.SetToDateToTodayAsync(apadrinamientoId, _coordinadorId);
-            if (qtyChanged == 0)
+            var result = await ApadrinamientoService.SetToDateToTodayAsync(apadrinamientoId, _coordinadorId);
+            if (!result.AnyRowsAffected)
             {
                 Snackbar.Add("No se pudo almacenar el cambio", Severity.Error);
                 return;
             }
 
-            var updatedApadrinamiento = _padrinosAsignados.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
+            var updatedApadrinamiento = _viewModel.ApadrinamientosViewModel.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
             updatedApadrinamiento.To = DateTime.Today;
+            updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
+            updatedApadrinamiento.UpdatedBy = _coordinadorName;
+        }
+
+        private async Task SetToDateToUknown(int apadrinamientoId)
+        {
+            var result = await ApadrinamientoService.SetToDateToUknownAsync(apadrinamientoId, _coordinadorId);
+            if (!result.AnyRowsAffected)
+            {
+                Snackbar.Add("No se pudo almacenar el cambio", Severity.Error);
+                return;
+            }
+
+            var updatedApadrinamiento = _viewModel.ApadrinamientosViewModel.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
+            updatedApadrinamiento.To = null;
             updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
             updatedApadrinamiento.UpdatedBy = _coordinadorName;
         }

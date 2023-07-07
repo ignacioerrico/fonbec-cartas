@@ -27,7 +27,7 @@ namespace Fonbec.Cartas.Logic.ViewModels.Admin
         public int QtyRevisores { get; set; }
     }
 
-    public class MapFilialesListDataModelToFilialesListViewModel : IRegister
+    public class FilialesListViewModelMappingDefinitions : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {

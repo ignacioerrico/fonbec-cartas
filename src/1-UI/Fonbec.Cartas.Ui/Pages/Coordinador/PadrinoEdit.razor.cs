@@ -1,22 +1,23 @@
-﻿using System.Security.Claims;
-using Fonbec.Cartas.Logic.ExtensionMethods;
+﻿using Fonbec.Cartas.Logic.ExtensionMethods;
 using Fonbec.Cartas.Logic.Services.Coordinador;
+using Fonbec.Cartas.Logic.ViewModels.Components.Dialogs;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Fonbec.Cartas.Ui.Components.Dialogs;
 using Fonbec.Cartas.Ui.Constants;
+using Mapster;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
-    public partial class PadrinoEdit
+    public partial class PadrinoEdit : PerFilialComponentBase
     {
-        private ClaimsPrincipal _user = default!;
+        private PadrinoEditViewModel _padrino = new();
+        private PadrinoEditViewModel _originalPadrino = new();
+        private int _padrinoId;
 
-        private readonly PadrinoEditViewModel _padrino = new();
-        private readonly PadrinoEditViewModel _originalPadrino = new();
-
+        private int _coordinadorId;
+        
         private bool _loading;
         private bool _isNew;
         private string? _pageTitle;
@@ -44,9 +45,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                     || orig.SendAsBcc != sat.SendAsBcc))
                 .Any(notFound => notFound);
 
-        [CascadingParameter]
-        private Task<AuthenticationState>? AuthenticationState { get; set; }
-
         [Parameter]
         public string PadrinoId { get; set; } = string.Empty;
 
@@ -55,12 +53,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         [Inject]
         public IDialogService DialogService { get; set; } = default!;
-
-        [Inject]
-        public ISnackbar Snackbar { get; set; } = default!;
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; } = default!;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -78,22 +70,17 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             _loading = true;
 
-            if (AuthenticationState is null)
+            var authenticatedUserData = await GetAuthenticatedUserDataAsync();
+            if (!authenticatedUserData.DataObtainedSuccessfully)
             {
-                Snackbar.Add("AuthenticationState is null.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
+                _loading = false;
                 return;
             }
 
-            var user = (await AuthenticationState).User;
-            if (user.Identity is not { IsAuthenticated: true })
-            {
-                Snackbar.Add("Usuario no está autenticado.", Severity.Error);
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
-                return;
-            }
+            _coordinadorId = authenticatedUserData.User.UserWithAccountId()
+                             ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
-            _user = user;
+            _padrino.FilialId = authenticatedUserData.FilialId;
 
             if (string.Equals(PadrinoId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
             {
@@ -102,56 +89,24 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 _pageTitle = "Alta de Padrino";
                 _saveButtonText = "Crear";
             }
-            else if (int.TryParse(PadrinoId, out var padrinoId) && padrinoId > 0)
+            else if (int.TryParse(PadrinoId, out _padrinoId) && _padrinoId > 0)
             {
                 _isNew = false;
 
                 _pageTitle = "Editar Padrino";
                 _saveButtonText = "Actualizar";
 
-                var filialId = _user.FilialId();
+                var result = await PadrinoService.GetPadrinoAsync(_padrinoId, authenticatedUserData.FilialId);
 
-                if (filialId is null)
+                if (!result.IsFound || result.Data is null)
                 {
-                    Snackbar.Add("Filial no está en el claim.", Severity.Error);
-                    NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinos);
-                    return;
-                }
-
-                var padrino = await PadrinoService.GetPadrinoAsync(padrinoId, filialId.Value);
-
-                if (padrino is null)
-                {
-                    Snackbar.Add($"No se encontró padrino con ID {padrinoId}.", Severity.Error);
+                    Snackbar.Add($"No se encontró padrino con ID {_padrinoId}.", Severity.Error);
                     NavigationManager.NavigateTo(NavRoutes.CoordinadorPadrinoNew);
                     return;
                 }
 
-                _padrino.FirstName = _originalPadrino.FirstName = padrino.FirstName;
-                _padrino.LastName = _originalPadrino.LastName = padrino.LastName;
-                _padrino.NickName = _originalPadrino.NickName = padrino.NickName;
-                _padrino.Gender = _originalPadrino.Gender = padrino.Gender;
-                _padrino.Email = _originalPadrino.Email = padrino.Email;
-                _padrino.Phone = _originalPadrino.Phone = padrino.Phone;
-
-                foreach (var satFromDb in padrino.SendAlsoTo)
-                {
-                    var sat = new PadrinoEditSendAlsoToViewModel
-                    {
-                        RecipientFullName = satFromDb.RecipientFullName,
-                        RecipientEmail = satFromDb.RecipientEmail,
-                        SendAsBcc = satFromDb.SendAsBcc
-                    };
-                    _padrino.SendAlsoTo.Add(sat);
-
-                    var originalSat = new PadrinoEditSendAlsoToViewModel
-                    {
-                        RecipientFullName = satFromDb.RecipientFullName,
-                        RecipientEmail = satFromDb.RecipientEmail,
-                        SendAsBcc = satFromDb.SendAsBcc
-                    };
-                    _originalPadrino.SendAlsoTo.Add(originalSat);
-                }
+                _padrino = result.Data.Adapt<PadrinoEditViewModel>();
+                _originalPadrino = result.Data.Adapt<PadrinoEditViewModel>();
             }
             else
             {
@@ -165,24 +120,22 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             if (_isNew)
             {
-                _padrino.FilialId = _user.FilialId() ?? throw new NullReferenceException("No claim FilialId found");
-                _padrino.CreatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+                _padrino.CreatedByCoordinadorId = _coordinadorId;
 
-                var qtyAdded = await PadrinoService.CreateAsync(_padrino);
+                var result = await PadrinoService.CreateAsync(_padrino);
                 
-                if (qtyAdded == 0)
+                if (!result.AnyRowsAffected)
                 {
                     Snackbar.Add("No se pudo crear el padrino.", Severity.Error);
                 }
             }
             else if (ModelHasChanged)
             {
-                var id = int.Parse(PadrinoId);
-                _padrino.UpdatedByCoordinadorId = _user.UserWithAccountId() ?? throw new NullReferenceException("No claim UserWithAccountId found");
+                _padrino.UpdatedByCoordinadorId = _coordinadorId;
 
-                var qtyUpdated = await PadrinoService.UpdateAsync(id, _padrino);
+                var result = await PadrinoService.UpdateAsync(_padrinoId, _padrino);
                 
-                if (qtyUpdated == 0)
+                if (!result.AnyRowsAffected)
                 {
                     Snackbar.Add("No se pudo actualizar el padrino.", Severity.Error);
                 }
@@ -216,7 +169,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            if (result.Data is not AddSendAlsoToDialogModel data)
+            if (result.Data is not AddSendAlsoToDialogViewModel data)
             {
                 return;
             }
