@@ -40,7 +40,7 @@
     <MudTextField T="string" Label="Teléfono" @bind-Value="_becario.Phone" Immediate="true"
                   MaxLength="@MaxLength.Actor.Phone" />
 
-    <MudAutocomplete T="SelectableModel" Label="Mediador" @bind-Value="_selectedMediador" SearchFunc="SearchMediador"
+    <MudAutocomplete T="SelectableModel<int>" Label="Mediador" @bind-Value="_selectedMediador" SearchFunc="SearchMediador"
                      Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
     </MudAutocomplete>
     

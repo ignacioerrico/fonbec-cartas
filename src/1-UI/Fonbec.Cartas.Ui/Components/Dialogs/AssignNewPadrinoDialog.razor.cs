@@ -20,7 +20,7 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         public ISnackbar Snackbar { get; set; } = default!;
 
         [Parameter]
-        public List<SelectableModel> Padrinos { get; set; } = default!;
+        public List<SelectableModel<int>> Padrinos { get; set; } = default!;
 
         [Parameter]
         public bool GetNewData { get; set; }
@@ -47,7 +47,7 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
             _viewModel.KnownEndDate = To.HasValue;
         }
 
-        private async Task<IEnumerable<SelectableModel>> SearchPadrino(string searchString)
+        private async Task<IEnumerable<SelectableModel<int>>> SearchPadrino(string searchString)
         {
             await Task.Delay(5);
 

@@ -1,15 +1,15 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
-using Fonbec.Cartas.Logic.Models.Components;
+using Fonbec.Cartas.Logic.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Fonbec.Cartas.Ui.Components
 {
     public partial class GenderSelector
     {
-        private static readonly SelectableGenderModel Male = new(Gender.Male, "Masculino");
-        private static readonly SelectableGenderModel Female = new(Gender.Female, "Femenino");
+        private static readonly SelectableModel<Gender> Male = new(Gender.Male, "Masculino");
+        private static readonly SelectableModel<Gender> Female = new(Gender.Female, "Femenino");
 
-        private SelectableGenderModel _selectedGender = Male;
+        private SelectableModel<Gender> _selectedGender = Male;
 
         [Parameter]
         public Gender SelectedGender { get; set; }
@@ -17,9 +17,9 @@ namespace Fonbec.Cartas.Ui.Components
         [Parameter]
         public EventCallback<Gender> SelectedGenderChanged { get; set; }
 
-        private async Task OnSelectedValuesChanged(IEnumerable<SelectableGenderModel> selectedGenders)
+        private async Task OnSelectedValuesChanged(IEnumerable<SelectableModel<Gender>> selectedGenders)
         {
-            await SelectedGenderChanged.InvokeAsync(selectedGenders.Single().Gender);
+            await SelectedGenderChanged.InvokeAsync(selectedGenders.Single().Id);
         }
 
         protected override async Task OnParametersSetAsync()
@@ -27,7 +27,7 @@ namespace Fonbec.Cartas.Ui.Components
             if (SelectedGender == Gender.Unknown)
             {
                 // If no gender is selected at invocation time, set it to the default.
-                await SelectedGenderChanged.InvokeAsync(_selectedGender.Gender);
+                await SelectedGenderChanged.InvokeAsync(_selectedGender.Id);
             }
             else if (SelectedGender == Gender.Female)
             {

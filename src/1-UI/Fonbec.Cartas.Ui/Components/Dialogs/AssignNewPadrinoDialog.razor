@@ -2,7 +2,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudAutocomplete T="SelectableModel" Label="Padrino" @bind-Value="_viewModel.SelectedPadrino" SearchFunc="SearchPadrino"
+        <MudAutocomplete T="SelectableModel<int>" Label="Padrino" @bind-Value="_viewModel.SelectedPadrino" SearchFunc="SearchPadrino"
                          Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
         </MudAutocomplete>
         

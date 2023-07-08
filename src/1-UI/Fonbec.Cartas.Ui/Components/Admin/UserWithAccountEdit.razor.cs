@@ -31,8 +31,8 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
         private MudTextField<string> _mudTextFieldNombre = default!;
 
-        private List<SelectableModel> _filiales = new();
-        private SelectableModel? _selectedFilial;
+        private List<SelectableModel<int>> _filiales = new();
+        private SelectableModel<int>? _selectedFilial;
 
         private bool SaveButtonDisabled => _loading
                                            || !_formValidationSucceeded

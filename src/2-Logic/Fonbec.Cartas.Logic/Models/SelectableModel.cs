@@ -3,32 +3,33 @@ using Mapster;
 
 namespace Fonbec.Cartas.Logic.Models
 {
-    public sealed class SelectableModel : IEquatable<SelectableModel>
+    public sealed class SelectableModel<TKey> : IEquatable<SelectableModel<TKey>>
+        where TKey : struct
     {
-        public SelectableModel(int id, string name)
+        public SelectableModel(TKey id, string name)
         {
             Id = id;
             DisplayName = name;
         }
 
-        public int Id { get; }
+        public TKey Id { get; }
         
         public string DisplayName { get; }
 
-        public bool Equals(SelectableModel? other)
+        public bool Equals(SelectableModel<TKey>? other)
         {
             if (other is null)
             {
                 return false;
             }
 
-            return other.Id == Id
-                   && string.Equals(other.DisplayName, DisplayName, StringComparison.Ordinal);
+            return Id.Equals(other.Id)
+                   && string.Equals(DisplayName, other.DisplayName, StringComparison.Ordinal);
         }
 
         public override bool Equals(object? obj)
         {
-            if (obj is SelectableModel selectableModel)
+            if (obj is SelectableModel<TKey> selectableModel)
             {
                 return Equals(selectableModel);
             }
@@ -45,8 +46,8 @@ namespace Fonbec.Cartas.Logic.Models
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<SelectableDataModel, SelectableModel>()
-                .ConstructUsing(dm => new SelectableModel(dm.Id, dm.DisplayName));
+            config.NewConfig<SelectableDataModel, SelectableModel<int>>()
+                .ConstructUsing(dm => new SelectableModel<int>(dm.Id, dm.DisplayName));
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
 {
     public interface IBecarioService
     {
-        Task<List<SelectableModel>> GetAllMediadoresForSelectionAsync(int filialId);
+        Task<List<SelectableModel<int>>> GetAllMediadoresForSelectionAsync(int filialId);
         Task<List<BecariosListViewModel>> GetAllBecariosAsync(int filialId);
         Task<SearchResult<BecarioEditViewModel>> GetBecarioAsync(int becarioId, int filialId);
         Task<CrudResult> CreateAsync(BecarioEditViewModel becarioEditViewModel);
@@ -25,10 +25,10 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
             _becarioRepository = becarioRepository;
         }
 
-        public async Task<List<SelectableModel>> GetAllMediadoresForSelectionAsync(int filialId)
+        public async Task<List<SelectableModel<int>>> GetAllMediadoresForSelectionAsync(int filialId)
         {
             var mediadores = await _becarioRepository.GetAllMediadoresForSelectionAsync(filialId);
-            return mediadores.Adapt<List<SelectableModel>>();
+            return mediadores.Adapt<List<SelectableModel<int>>>();
         }
 
         public async Task<List<BecariosListViewModel>> GetAllBecariosAsync(int filialId)

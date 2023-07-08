@@ -15,7 +15,7 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 
         public string? BecarioFullName { get; set; }
         
-        public List<SelectableModel> PadrinosForBecario { get; set; } = new();
+        public List<SelectableModel<int>> PadrinosForBecario { get; set; } = new();
     }
 
     public class ApadrinamientoEditApadrinamientoViewModel : AuditableWithAuthorNameViewModel

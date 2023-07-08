@@ -22,7 +22,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         
         private string? _pageTitle;
         private string _becarioFirstName = default!;
-        private List<SelectableModel> _padrinos = new();
+        private List<SelectableModel<int>> _padrinos = new();
 
         [Inject]
         public IApadrinamientoService ApadrinamientoService { get; set; } = default!;

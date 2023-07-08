@@ -13,7 +13,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
 {
     public interface IUserWithAccountService<T> where T : UserWithAccount
     {
-        Task<List<SelectableModel>> GetAllFilialesAsSelectableAsync();
+        Task<List<SelectableModel<int>>> GetAllFilialesAsSelectableAsync();
         Task<List<UsersWithAccountListViewModel>> GetAllUsersWithAccountAsync();
         Task<SearchResult<UserWithAccountEditViewModel>> GetUserWithAccountAsync(int id);
         Task<CrudErrorResult> CreateUserWithAccountAsync(UserWithAccountEditViewModel editViewModel, string initialPassword);
@@ -35,10 +35,10 @@ namespace Fonbec.Cartas.Logic.Services.Admin
             _userStore = userStore;
         }
 
-        public async Task<List<SelectableModel>> GetAllFilialesAsSelectableAsync()
+        public async Task<List<SelectableModel<int>>> GetAllFilialesAsSelectableAsync()
         {
             var filiales = await _userWithAccountRepository.GetAllFilialesAsync();
-            return filiales.Select(f => new SelectableModel(f.Id, f.Name)).ToList();
+            return filiales.Select(f => new SelectableModel<int>(f.Id, f.Name)).ToList();
         }
 
         public async Task<List<UsersWithAccountListViewModel>> GetAllUsersWithAccountAsync()

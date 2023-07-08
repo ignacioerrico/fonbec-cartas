@@ -28,8 +28,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         private NivelDeEstudio _selectedNivelDeEstudio = NivelDeEstudio.Primario;
 
-        private List<SelectableModel> _mediadores = new();
-        private SelectableModel? _selectedMediador;
+        private List<SelectableModel<int>> _mediadores = new();
+        private SelectableModel<int>? _selectedMediador;
 
         private bool SaveButtonDisabled => _loading
                                            || !_formValidationSucceeded
@@ -163,7 +163,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             NavigationManager.NavigateTo(NavRoutes.CoordinadorBecarios);
         }
 
-        private async Task<IEnumerable<SelectableModel>> SearchMediador(string searchString)
+        private async Task<IEnumerable<SelectableModel<int>>> SearchMediador(string searchString)
         {
             await Task.Delay(5);
 

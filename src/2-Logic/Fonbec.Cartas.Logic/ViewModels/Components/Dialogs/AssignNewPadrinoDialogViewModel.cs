@@ -4,7 +4,7 @@ namespace Fonbec.Cartas.Logic.ViewModels.Components.Dialogs;
 
 public class AssignNewPadrinoDialogViewModel
 {
-    public SelectableModel? SelectedPadrino { get; set; }
+    public SelectableModel<int>? SelectedPadrino { get; set; }
 
     public DateTime? Desde { get; set; } = DateTime.Today;
 
