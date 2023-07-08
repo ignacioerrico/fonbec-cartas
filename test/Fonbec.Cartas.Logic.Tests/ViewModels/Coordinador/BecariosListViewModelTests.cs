@@ -98,7 +98,8 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
                 result.PadrinosFuturos[0].Should().Be("FirstName-Padrino-2 LastName-Padrino-2");
                 result.LatestActiveAssignmentEndsOn.Should().NotBeNull();
                 result.LatestActiveAssignmentEndsOn!.Value.Date.Should().Be(DateTime.Now.AddDays(10).Date);
-                result.NivelDeEstudio.Should().Be("Universitario");
+                result.NivelDeEstudioText.Should().Be("Universitario");
+                result.NivelDeEstudio.Should().Be(NivelDeEstudio.Universitario);
                 result.Name.Should().Be("FirstName-Becario LastName-Becario (\"NickName-Becario\")");
                 result.Gender.Should().Be(Gender.Female);
                 result.Email.Should().Be("Email");

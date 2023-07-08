@@ -1,5 +1,6 @@
 ﻿@page "/coordinador/becarios"
 @using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.DataAccess.Entities.Enums
 @using Fonbec.Cartas.Logic.Models
 @using Fonbec.Cartas.Logic.ViewModels.Components
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
@@ -23,13 +24,31 @@
 
 @if (_viewModels.Any())
 {
-    <MudSelect T="SelectableModel<FilterBy>" Label="Mostrar" Value="_selectedFilter" ValueChanged="OnSelectedStatusChanged"
-               Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter" Class="mt-4">
-        @foreach (var filter in _filters)
-        {
-            <MudSelectItem T="SelectableModel<FilterBy>" Value="@filter" />
-        }
-    </MudSelect>
+    @if (_displayFilterByBecario)
+    {
+        <MudSelect T="SelectableModel<FilterBy>" Label="Becarios" Class="mt-4"
+                   Value="_selectedFilter" ValueChanged="OnSelectedStatusChanged"
+                   Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var filter in _filters)
+            {
+                <MudSelectItem T="SelectableModel<FilterBy>" Value="@filter"/>
+            }
+        </MudSelect>
+    }
+
+    @if (_displayFilterByNivelDeEstudio)
+    {
+        <MudSelect T="SelectableModel<NivelDeEstudio>" Label="Nivel de estudio" Class="mt-4"
+                   SelectedValues="_selectedNiveles" SelectedValuesChanged="OnSelectedNivelesChanged"
+                   MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetSelectedNivelesText))"
+                   SelectAll="true" SelectAllText="Seleccionar todos"
+                   Variant="Variant.Filled" AdornmentIcon="@Icons.Material.Filled.Search">
+            @foreach (var revisor in _niveles)
+            {
+                <MudSelectItem T="SelectableModel<NivelDeEstudio>" Value="@revisor"/>
+            }
+        </MudSelect>
+    }
 
     <MudTable Items="_filteredViewModels"
               Dense="true" Hover="true" Striped="true" Bordered="true"
@@ -70,7 +89,7 @@
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.NivelDeEstudio)">
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.NivelDeEstudioText)">
                     Nivel
                 </MudTableSortLabel>
             </MudTh>
@@ -94,7 +113,7 @@
                 <ListOrMDash Items="@context.PadrinosFuturos.Select(pa => new ListOrMDashViewModel(pa))" />
             </MudTd>
             <MudTd DataLabel="Nivel">
-                @context.NivelDeEstudio
+                @context.NivelDeEstudioText
             </MudTd>
             <MudTd DataLabel="Teléfono">
                 <PhoneOrMDash Number="@context.Phone" />

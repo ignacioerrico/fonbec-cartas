@@ -16,7 +16,9 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 
         public DateTime? LatestActiveAssignmentEndsOn { get; set; }
 
-        public string NivelDeEstudio { get; set; } = default!;
+        public string NivelDeEstudioText { get; set; } = default!;
+
+        public NivelDeEstudio NivelDeEstudio { get; set; }
 
         public string Name { get; set; } = default!;
 
@@ -51,7 +53,8 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
                         .Select(a => a.Padrino.FullName(false))
                         .OrderBy(name => name))
                 .Map(dest => dest.LatestActiveAssignmentEndsOn, src => latestActiveAssignmentEndsOn.Invoke(src))
-                .Map(dest => dest.NivelDeEstudio, src => src.NivelDeEstudio.ToString())
+                .Map(dest => dest.NivelDeEstudioText, src => src.NivelDeEstudio.ToString())
+                .Map(dest => dest.NivelDeEstudio, src => src.NivelDeEstudio)
                 .Map(dest => dest.Name, src => src.FullName(true))
                 .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.Email, src => src.Email ?? string.Empty)
