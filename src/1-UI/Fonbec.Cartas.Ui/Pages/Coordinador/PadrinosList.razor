@@ -34,36 +34,62 @@
         </ToolBarContent>
         <HeaderContent>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<PadrinosListViewModel, object>(padrino => padrino.Name)"
+                <MudTableSortLabel SortBy="new Func<PadrinosListViewModel, object>(viewModel => viewModel.PadrinoFullName)"
                                    InitialDirection="SortDirection.Ascending">
                     Nombre
                 </MudTableSortLabel>
             </MudTh>
-            <MudTh>Correo electrónico</MudTh>
-            <MudTh>CC</MudTh>
-            <MudTh>BCC</MudTh>
-            <MudTh>Teléfono</MudTh>
-            <MudTh>Acciones</MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<PadrinosListViewModel, object>(viewModel => viewModel.BecariosActivos.Any() ? viewModel.BecariosActivos.First().BecarioFullName : string.Empty)">
+                    Ahijados actuales
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                Teléfono
+            </MudTh>
+            <MudTh>
+                Acciones
+            </MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nombre">
-                <AuditableItemDisplay Id="@context.Id" Name="@context.Name" AuditableViewModel="@context" />
+                <AuditableItemDisplay Id="@context.PadrinoId" Name="@context.PadrinoFullName" Email="@context.PadrinoEmail" AuditableViewModel="@context" />
+
+                @if (context.Cc.Any())
+                {
+                    <MudText Typo="Typo.body2">
+                        <strong>CC</strong>: @context.Cc.ToCommaSeparatedList()
+                    </MudText>
+                }
+
+                @if (context.Bcc.Any())
+                {
+                    <MudText Typo="Typo.body2">
+                        <strong>BCC</strong>: @context.Bcc.ToCommaSeparatedList()
+                    </MudText>
+                }
             </MudTd>
-            <MudTd DataLabel="Correo electrónico">
-                <MudLink Href="@($"mailto:{context.Email}")">@context.Email</MudLink>
-            </MudTd>
-            <MudTd DataLabel="CC">
-                @(context.Cc.Any() ? string.Join(", ", context.Cc) : "—")
-            </MudTd>
-            <MudTd DataLabel="BCC">
-                @(context.Bcc.Any() ? string.Join(", ", context.Bcc) : "—")
+            <MudTd DataLabel="Ahijados">
+                @if (context.BecariosActivos.Any())
+                {
+                    foreach (var becario in context.BecariosActivos)
+                    {
+                        <MudText Typo="Typo.body2" Inline="false">
+                            @becario.BecarioFullName <EmailIconButton EmailAddress="@becario.BecarioEmail" />
+                        </MudText>
+                    }
+                }
+                else
+                {
+                    <span>&mdash;</span>
+                }
             </MudTd>
             <MudTd DataLabel="Teléfono">
-                @context.Phone
+                @context.PadrinoPhone
             </MudTd>
-            <MudTd>
+            <MudTd DataLabel="Acciones">
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorPadrinoEdit0, context.Id))"
+                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorPadrinoEdit0, context.PadrinoId))"
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
             </MudTd>

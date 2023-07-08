@@ -34,10 +34,14 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private bool Filter(PadrinosListViewModel padrinosListViewModel)
         {
             return string.IsNullOrWhiteSpace(_searchString)
-                   || padrinosListViewModel.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                   || padrinosListViewModel.PadrinoFullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                    || (_includeAll &&
-                       (padrinosListViewModel.Email.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-                        || padrinosListViewModel.Phone.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));
+                       (padrinosListViewModel.PadrinoEmail.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                        || padrinosListViewModel.PadrinoPhone.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                        || padrinosListViewModel.BecariosActivos.Any(b => b.BecarioFullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                                                                          || (b.BecarioEmail is not null && b.BecarioEmail.Contains(_searchString, StringComparison.OrdinalIgnoreCase)))
+                        || padrinosListViewModel.Cc.Any(cc => cc.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                        || padrinosListViewModel.Bcc.Any(cc => cc.Contains(_searchString, StringComparison.OrdinalIgnoreCase))));
         }
     }
 }

@@ -7,19 +7,28 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 {
     public class PadrinosListViewModel : AuditableWithAuthorNameViewModel
     {
-        public int Id { get; set; }
+        public int PadrinoId { get; set; }
 
-        public string Name { get; set; } = default!;
+        public List<PadrinosListBecariosActivosViewModel> BecariosActivos { get; set; } = default!;
 
-        public string Email { get; set; } = default!;
+        public string PadrinoFullName { get; set; } = default!;
+
+        public string PadrinoEmail { get; set; } = default!;
 
         public List<string> Cc { get; set; } = default!;
 
         public List<string> Bcc { get; set; } = default!;
 
-        public string Phone { get; set; } = default!;
+        public string PadrinoPhone { get; set; } = default!;
 
-        public Gender Gender { get; set; }
+        public Gender PadrinoGender { get; set; }
+    }
+
+    public class PadrinosListBecariosActivosViewModel
+    {
+        public string BecarioFullName { get; set; } = default!;
+
+        public string? BecarioEmail { get; set; }
     }
 
     public class PadrinosListViewModelMappingDefinitions : IRegister
@@ -27,10 +36,11 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
         public void Register(TypeAdapterConfig config)
         {
             config.NewConfig<Padrino, PadrinosListViewModel>()
-                .Map(dest => dest.Id, src => src.Id)
-                .Map(dest => dest.Name, src => src.FullName(true))
-                .Map(dest => dest.Gender, src => src.Gender)
-                .Map(dest => dest.Email, src => src.Email)
+                .Map(dest => dest.PadrinoId, src => src.Id)
+                .Map(dest => dest.BecariosActivos, src => src.Apadrinamientos)
+                .Map(dest => dest.PadrinoFullName, src => src.FullName(true))
+                .Map(dest => dest.PadrinoGender, src => src.Gender)
+                .Map(dest => dest.PadrinoEmail, src => src.Email)
                 .Map(dest => dest.Cc, src => src.SendAlsoTo!.Where(sat => !sat.SendAsBcc).Select(ToPrintableString).ToList(), // [1]
                     srcCond => srcCond.SendAlsoTo != null)
                 .Map(dest => dest.Bcc, src => src.SendAlsoTo!.Where(sat => sat.SendAsBcc).Select(ToPrintableString).ToList(), // [1]
@@ -39,12 +49,16 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
                     srcCond => srcCond.SendAlsoTo == null)
                 .Map(dest => dest.Bcc, src => new List<string>(),
                     srcCond => srcCond.SendAlsoTo == null)
-                .Map(dest => dest.Phone, src => src.Phone ?? string.Empty)
+                .Map(dest => dest.PadrinoPhone, src => src.Phone ?? string.Empty)
                 .Map(dest => dest.CreatedOnUtc, src => src.CreatedOnUtc)
                 .Map(dest => dest.LastUpdatedOnUtc, src => src.LastUpdatedOnUtc)
                 .Map(dest => dest.CreatedBy, src => src.CreatedByCoordinador.FullName(false))
                 .Map(dest => dest.UpdatedBy, src => src.UpdatedByCoordinador!.FullName(false),
                     srcCond => srcCond.UpdatedByCoordinador != null);
+
+            config.NewConfig<Apadrinamiento, PadrinosListBecariosActivosViewModel>()
+                .Map(dest => dest.BecarioFullName, src => src.Becario.FullName(false))
+                .Map(dest => dest.BecarioEmail, src => src.Becario.Email);
         }
 
         private string ToPrintableString(SendAlsoTo sendAlsoTo) =>

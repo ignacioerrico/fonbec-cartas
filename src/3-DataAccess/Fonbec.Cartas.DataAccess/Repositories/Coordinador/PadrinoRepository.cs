@@ -1,5 +1,4 @@
-﻿using Fonbec.Cartas.DataAccess.Entities;
-using Fonbec.Cartas.DataAccess.Entities.Actors;
+﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
@@ -25,6 +24,12 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             var all = await appDbContext.Padrinos
+                .Include(p =>
+                    p.Apadrinamientos
+                        .Where(a => a.From.Date <= DateTime.Today
+                                    && (a.To == null || DateTime.Today <= a.To.Value.Date))
+                        .OrderBy(a => a.Becario.FirstName))
+                .ThenInclude(a => a.Becario)
                 .Include(p => p.SendAlsoTo)
                 .Include(p => p.CreatedByCoordinador)
                 .Include(p => p.UpdatedByCoordinador)

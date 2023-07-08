@@ -58,7 +58,30 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
                         RecipientEmail = "SendAlsoTo-RecipientEmail-3",
                         SendAsBcc = true,
                     },
-                }
+                },
+                Apadrinamientos = new()
+                {
+                    new()
+                    {
+                        Becario = new()
+                        {
+                            FirstName = "Becario-FirstName-1",
+                            LastName = "Becario-LastName-1",
+                            NickName = "Becario-NickName-1",
+                            Email = "Becario-Email-1",
+                        },
+                    },
+                    new()
+                    {
+                        Becario = new()
+                        {
+                            FirstName = "Becario-FirstName-2",
+                            LastName = "Becario-LastName-2",
+                            NickName = "Becario-NickName-2",
+                            Email = "Becario-Email-2",
+                        },
+                    },
+                },
             };
 
             // Act
@@ -67,10 +90,17 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
             // Assert
             using (new AssertionScope())
             {
-                result.Id.Should().Be(42);
-                result.Name.Should().Be("FirstName LastName (\"NickName\")");
-                result.Gender.Should().Be(Gender.Female);
-                result.Email.Should().Be("Email");
+                result.PadrinoId.Should().Be(42);
+                
+                result.BecariosActivos.Should().HaveCount(2);
+                result.BecariosActivos[0].BecarioFullName.Should().Be("Becario-FirstName-1 Becario-LastName-1");
+                result.BecariosActivos[0].BecarioEmail.Should().Be("Becario-Email-1");
+                result.BecariosActivos[1].BecarioFullName.Should().Be("Becario-FirstName-2 Becario-LastName-2");
+                result.BecariosActivos[1].BecarioEmail.Should().Be("Becario-Email-2");
+
+                result.PadrinoFullName.Should().Be("FirstName LastName (\"NickName\")");
+                result.PadrinoGender.Should().Be(Gender.Female);
+                result.PadrinoEmail.Should().Be("Email");
                 
                 result.Cc.Should().HaveCount(2);
                 result.Cc[0].Should().Be("SendAlsoTo-RecipientFullName-1 <SendAlsoTo-RecipientEmail-1>");
@@ -79,7 +109,7 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
                 result.Bcc.Should().ContainSingle();
                 result.Bcc[0].Should().Be("SendAlsoTo-RecipientFullName-3 <SendAlsoTo-RecipientEmail-3>");
 
-                result.Phone.Should().Be("Phone");
+                result.PadrinoPhone.Should().Be("Phone");
                 result.CreatedOnUtc.Should().Be(createdOnUtc);
                 result.LastUpdatedOnUtc.Should().Be(createdOnUtc.AddDays(1));
                 result.CreatedBy.Should().Be("CreatedByCoordinador-FirstName CreatedByCoordinador-LastName");
