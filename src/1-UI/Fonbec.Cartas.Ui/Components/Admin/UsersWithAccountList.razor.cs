@@ -1,5 +1,6 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Fonbec.Cartas.DataAccess.Entities.Actors.Abstract;
+using Fonbec.Cartas.Logic.ExtensionMethods;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.ViewModels.Admin;
 using Fonbec.Cartas.Ui.Constants;
@@ -59,12 +60,12 @@ namespace Fonbec.Cartas.Ui.Components.Admin
         private bool Filter(UsersWithAccountListViewModel usersWithAccountListViewModel)
         {
             return string.IsNullOrWhiteSpace(_searchString)
-                   || usersWithAccountListViewModel.UserWithAccountFullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                   || usersWithAccountListViewModel.UserWithAccountFullName.ContainsIgnoringAccents(_searchString)
                    || (_includeAll &&
-                       (usersWithAccountListViewModel.FilialName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                       (usersWithAccountListViewModel.FilialName.ContainsIgnoringAccents(_searchString)
                         || usersWithAccountListViewModel.Email.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                         || usersWithAccountListViewModel.Phone.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-                        || usersWithAccountListViewModel.Username.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));
+                        || usersWithAccountListViewModel.Username.ContainsIgnoringAccents(_searchString)));
         }
     }
 }

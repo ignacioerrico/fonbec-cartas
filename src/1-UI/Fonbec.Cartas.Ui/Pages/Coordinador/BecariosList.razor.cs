@@ -1,4 +1,5 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
+using Fonbec.Cartas.Logic.ExtensionMethods;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Microsoft.AspNetCore.Components;
 using Fonbec.Cartas.Logic.Services.Coordinador;
@@ -63,11 +64,11 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private bool Filter(BecariosListViewModel becariosListViewModel)
         {
             return string.IsNullOrWhiteSpace(_searchString)
-                   || becariosListViewModel.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                   || becariosListViewModel.Name.ContainsIgnoringAccents(_searchString)
                    || (_includeAll &&
-                       (becariosListViewModel.Mediador.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-                        || becariosListViewModel.PadrinosActivos.Any(pa => pa.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-                        || becariosListViewModel.PadrinosFuturos.Any(pf => pf.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                       (becariosListViewModel.Mediador.ContainsIgnoringAccents(_searchString)
+                        || becariosListViewModel.PadrinosActivos.Any(pa => pa.ContainsIgnoringAccents(_searchString))
+                        || becariosListViewModel.PadrinosFuturos.Any(pf => pf.ContainsIgnoringAccents(_searchString))
                         || becariosListViewModel.Email.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                         || becariosListViewModel.Phone.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));
         }

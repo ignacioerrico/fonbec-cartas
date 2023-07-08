@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.Logic.Services.Admin;
+﻿using Fonbec.Cartas.Logic.ExtensionMethods;
+using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.ViewModels.Admin;
 using Fonbec.Cartas.Ui.Components.Dialogs;
 using Microsoft.AspNetCore.Components;
@@ -35,9 +36,9 @@ namespace Fonbec.Cartas.Ui.Pages.Admin
         private bool Filter(FilialesListViewModel filialesListViewModel)
         {
             return string.IsNullOrWhiteSpace(_searchString)
-                   || filialesListViewModel.FilialName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                   || filialesListViewModel.FilialName.ContainsIgnoringAccents(_searchString)
                    || (_includeCoordinadores
-                       && filialesListViewModel.Coordinadores.Any(c => c.Contains(_searchString, StringComparison.OrdinalIgnoreCase)));
+                       && filialesListViewModel.Coordinadores.Any(c => c.ContainsIgnoringAccents(_searchString)));
         }
 
         private async Task OpenDeleteDialogAsync(int id, string filialName)

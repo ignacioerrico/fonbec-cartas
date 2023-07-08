@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.Logic.Models;
+﻿using Fonbec.Cartas.Logic.ExtensionMethods;
+using Fonbec.Cartas.Logic.Models;
 using Fonbec.Cartas.Logic.Services.Coordinador;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Microsoft.AspNetCore.Components;
@@ -49,14 +50,14 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private bool Filter(PadrinosListViewModel padrinosListViewModel)
         {
             return string.IsNullOrWhiteSpace(_searchString)
-                   || padrinosListViewModel.PadrinoFullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                   || padrinosListViewModel.PadrinoFullName.ContainsIgnoringAccents(_searchString)
                    || (_includeAll &&
                        (padrinosListViewModel.PadrinoEmail.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
                         || padrinosListViewModel.PadrinoPhone.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-                        || padrinosListViewModel.BecariosActivos.Any(b => b.BecarioFullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+                        || padrinosListViewModel.BecariosActivos.Any(b => b.BecarioFullName.ContainsIgnoringAccents(_searchString)
                                                                           || (b.BecarioEmail is not null && b.BecarioEmail.Contains(_searchString, StringComparison.OrdinalIgnoreCase)))
-                        || padrinosListViewModel.Cc.Any(cc => cc.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-                        || padrinosListViewModel.Bcc.Any(cc => cc.Contains(_searchString, StringComparison.OrdinalIgnoreCase))));
+                        || padrinosListViewModel.Cc.Any(cc => cc.ContainsIgnoringAccents(_searchString))
+                        || padrinosListViewModel.Bcc.Any(cc => cc.ContainsIgnoringAccents(_searchString))));
         }
 
         private void AddFilters()
