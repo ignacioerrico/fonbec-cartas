@@ -108,11 +108,11 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             _filters.Add(optionWithTotal);
         }
 
-        private void OnSelectedStatusChanged(SelectableModel<FilterBy> selectedStatus)
+        private void OnSelectedStatusChanged(SelectableModel<FilterBy> selectedFilter)
         {
-            _selectedFilter = selectedStatus;
+            _selectedFilter = selectedFilter;
 
-            _filteredViewModels = selectedStatus.Id switch
+            _filteredViewModels = selectedFilter.Id switch
             {
                 FilterBy.Todos => _viewModels.ToList(),
                 FilterBy.SinBecario => _viewModels.Where(vm => !vm.BecariosActivos.Any()).ToList(),

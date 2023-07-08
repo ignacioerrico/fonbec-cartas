@@ -1,5 +1,6 @@
 ﻿@page "/coordinador/becarios"
 @using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.Logic.Models
 @using Fonbec.Cartas.Logic.ViewModels.Components
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
 @using Fonbec.Cartas.Ui.Constants
@@ -22,7 +23,15 @@
 
 @if (_viewModels.Any())
 {
-    <MudTable Items="_viewModels"
+    <MudSelect T="SelectableModel<FilterBy>" Label="Mostrar" Value="_selectedFilter" ValueChanged="OnSelectedStatusChanged"
+               Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter" Class="mt-4">
+        @foreach (var filter in _filters)
+        {
+            <MudSelectItem T="SelectableModel<FilterBy>" Value="@filter" />
+        }
+    </MudSelect>
+
+    <MudTable Items="_filteredViewModels"
               Dense="true" Hover="true" Striped="true" Bordered="true"
               Filter="new Func<BecariosListViewModel, bool>(Filter)"
               SortLabel="Ordenar por"
