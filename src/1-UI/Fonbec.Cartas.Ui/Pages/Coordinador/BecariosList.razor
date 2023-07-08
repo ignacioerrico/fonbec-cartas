@@ -27,7 +27,7 @@
     @if (_displayFilterByBecario)
     {
         <MudSelect T="SelectableModel<FilterBy>" Label="Becarios" Class="mt-4"
-                   Value="_selectedFilter" ValueChanged="OnSelectedStatusChanged"
+                   Value="_selectedFilter" ValueChanged="OnSelectedFilterChanged"
                    Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
             @foreach (var filter in _filters)
             {

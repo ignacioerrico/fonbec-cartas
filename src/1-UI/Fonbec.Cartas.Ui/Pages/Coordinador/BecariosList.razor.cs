@@ -32,7 +32,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private static readonly SelectableModel<NivelDeEstudio> Universitario = new(NivelDeEstudio.Universitario, "Universitarios");
 
         private bool _displayFilterByNivelDeEstudio = true;
-        private int _totalNivelesDisponibles = 0;
+        private int _totalNivelesDisponibles;
         private readonly List<SelectableModel<NivelDeEstudio>> _niveles = new();
         private List<SelectableModel<NivelDeEstudio>> _selectedNiveles = new();
 
@@ -56,7 +56,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             AddNivelesDeEstudioFilters();
 
-            OnSelectedStatusChanged(_selectedFilter);
+            ApplyFilters(_selectedFilter, _selectedNiveles);
             
             _loading = false;
         }
@@ -189,7 +189,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             _selectedNiveles.Add(optionWithTotal);
         }
 
-        private void OnSelectedStatusChanged(SelectableModel<FilterBy> selectedFilter)
+        private void OnSelectedFilterChanged(SelectableModel<FilterBy> selectedFilter)
         {
             _selectedFilter = selectedFilter;
 
