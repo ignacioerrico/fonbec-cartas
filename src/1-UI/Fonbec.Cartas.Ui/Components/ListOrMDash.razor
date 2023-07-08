@@ -1,0 +1,21 @@
+﻿@using Fonbec.Cartas.Logic.ViewModels.Components
+
+@if (Items?.Any() ?? false)
+{
+    @foreach (var item in Items)
+    {
+        <MudText Typo="Typo.body2" Inline="false">
+            @item.Text <EmailIconButton EmailAddress="@item.Email" />
+        </MudText>
+    }
+}
+else
+{
+    <span>&mdash;</span>
+}
+
+
+@code {
+    [Parameter]
+    public IEnumerable<ListOrMDashViewModel>? Items { get; set; }
+}

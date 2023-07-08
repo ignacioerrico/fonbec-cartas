@@ -6,8 +6,7 @@ namespace Fonbec.Cartas.Logic.ExtensionMethods
     {
         public static bool ContainsIgnoringAccents(this string source, string subString)
         {
-            var compareOptions =
-                CompareOptions.IgnoreCase
+            const CompareOptions compareOptions = CompareOptions.IgnoreCase
                 | CompareOptions.IgnoreSymbols
                 | CompareOptions.IgnoreNonSpace;
             
@@ -16,12 +15,26 @@ namespace Fonbec.Cartas.Logic.ExtensionMethods
             return index != -1;
         }
 
-        public static string ToCommaSeparatedList(this List<string> list, bool useMDashIfEmpty = false)
+        public static string ToCommaSeparatedList(this List<string>? list)
         {
-            var result = string.Join(", ", list);
-            return string.IsNullOrEmpty(result) && useMDashIfEmpty
+            if (list is null)
+            {
+                return string.Empty;
+            }
+
+            return string.Join(", ", list);
+        }
+
+        public static string MDashIfEmpty(this string? value)
+        {
+            if (value is null)
+        {
+                return string.Empty;
+            }
+
+            return string.IsNullOrWhiteSpace(value)
                 ? "—"
-                : result;
+                : value;
         }
     }
 }

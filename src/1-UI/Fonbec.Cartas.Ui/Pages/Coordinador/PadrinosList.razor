@@ -1,6 +1,7 @@
 ﻿@page "/coordinador/padrinos"
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Logic.Models
+@using Fonbec.Cartas.Logic.ViewModels.Components
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
 @using Fonbec.Cartas.Ui.Constants
 @inherits PerFilialComponentBase
@@ -79,26 +80,14 @@
                 }
             </MudTd>
             <MudTd DataLabel="Ahijados">
-                @if (context.BecariosActivos.Any())
-                {
-                    foreach (var becario in context.BecariosActivos)
-                    {
-                        <MudText Typo="Typo.body2" Inline="false">
-                            @becario.BecarioFullName <EmailIconButton EmailAddress="@becario.BecarioEmail" />
-                        </MudText>
-                    }
-                }
-                else
-                {
-                    <span>&mdash;</span>
-                }
+                <ListOrMDash Items="@context.BecariosActivos.Select(ba => new ListOrMDashViewModel(ba.BecarioFullName, ba.BecarioEmail))" />
             </MudTd>
             <MudTd DataLabel="Teléfono">
-                @context.PadrinoPhone
+                <PhoneOrMDash Number="@context.PadrinoPhone" />
             </MudTd>
             <MudTd DataLabel="Acciones">
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorPadrinoEdit0, context.PadrinoId))"
+                    <MudIconButton Href="@string.Format(@NavRoutes.CoordinadorPadrinoEdit0, context.PadrinoId)"
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
             </MudTd>

@@ -67,7 +67,7 @@
                 <AuditableItemDisplay Id="@context.FilialId" Name="@context.FilialName" AuditableViewModel="@context" />
             </MudTd>
             <MudTd DataLabel="Coordinadores">
-                @context.Coordinadores.ToCommaSeparatedList(useMDashIfEmpty: true)
+                @context.Coordinadores.ToCommaSeparatedList().MDashIfEmpty()
             </MudTd>
             <MudTd DataLabel="# Mediadores">
                    @context.QtyMediadores

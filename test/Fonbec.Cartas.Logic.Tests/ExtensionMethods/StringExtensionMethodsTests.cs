@@ -20,45 +20,82 @@ namespace Fonbec.Cartas.Logic.Tests.ExtensionMethods
             expected.Should().Be(actual);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void ToCommaSeparatedList_Success(bool useMDashIfEmpty)
+        [Fact]
+        public void ToCommaSeparatedList_ListHasElements()
         {
             // Arrange
             var list = new List<string> { "one", "two", "three" };
 
             // Act
-            var result = list.ToCommaSeparatedList(useMDashIfEmpty);
+            var result = list.ToCommaSeparatedList();
 
             // Assert
             result.Should().Be("one, two, three");
         }
 
         [Fact]
-        public void ToCommaSeparatedList_Empty_DoNotUseMDash()
+        public void ToCommaSeparatedList_ListIsEmpty()
         {
             // Arrange
             var list = new List<string>();
 
             // Act
-            var result = list.ToCommaSeparatedList(useMDashIfEmpty: false);
+            var result = list.ToCommaSeparatedList();
 
             // Assert
             result.Should().Be(string.Empty);
         }
         
         [Fact]
-        public void ToCommaSeparatedList_Empty_UseMDash()
+        public void ToCommaSeparatedList_ListIsNull()
         {
             // Arrange
-            var list = new List<string>();
+            List<string>? list = null;
 
             // Act
-            var result = list.ToCommaSeparatedList(useMDashIfEmpty: true);
+            var result = list.ToCommaSeparatedList();
+
+            // Assert
+            result.Should().Be(string.Empty);
+        }
+        
+        [Fact]
+        public void MDashIfEmpty_StringIsEmpty()
+        {
+            // Arrange
+            var value = string.Empty;
+
+            // Act
+            var result = value.MDashIfEmpty();
 
             // Assert
             result.Should().Be("—");
+        }
+
+        [Fact]
+        public void MDashIfEmpty_StringIsNotEmpty()
+        {
+            // Arrange
+            var value = "something";
+
+            // Act
+            var result = value.MDashIfEmpty();
+
+            // Assert
+            result.Should().Be("something");
+        }
+
+        [Fact]
+        public void MDashIfEmpty_StringIsNull()
+        {
+            // Arrange
+            string? value = null;
+
+            // Act
+            var result = value.MDashIfEmpty();
+
+            // Assert
+            result.Should().Be(string.Empty);
         }
     }
 }

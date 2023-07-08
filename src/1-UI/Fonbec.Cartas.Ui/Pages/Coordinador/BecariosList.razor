@@ -1,8 +1,8 @@
 ﻿@page "/coordinador/becarios"
 @using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.Logic.ViewModels.Components
 @using Fonbec.Cartas.Logic.ViewModels.Coordinador
 @using Fonbec.Cartas.Ui.Constants
-@using Fonbec.Cartas.Logic.ExtensionMethods
 @inherits PerFilialComponentBase
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
@@ -41,61 +41,62 @@
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.Mediador)"
-                                   InitialDirection="SortDirection.Ascending">
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.Mediador)">
                     Mediador
                 </MudTableSortLabel>
             </MudTh>
-            <MudTh>Padrinos activos</MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.LatestActiveAssignmentEndsOn ?? DateTime.MinValue)"
-                                   InitialDirection="SortDirection.Ascending">
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.PadrinosActivos.Any() ? becario.PadrinosActivos.First() : string.Empty)">
+                    Padrinos activos
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.LatestActiveAssignmentEndsOn ?? DateTime.MinValue)">
                     Finaliza
                 </MudTableSortLabel>
             </MudTh>
-            <MudTh>Padrinos futuros</MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.NivelDeEstudio)"
-                                   InitialDirection="SortDirection.Ascending">
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.PadrinosFuturos.Any() ? becario.PadrinosFuturos.First() : string.Empty)">
+                    Padrinos futuros
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<BecariosListViewModel, object>(becario => becario.NivelDeEstudio)">
                     Nivel
                 </MudTableSortLabel>
             </MudTh>
-            <MudTh>Correo electrónico</MudTh>
             <MudTh>Teléfono</MudTh>
             <MudTh>Acciones</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nombre">
-                <AuditableItemDisplay Id="@context.Id" Name="@context.Name" AuditableViewModel="@context" />
+                <AuditableItemDisplay Id="@context.Id" Name="@context.Name" Email="@context.Email" AuditableViewModel="@context" />
             </MudTd>
             <MudTd DataLabel="Mediador">
                 @context.Mediador
             </MudTd>
             <MudTd DataLabel="Padrinos activos">
-                @(context.PadrinosActivos.Any() ? string.Join(", ", context.PadrinosActivos) : "—")
+                <ListOrMDash Items="@context.PadrinosActivos.Select(pa => new ListOrMDashViewModel(pa))" />
             </MudTd>
             <MudTd DataLabel="Finaliza">
                 @(context.LatestActiveAssignmentEndsOn.HasValue ? context.LatestActiveAssignmentEndsOn.Value.ToLocalizedDate() : "—")
             </MudTd>
             <MudTd DataLabel="Padrinos futuros">
-                @(context.PadrinosFuturos.Any() ? string.Join(", ", context.PadrinosFuturos) : "—")
+                <ListOrMDash Items="@context.PadrinosFuturos.Select(pa => new ListOrMDashViewModel(pa))" />
             </MudTd>
             <MudTd DataLabel="Nivel">
                 @context.NivelDeEstudio
             </MudTd>
-            <MudTd DataLabel="Correo electrónico">
-                <MudLink Href="@($"mailto:{context.Email}")">@context.Email</MudLink>
-            </MudTd>
             <MudTd DataLabel="Teléfono">
-                @context.Phone
+                <PhoneOrMDash Number="@context.Phone" />
             </MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecariosEdit0, context.Id))"
+                    <MudIconButton Href="@string.Format(@NavRoutes.CoordinadorBecariosEdit0, context.Id)"
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
                 <MudTooltip Text="Asignar padrino" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorBecario0AsignarPadrinos, context.Id))"
+                    <MudIconButton Href="@string.Format(@NavRoutes.CoordinadorBecario0AsignarPadrinos, context.Id)"
                                    Icon="@Icons.Material.Filled.SupervisorAccount" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
             </MudTd>

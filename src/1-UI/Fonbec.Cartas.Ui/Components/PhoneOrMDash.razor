@@ -1,0 +1,17 @@
+﻿@if (string.IsNullOrWhiteSpace(Number))
+{
+    <span>&mdash;</span>
+}
+else
+{
+    <MudLink Href="@($"tel:{Number}")" Typo="Typo.body2">
+        @Number
+    </MudLink>
+}
+
+@code {
+
+    [Parameter]
+    public string Number { get; set; } = string.Empty;
+
+}
