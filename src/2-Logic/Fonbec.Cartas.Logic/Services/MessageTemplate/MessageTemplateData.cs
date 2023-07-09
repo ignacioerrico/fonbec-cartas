@@ -10,7 +10,7 @@ public class MessageTemplateData
 
     public PersonData Becario { get; set; } = default!;
 
-    public string RevisorNombre { get; set; } = default!;
+    public PersonData Revisor { get; set; } = default!;
     
     public string FilialNombre { get; set; } = default!;
 }

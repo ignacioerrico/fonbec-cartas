@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
+using System.Text.RegularExpressions;
 
 namespace Fonbec.Cartas.Logic.Services.MessageTemplate
 {
@@ -11,6 +12,8 @@ namespace Fonbec.Cartas.Logic.Services.MessageTemplate
     public class MessageTemplateGetterService : IMessageTemplateGetterService
     {
         private const string RevisorNombre = "{revisor:nombre}";
+
+        private const string VoluntarioCapitalized = "{Voluntario}";
 
         private const string FilialNombre = "{filial:nombre}";
 
@@ -45,7 +48,8 @@ namespace Fonbec.Cartas.Logic.Services.MessageTemplate
             body = _messageTemplateParser.MarkdownToHtml(body);
 
             var htmlTemplate = Regex.Replace(_htmlTemplate, BodyPlaceholder, body);
-            htmlTemplate = Regex.Replace(htmlTemplate, RevisorNombre, data.RevisorNombre);
+            htmlTemplate = Regex.Replace(htmlTemplate, RevisorNombre, data.Revisor.Name);
+            htmlTemplate = Regex.Replace(htmlTemplate, VoluntarioCapitalized, data.Revisor.Gender is Gender.Unknown or Gender.Male ? "Voluntario" : "Voluntaria");
             htmlTemplate = Regex.Replace(htmlTemplate, FilialNombre, data.FilialNombre);
 
             return htmlTemplate;

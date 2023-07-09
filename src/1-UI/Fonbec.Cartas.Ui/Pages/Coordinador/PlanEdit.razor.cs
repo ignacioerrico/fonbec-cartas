@@ -50,7 +50,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             Documents = "la carta y el boletín",
             Padrino = Padrino,
             Becario = Ahijado,
-            RevisorNombre = "Vicente",
+            Revisor = new PersonData("Victoria", Gender.Female),
             FilialNombre = "AMBA",
         };
 
