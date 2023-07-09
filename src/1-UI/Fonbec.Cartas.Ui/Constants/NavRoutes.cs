@@ -35,5 +35,7 @@
         public const string CoordinadorBecariosEdit0 = $"{CoordinadorBecarios}/{{0}}";
         public const string CoordinadorBecario0AsignarPadrinos = $"{CoordinadorBecarios}/{{0}}/padrinos";
         public const string CoordinadorPlanEdit0 = $"{CoordinadorPlanes}/{{0}}";
+        
+        public const string CoordinadorPlanPreview0 = $"{CoordinadorPlanes}/{{0}}/ver";
     }
 }

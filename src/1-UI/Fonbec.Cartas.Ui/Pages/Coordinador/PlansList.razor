@@ -48,9 +48,13 @@
             <MudTd DataLabel="Porcentaje enviado">@context.Percentage.ToString("P", new System.Globalization.CultureInfo("es-AR"))</MudTd>
             <MudTd>
                 <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                    <MudIconButton Href="@(string.Format(@NavRoutes.CoordinadorPlanEdit0, context.Id))"
+                    <MudIconButton Href="@(string.Format(NavRoutes.CoordinadorPlanEdit0, context.Id))"
                                    Disabled="@(@context.StartDate <= DateTime.Today)"
                                    Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary"/>
+                </MudTooltip>
+                <MudTooltip Text="Ver" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                    <MudIconButton Href="@(string.Format(NavRoutes.CoordinadorPlanPreview0, context.Id))"
+                                   Icon="@Icons.Material.Filled.RemoveRedEye" Size="Size.Small" Color="Color.Primary" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>

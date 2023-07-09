@@ -9,6 +9,7 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
     {
         Task<List<PlansListViewModel>> GetAllPlansAsync(int filialId);
         Task<SearchResult<PlanEditViewModel>> GetPlanAsync(int planId, int filialId);
+        Task<SearchResult<PlanPreviewViewModel>> GetPlanForPreviewAsync(int planId, int filialId);
         Task<List<DateTime>> GetAllPlansStartDates(int filialId);
         Task<CrudResult> CreatePlanAsync(PlanEditViewModel planEditViewModel);
         Task<CrudResult> UpdatePlanAsync(int planId, PlanEditViewModel planEditViewModel);
@@ -34,6 +35,13 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
             var plan = await _planRepository.GetPlanAsync(planId, filialId);
             var planEditViewModel = plan?.Adapt<PlanEditViewModel>();
             return new SearchResult<PlanEditViewModel>(planEditViewModel);
+        }
+
+        public async Task<SearchResult<PlanPreviewViewModel>> GetPlanForPreviewAsync(int planId, int filialId)
+        {
+            var plan = await _planRepository.GetPlanAsync(planId, filialId);
+            var planEditViewModel = plan?.Adapt<PlanPreviewViewModel>();
+            return new SearchResult<PlanPreviewViewModel>(planEditViewModel);
         }
 
         public async Task<List<DateTime>> GetAllPlansStartDates(int filialId)

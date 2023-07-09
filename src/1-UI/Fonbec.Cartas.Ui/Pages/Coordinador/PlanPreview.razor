@@ -1,0 +1,28 @@
+﻿@page "/coordinador/planes/{PlanId}/ver"
+@using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.Ui.Components.Coordinador
+@using Fonbec.Cartas.Ui.Constants
+@inherits PerFilialComponentBase
+@attribute [Authorize(Roles = FonbecRoles.Coordinador)]
+
+<PageHeader Title="@_pageTitle" />
+
+<ActivityIndicator Loading="_loading" />
+
+<PersonSelectorForPreview @bind-SelectedPadrino="_messageTemplateData.Padrino"
+                          @bind-SelectedBecario="_messageTemplateData.Becario"
+                          @bind-Highlight="_highlight"
+                          StateChanged="UpdatePreview" />
+
+<MudPaper Outlined="true" Class="mt-4 pa-4">
+    <MudText><strong>Asunto</strong>: FONBEC | @((MarkupString)_renderedSubject)</MudText>
+
+    <MudText><strong>Cuerpo del mensaje:</strong>:</MudText>
+
+    <iframe srcdoc="@((MarkupString)_renderedMessageBody)"></iframe>
+</MudPaper>
+
+    <MudButton Href="@NavRoutes.CoordinadorPlanes" Class="mt-4"
+           Variant="Variant.Filled" Color="Color.Default">
+    Volver
+</MudButton>
