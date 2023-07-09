@@ -52,7 +52,7 @@ namespace Fonbec.Cartas.Ui.Components.Admin
         {
             switch (typeof(T))
             {
-                case { } t when t == typeof(Coordinador):
+                case { } t when t == typeof(DataAccess.Entities.Actors.Coordinador):
                     _pathToList = NavRoutes.AdminCoordinadores;
                     _pathToNew = NavRoutes.AdminCoordinadorNew;
                     _pageTitleNew = "Alta de Coordinador";

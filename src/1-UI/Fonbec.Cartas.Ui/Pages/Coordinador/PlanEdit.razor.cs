@@ -1,5 +1,4 @@
-﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
-using Fonbec.Cartas.Logic.ExtensionMethods;
+﻿using Fonbec.Cartas.Logic.ExtensionMethods;
 using Fonbec.Cartas.Logic.Services.MessageTemplate;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Fonbec.Cartas.Ui.Constants;
@@ -8,23 +7,14 @@ using MudBlazor;
 using System.Globalization;
 using Fonbec.Cartas.Logic.Services.Coordinador;
 using Mapster;
+using Fonbec.Cartas.DataAccess.Entities.Enums;
+using Fonbec.Cartas.Ui.Components.Coordinador;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
     public partial class PlanEdit : PerFilialComponentBase
     {
         private static readonly CultureInfo EsArCultureInfo = CultureInfo.GetCultureInfo("es-AR");
-
-        private static readonly DateTime FirstDayOfFollowingMonth =
-            DateTime.Today
-                .AddDays(1 - DateTime.Today.Day) // Go back to the first day
-                .AddMonths(1);
-
-        private static readonly PersonData Padrino = new("Patricio", Gender.Male);
-        private static readonly PersonData Madrina = new("María", Gender.Female);
-
-        private static readonly PersonData Ahijado = new("Benjamín", Gender.Male);
-        private static readonly PersonData Ahijada = new("Beatriz", Gender.Female);
 
         private PlanEditViewModel _plan = new();
         private PlanEditViewModel _originalPlan = new();
@@ -36,38 +26,30 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private bool _isNew;
         private string? _pageTitle;
         private string _saveButtonText = "Guardar";
+        private bool _formValidationSucceeded;
 
         private List<DateTime> _takenStartDates = new();
 
-        private PersonData _selectedPadrino = Padrino;
-        private PersonData _selectedBecario = Ahijado;
-
-        private MudForm _mudForm = default!;
-        private bool _formValidationSucceeded;
-
-        private string _renderedSubject = default!;
-        private string _renderedMessageBody = default!;
-        private bool _highlight;
-
-        private bool ModelHasChanged =>
-            !string.Equals(_plan.Subject, _originalPlan.Subject, StringComparison.Ordinal)
-            || !string.Equals(_plan.MessageMarkdown, _originalPlan.MessageMarkdown, StringComparison.Ordinal);
-
-        private bool SaveButtonDisabled => _loading
-                                           || !_formValidationSucceeded
-                                           || string.IsNullOrWhiteSpace(_plan.Subject)
-                                           || string.IsNullOrWhiteSpace(_plan.MessageMarkdown)
-                                           || !ModelHasChanged;
-
         private readonly MessageTemplateData _messageTemplateData = new()
         {
-            Date = FirstDayOfFollowingMonth,
             Documents = "la carta y el boletín",
-            Padrino = Padrino,
-            Becario = Ahijado,
+            Padrino = PersonSelectorForPreview.Padrino,
+            Becario = PersonSelectorForPreview.Ahijado,
             Revisor = new PersonData("Victoria", Gender.Female),
             FilialNombre = "AMBA",
         };
+
+        private bool _highlight;
+
+        private string _renderedSubject = default!;
+        private string _renderedMessageBody = default!;
+
+        private bool ModelHasChanged => !string.Equals(_plan.Subject, _originalPlan.Subject, StringComparison.Ordinal)
+                                        || !string.Equals(_plan.MessageMarkdown, _originalPlan.MessageMarkdown, StringComparison.Ordinal);
+
+        private bool SaveButtonDisabled => _loading
+                                           || !_formValidationSucceeded
+                                           || !ModelHasChanged;
 
         [Parameter]
         public string PlanId { get; set; } = string.Empty;
@@ -80,16 +62,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
         [Inject]
         public IMessageTemplateParser MessageTemplateParser { get; set; } = default!;
-
-        public PlanEdit()
-        {
-            _plan.StartDate = FirstDayOfFollowingMonth;
-        }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            _mudForm.Validate();
-        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -116,6 +88,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
                 _takenStartDates = await PlanService.GetAllPlansStartDates(authenticatedUserData.FilialId);
 
+                SetInitialStartDate();
                 _plan.MessageMarkdown = MessageTemplateGetterService.GetDefaultMessage();
             }
             else if (int.TryParse(PlanId, out _planId) && _planId > 0)
@@ -175,17 +148,11 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanes);
         }
 
-        private void OnStartDateChanged(DateTime? startDate)
+        private void SetInitialStartDate()
         {
-            if (startDate is null)
-            {
-                _plan.StartDate = FirstDayOfFollowingMonth;
-                return;
-            }
-
-            _plan.StartDate = startDate.Value;
-            _messageTemplateData.Date = startDate.Value;
-            UpdatePreview();
+            _plan.StartDate = _takenStartDates.Any()
+                ? _takenStartDates.Max().AddMonths(1)
+                : new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
         }
 
         private bool IsDateDisabled(DateTime dateTime)
@@ -196,42 +163,37 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                    || _takenStartDates.Any(taken => dateTime.Year == taken.Year && dateTime.Month == taken.Month);
         }
 
+        private void UpdatePreview()
+        {
+            _renderedSubject = MessageTemplateParser.FillPlaceholders(_plan.Subject, _messageTemplateData, _highlight);
+            _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(_plan.MessageMarkdown, _messageTemplateData, _highlight);
+        }
+
+        private void OnStartDateChanged(DateTime? startDate)
+        {
+            if (startDate is null)
+            {
+                SetInitialStartDate();
+            }
+            else
+            {
+                _plan.StartDate = startDate.Value;
+            }
+
+            _messageTemplateData.Date = _plan.StartDate;
+            UpdatePreview();
+        }
+
         private void OnSubjectChanged(string subject)
         {
             _plan.Subject = subject;
-            _renderedSubject = MessageTemplateParser.FillPlaceholders(subject, _messageTemplateData, _highlight);
-        }
-
-        private void OnMessageBodyChanged(string messageBody)
-        {
-            _plan.MessageMarkdown = messageBody;
-            _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(messageBody, _messageTemplateData, _highlight);
-        }
-
-        private void OnSelectedPadrinoChanged(PersonData padrinoData)
-        {
-            _selectedPadrino = padrinoData;
-            _messageTemplateData.Padrino = padrinoData;
             UpdatePreview();
         }
 
-        private void OnSelectedBecarioChanged(PersonData becarioData)
+        private void OnMessageMarkdownChanged(string messageMarkdown)
         {
-            _selectedBecario = becarioData;
-            _messageTemplateData.Becario = becarioData;
+            _plan.MessageMarkdown = messageMarkdown;
             UpdatePreview();
-        }
-
-        private void OnHighlightChanged(bool highlight)
-        {
-            _highlight = highlight;
-            UpdatePreview();
-        }
-
-        private void UpdatePreview()
-        {
-            OnSubjectChanged(_plan.Subject);
-            OnMessageBodyChanged(_plan.MessageMarkdown);
         }
     }
 }

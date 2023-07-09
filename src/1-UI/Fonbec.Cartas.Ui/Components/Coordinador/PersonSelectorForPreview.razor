@@ -1,0 +1,23 @@
+﻿@using Fonbec.Cartas.Logic.Services.MessageTemplate
+
+<MudText Typo="Typo.h4" Class="mt-4">Vista previa:</MudText>
+
+<MudStack Row="true">
+    <MudStack Class="mr-16">
+        <MudText Typo="Typo.h5">Padrino:</MudText>
+        <MudRadioGroup T="PersonData" SelectedOptionChanged="OnSelectedPadrinoChanged" SelectedOption="SelectedPadrino">
+            <MudRadio Option="Padrino">@Padrino.Name</MudRadio>
+            <MudRadio Option="Madrina">@Madrina.Name</MudRadio>
+        </MudRadioGroup>
+    </MudStack>
+    <MudStack>
+        <MudText Typo="Typo.h5">Ahijado:</MudText>
+        <MudRadioGroup T="PersonData" SelectedOptionChanged="OnSelectedBecarioChanged" SelectedOption="SelectedBecario">
+            <MudRadio Option="Ahijado">@Ahijado.Name</MudRadio>
+            <MudRadio Option="Ahijada">@Ahijada.Name</MudRadio>
+        </MudRadioGroup>
+    </MudStack>
+    <MudStack>
+        <MudCheckBox T="bool" CheckedChanged="OnHighlightChanged" Checked="Highlight">Resaltar el texto especial</MudCheckBox>
+    </MudStack>
+</MudStack>

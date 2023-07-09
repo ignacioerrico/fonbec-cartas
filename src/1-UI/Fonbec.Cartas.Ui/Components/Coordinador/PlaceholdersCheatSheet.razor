@@ -1,0 +1,39 @@
+﻿<MudExpansionPanels Class="mt-4">
+    <MudExpansionPanel Text="Texto expecial">
+        <MudList>
+            <MudListItem><tt class="placeholder"><strong>{mes-de-carta}</strong></tt>: mes y año del plan (p.ej. junio de 2023)</MudListItem>
+            <MudListItem><tt class="placeholder"><strong>{documentos}</strong></tt>: los documentos adjuntos (carta, boletín, etc.)</MudListItem>
+            <MudListItem Icon="@Icons.Material.Filled.SupervisorAccount" Text="Padrinos y madrinas" InitiallyExpanded="true">
+                <NestedList>
+                    <MudListItem><tt class="placeholder"><strong>{padrino}</strong></tt>: padrino o madrina</MudListItem>
+                    <MudListItem><tt class="placeholder"><strong>{padrino:nombre}</strong></tt>: nombre (o apodo, si tiene) del padrino o de la madrina</MudListItem>
+                    <MudListItem>
+                        <tt class="placeholder"><strong>{padrino:</strong><em>masculino</em><strong>:</strong><em>femenino</em><strong>}</strong></tt>:
+                        usa <tt><em>masculino</em></tt> o <tt><em>femenino</em></tt> para el padrino o la madrina según corresponda
+                    </MudListItem>
+                </NestedList>
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.Filled.Face" Text="Becarios (ahijados)" InitiallyExpanded="true">
+                <NestedList>
+                    <MudListItem><tt class="placeholder"><strong>{ahijado}</strong></tt>: ahijado o ahijada</MudListItem>
+                    <MudListItem><tt class="placeholder"><strong>{ahijado:nombre}</strong></tt>: nombre (o apodo, si tiene) del becario</MudListItem>
+                    <MudListItem>
+                        <tt class="placeholder"><strong>{ahijado:</strong><em>masculino</em><strong>:</strong><em>femenino</em><strong>}</strong></tt>:
+                        usa <tt><em>masculino</em></tt> o <tt><em>femenino</em></tt> para el becario según corresponda
+                    </MudListItem>
+                </NestedList>
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.Filled.TextFormat" Text="Formato del texto" InitiallyExpanded="true">
+                <NestedList>
+                    <MudListItem><tt class="placeholder"><strong>#</strong></tt>: subtítulo</MudListItem>
+                    <MudListItem><tt class="placeholder"><strong>##</strong></tt>: saludo</MudListItem>
+                    <MudListItem><tt class="placeholder"><strong>&gt;</strong></tt>: cita</MudListItem>
+                    <MudListItem><tt class="placeholder"><strong>*</strong><em>negrita</em><strong>*</strong></tt>: negrita</MudListItem>
+                    <MudListItem><tt class="placeholder"><strong>_</strong><em>itálica</em><strong>_</strong></tt>: itálica</MudListItem>
+                    <MudListItem><tt class="placeholder"><strong>-</strong> <em>ítem</em></tt>: lista</MudListItem>
+                    <MudListItem><tt class="placeholder"><strong>###</strong> <em>encabezado</em></tt>: nota resaltada (todo el texto que sigue, hasta la primera línea en blanco, es el cuerpo de la nota)</MudListItem>
+                </NestedList>
+            </MudListItem>
+        </MudList>
+    </MudExpansionPanel>
+</MudExpansionPanels>

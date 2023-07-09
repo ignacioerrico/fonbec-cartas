@@ -1,6 +1,6 @@
 ﻿@page "/coordinador/planes/{PlanId}"
 @using Fonbec.Cartas.DataAccess.Constants
-@using Fonbec.Cartas.Logic.Services.MessageTemplate
+@using Fonbec.Cartas.Ui.Components.Coordinador
 @using Fonbec.Cartas.Ui.Constants
 @inherits PerFilialComponentBase
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
@@ -9,7 +9,7 @@
 
 <ActivityIndicator Loading="_loading" />
 
-<MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
+<MudForm @bind-IsValid="_formValidationSucceeded">
     @if (_isNew)
     {
         <MudDatePicker DateChanged="OnStartDateChanged" Date="_plan.StartDate" Label="Mes de recepción de cartas"
@@ -27,7 +27,7 @@
                   Adornment="Adornment.Start" AdornmentText="FONBEC |"
                   Variant="Variant.Outlined" Class="mt-4" />
 
-    <MudTextField T="string" ValueChanged="OnMessageBodyChanged" Value="_plan.MessageMarkdown" Label="Cuerpo del mensaje"
+    <MudTextField T="string" ValueChanged="OnMessageMarkdownChanged" Value="_plan.MessageMarkdown" Label="Cuerpo del mensaje"
                   MaxLength="@MaxLength.Plan.MessageMarkdown"
                   Required="true" RequiredError="Se debe especificar el mensaje."
                   DebounceInterval="250"
@@ -45,70 +45,17 @@
     </MudPaper>
 </MudForm>
 
-<MudExpansionPanels Class="mt-4">
-    <MudExpansionPanel Text="Texto expecial">
-        <MudList>
-            <MudListItem><tt class="placeholder"><strong>{mes-de-carta}</strong></tt>: mes y año del plan (p.ej. junio de 2023)</MudListItem>
-            <MudListItem><tt class="placeholder"><strong>{documentos}</strong></tt>: los documentos adjuntos (carta, boletín, etc.)</MudListItem>
-            <MudListItem Icon="@Icons.Material.Filled.SupervisorAccount" Text="Padrinos y madrinas" InitiallyExpanded="true">
-                <NestedList>
-                    <MudListItem><tt class="placeholder"><strong>{padrino}</strong></tt>: padrino o madrina</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>{padrino:nombre}</strong></tt>: nombre (o apodo, si tiene) del padrino o de la madrina</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>{padrino:</strong><em>masculino</em><strong>:</strong><em>femenino</em><strong>}</strong></tt>:
-                        usa <tt><em>masculino</em></tt> o <tt><em>femenino</em></tt> para el padrino o la madrina según corresponda
-                    </MudListItem>
-                </NestedList>
-            </MudListItem>
-            <MudListItem Icon="@Icons.Material.Filled.Face" Text="Becarios (ahijados)" InitiallyExpanded="true">
-                <NestedList>
-                    <MudListItem><tt class="placeholder"><strong>{ahijado}</strong></tt>: ahijado o ahijada</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>{ahijado:nombre}</strong></tt>: nombre (o apodo, si tiene) del becario</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>{ahijado:</strong><em>masculino</em><strong>:</strong><em>femenino</em><strong>}</strong></tt>:
-                        usa <tt><em>masculino</em></tt> o <tt><em>femenino</em></tt> para el becario según corresponda
-                    </MudListItem>
-                </NestedList>
-            </MudListItem>
-            <MudListItem Icon="@Icons.Material.Filled.TextFormat" Text="Formato del texto" InitiallyExpanded="true">
-                <NestedList>
-                    <MudListItem><tt class="placeholder"><strong>#</strong></tt>: subtítulo</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>##</strong></tt>: saludo</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>&gt;</strong></tt>: cita</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>*</strong><em>negrita</em><strong>*</strong></tt>: negrita</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>_</strong><em>itálica</em><strong>_</strong></tt>: itálica</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>-</strong> <em>ítem</em></tt>: lista</MudListItem>
-                    <MudListItem><tt class="placeholder"><strong>###</strong> <em>encabezado</em></tt>: nota resaltada (todo el texto que sigue, hasta la primera línea en blanco, es el cuerpo de la nota)</MudListItem>
-                </NestedList>
-            </MudListItem>
-        </MudList>
-    </MudExpansionPanel>
-</MudExpansionPanels>
+<PlaceholdersCheatSheet />
 
-<MudText Typo="Typo.h4" Class="mt-4">Vista previa:</MudText>
-
-<MudStack Row="true">
-    <MudStack Class="mr-16">
-        <MudText Typo="Typo.h5">Padrino:</MudText>
-        <MudRadioGroup T="PersonData" SelectedOptionChanged="OnSelectedPadrinoChanged" SelectedOption="_selectedPadrino">
-            <MudRadio Option="Padrino">@Padrino.Name</MudRadio>
-            <MudRadio Option="Madrina">@Madrina.Name</MudRadio>
-        </MudRadioGroup>
-    </MudStack>
-    <MudStack>
-        <MudText Typo="Typo.h5">Ahijado:</MudText>
-        <MudRadioGroup T="PersonData" SelectedOptionChanged="OnSelectedBecarioChanged" SelectedOption="_selectedBecario">
-            <MudRadio Option="Ahijado">@Ahijado.Name</MudRadio>
-            <MudRadio Option="Ahijada">@Ahijada.Name</MudRadio>
-        </MudRadioGroup>
-    </MudStack>
-    <MudStack>
-        <MudCheckBox T="bool" CheckedChanged="OnHighlightChanged" Checked="@_highlight">Resaltar el texto especial</MudCheckBox>
-    </MudStack>
-</MudStack>
+<PersonSelectorForPreview @bind-SelectedPadrino="_messageTemplateData.Padrino"
+                          @bind-SelectedBecario="_messageTemplateData.Becario"
+                          @bind-Highlight="_highlight"
+                          StateChanged="UpdatePreview" />
 
 <MudPaper Outlined="true" Class="mt-4 pa-4">
     <MudText><strong>Asunto</strong>: FONBEC | @((MarkupString)_renderedSubject)</MudText>
-    
+
     <MudText><strong>Cuerpo del mensaje:</strong>:</MudText>
-    
+
     <iframe srcdoc="@((MarkupString)_renderedMessageBody)"></iframe>
 </MudPaper>

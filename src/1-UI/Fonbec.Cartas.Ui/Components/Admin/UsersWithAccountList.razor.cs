@@ -27,7 +27,7 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
             switch (typeof(T))
             {
-                case { } t when t == typeof(Coordinador):
+                case { } t when t == typeof(DataAccess.Entities.Actors.Coordinador):
                     _pathToNew = NavRoutes.AdminCoordinadorNew;
                     _pathToEdit_0 = NavRoutes.AdminCoordinadorEdit0;
                     break;
