@@ -1,37 +1,42 @@
-﻿@page "/coordinador/planes/new"
+﻿@page "/coordinador/planes/{PlanId}"
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Logic.Services.MessageTemplate
 @using Fonbec.Cartas.Ui.Constants
 @inherits PerFilialComponentBase
 @attribute [Authorize(Roles = FonbecRoles.Coordinador)]
 
-<PageHeader Title="Plan nuevo" />
+<PageHeader Title="@_pageTitle" />
 
 <ActivityIndicator Loading="_loading" />
 
 <MudForm @ref="_mudForm" @bind-IsValid="_formValidationSucceeded">
-    <MudDatePicker DateChanged="OnStartDateChanged" Date="_plan.StartDate" Label="Mes de recepción de cartas"
-                   FixDay="1"
-                   PickerVariant="PickerVariant.Dialog"
-                   Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" DateFormat="MMMM \d\e yyyy" />
+    @if (_isNew)
+    {
+        <MudDatePicker DateChanged="OnStartDateChanged" Date="_plan.StartDate" Label="Mes de recepción de cartas"
+                       IsDateDisabledFunc="IsDateDisabled"
+                       FixDay="1"
+                       PickerVariant="PickerVariant.Dialog"
+                       Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" DateFormat="MMMM \d\e yyyy"
+                       Class="mt-4" />
+    }
 
     <MudTextField T="string" ValueChanged="OnSubjectChanged" Value="_plan.Subject" Label="Asunto"
                   MaxLength="@MaxLength.Plan.Subject"
                   Required="true" RequiredError="Se debe especificar el asunto."
                   Immediate="true"
                   Adornment="Adornment.Start" AdornmentText="FONBEC |"
-                  Variant="Variant.Outlined" Class="mt-2" />
+                  Variant="Variant.Outlined" Class="mt-4" />
 
     <MudTextField T="string" ValueChanged="OnMessageBodyChanged" Value="_plan.MessageMarkdown" Label="Cuerpo del mensaje"
                   MaxLength="@MaxLength.Plan.MessageMarkdown"
                   Required="true" RequiredError="Se debe especificar el mensaje."
-                  DebounceInterval="1500"
-                  Variant="Variant.Outlined" Lines="10" Class="mt-2" />
+                  DebounceInterval="250"
+                  Variant="Variant.Outlined" Lines="10" Class="mt-4" />
 
-    <MudPaper Elevation="0" Class="pt-4">
+    <MudPaper Elevation="0" Class="mt-4">
         <MudButton OnClick="Save" Disabled="SaveButtonDisabled"
                    Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
-            Crear
+            @_saveButtonText
         </MudButton>
         <MudButton Href="@NavRoutes.CoordinadorPlanes"
                    Variant="Variant.Filled" Color="Color.Default">

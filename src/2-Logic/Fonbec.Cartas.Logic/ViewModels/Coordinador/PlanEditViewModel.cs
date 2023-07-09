@@ -14,6 +14,8 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
         public string MessageMarkdown { get; set; } = string.Empty;
 
         public int CreatedByCoordinadorId { get; set; }
+        
+        public int? UpdatedByCoordinadorId { get; set; }
     }
 
     public class PlanEditViewModelMappingDefinitions : IRegister
@@ -21,11 +23,13 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
         public void Register(TypeAdapterConfig config)
         {
             config.NewConfig<PlanEditViewModel, Plan>()
+                .TwoWays()
                 .Map(dest => dest.FilialId, src => src.FilialId)
                 .Map(dest => dest.StartDate, src => src.StartDate)
                 .Map(dest => dest.Subject, src => src.Subject)
                 .Map(dest => dest.MessageMarkdown, src => src.MessageMarkdown)
-                .Map(dest => dest.CreatedByCoordinadorId, src => src.CreatedByCoordinadorId);
+                .Map(dest => dest.CreatedByCoordinadorId, src => src.CreatedByCoordinadorId)
+                .Map(dest => dest.UpdatedByCoordinadorId, src => src.UpdatedByCoordinadorId);
         }
     }
 }

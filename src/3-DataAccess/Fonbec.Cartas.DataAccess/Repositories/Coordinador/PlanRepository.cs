@@ -6,8 +6,10 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
     public interface IPlanRepository
     {
         Task<List<Plan>> GetAllPlansAsync(int filialId);
+        Task<Plan?> GetPlanAsync(int planId, int filialId);
         Task<List<DateTime>> GetAllPlansStartDates(int filialId);
         Task<int> CreatePlanAsync(Plan plan);
+        Task<int> UpdatePlanAsync(int planId, Plan plan);
     }
 
     public class PlanRepository : IPlanRepository
@@ -31,6 +33,17 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
             return all;
         }
 
+        public async Task<Plan?> GetPlanAsync(int planId, int filialId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var plan = await appDbContext.Planes
+                .Include(p => p.Filial)
+                .SingleOrDefaultAsync(p =>
+                    p.Id == planId
+                    && p.FilialId == filialId);
+            return plan;
+        }
+
         public async Task<List<DateTime>> GetAllPlansStartDates(int filialId)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
@@ -45,6 +58,25 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             await appDbContext.Planes.AddAsync(plan);
+            return await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> UpdatePlanAsync(int planId, Plan plan)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var planDb = await appDbContext.Planes
+                .SingleOrDefaultAsync(p => p.Id == planId);
+            if (planDb is null)
+            {
+                return 0;
+            }
+
+            planDb.Subject = plan.Subject;
+            planDb.MessageMarkdown = plan.MessageMarkdown;
+            planDb.UpdatedByCoordinadorId = plan.UpdatedByCoordinadorId;
+
+            appDbContext.Planes.Update(planDb);
+
             return await appDbContext.SaveChangesAsync();
         }
     }

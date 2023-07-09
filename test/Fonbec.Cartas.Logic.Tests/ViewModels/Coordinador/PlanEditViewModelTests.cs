@@ -20,7 +20,8 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
                 StartDate = startDate,
                 Subject = "Subject",
                 MessageMarkdown = "MessageMarkdown",
-                CreatedByCoordinadorId = 78
+                CreatedByCoordinadorId = 78,
+                UpdatedByCoordinadorId = 123,
             };
 
             // Act
@@ -34,6 +35,7 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
                 result.Subject.Should().Be("Subject");
                 result.MessageMarkdown.Should().Be("MessageMarkdown");
                 result.CreatedByCoordinadorId.Should().Be(78);
+                result.UpdatedByCoordinadorId.Should().Be(123);
             }
         }
     }

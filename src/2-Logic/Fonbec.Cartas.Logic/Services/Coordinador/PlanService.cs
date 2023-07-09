@@ -1,5 +1,4 @@
-﻿using Fonbec.Cartas.DataAccess.Entities;
-using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
+﻿using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
 using Fonbec.Cartas.Logic.Models.Results;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Mapster;
@@ -9,8 +8,10 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
     public interface IPlanService
     {
         Task<List<PlansListViewModel>> GetAllPlansAsync(int filialId);
+        Task<SearchResult<PlanEditViewModel>> GetPlanAsync(int planId, int filialId);
         Task<List<DateTime>> GetAllPlansStartDates(int filialId);
         Task<CrudResult> CreatePlanAsync(PlanEditViewModel planEditViewModel);
+        Task<CrudResult> UpdatePlanAsync(int planId, PlanEditViewModel planEditViewModel);
     }
 
     public class PlanService : IPlanService
@@ -28,6 +29,13 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
             return all.Adapt<List<PlansListViewModel>>();
         }
 
+        public async Task<SearchResult<PlanEditViewModel>> GetPlanAsync(int planId, int filialId)
+        {
+            var plan = await _planRepository.GetPlanAsync(planId, filialId);
+            var planEditViewModel = plan?.Adapt<PlanEditViewModel>();
+            return new SearchResult<PlanEditViewModel>(planEditViewModel);
+        }
+
         public async Task<List<DateTime>> GetAllPlansStartDates(int filialId)
         {
             var takenStartDates = await _planRepository.GetAllPlansStartDates(filialId);
@@ -36,8 +44,15 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
 
         public async Task<CrudResult> CreatePlanAsync(PlanEditViewModel planEditViewModel)
         {
-            var plan = planEditViewModel.Adapt<Plan>();
+            var plan = planEditViewModel.Adapt<DataAccess.Entities.Plan>();
             var rowsAffected = await _planRepository.CreatePlanAsync(plan);
+            return new CrudResult(rowsAffected);
+        }
+
+        public async Task<CrudResult> UpdatePlanAsync(int planId, PlanEditViewModel planEditViewModel)
+        {
+            var plan = planEditViewModel.Adapt<DataAccess.Entities.Plan>();
+            var rowsAffected = await _planRepository.UpdatePlanAsync(planId, plan);
             return new CrudResult(rowsAffected);
         }
     }
