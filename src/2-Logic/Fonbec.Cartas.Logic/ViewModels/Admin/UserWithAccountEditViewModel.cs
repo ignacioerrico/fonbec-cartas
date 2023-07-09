@@ -36,7 +36,7 @@ public class UserWithAccountEditViewModelMappingDefinitions : IRegister
             .Include<Revisor, UserWithAccountEditViewModel>()
             .Map(dest => dest.FilialId, src => src.Filial.Id)
             .Map(dest => dest.FirstName, src => src.FirstName)
-            .Map(dest => dest.LastName, src => src.LastName)
+            .Map(dest => dest.LastName, src => src.LastName ?? string.Empty)
             .Map(dest => dest.NickName, src => src.NickName ?? string.Empty)
             .Map(dest => dest.Gender, src => src.Gender)
             .Map(dest => dest.Email, src => src.Email)
@@ -50,12 +50,17 @@ public class UserWithAccountEditViewModelMappingDefinitions : IRegister
             .Include<UserWithAccountEditViewModel, Revisor>()
             .Map(dest => dest.FilialId, src => src.FilialId)
             .Map(dest => dest.FirstName, src => src.FirstName)
-            .Map(dest => dest.LastName, src => src.LastName)
-            .Map(dest => dest.NickName, src => string.IsNullOrWhiteSpace(src.NickName) ? null : src.NickName)
+            .Map(dest => dest.LastName, src => src.LastName,
+                srcCond => !string.IsNullOrWhiteSpace(srcCond.LastName))
+            .Map(dest => dest.NickName, src => src.NickName,
+                srcCond => !string.IsNullOrWhiteSpace(srcCond.NickName))
             .Map(dest => dest.Gender, src => src.Gender)
             .Map(dest => dest.Email, src => src.Email)
-            .Map(dest => dest.Phone, src => string.IsNullOrWhiteSpace(src.Phone) ? null : src.Phone)
-            .Map(dest => dest.Username, src => MapContext.Current!.Parameters["userId"], _ => MapContext.Current != null)
-            .Map(dest => dest.Username, src => string.Empty, _ => MapContext.Current == null);
+            .Map(dest => dest.Phone, src => src.Phone,
+                srcCond => !string.IsNullOrWhiteSpace(srcCond.Phone))
+            .Map(dest => dest.Username, src => MapContext.Current!.Parameters["userId"],
+                _ => MapContext.Current != null)
+            .Map(dest => dest.Username, src => string.Empty,
+                _ => MapContext.Current == null);
     }
 }

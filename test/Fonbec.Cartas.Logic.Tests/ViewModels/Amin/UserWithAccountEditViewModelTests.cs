@@ -50,6 +50,23 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Amin
             }
         }
 
+        [Fact]
+        protected void Map_UserWithAccount_To_UserWithAccountEditViewModel_LastNameMappedToEmptyIfNull()
+        {
+            // Arrange
+            var userWithAccount = new T()
+            {
+                // This is necessary for the mapping to work, but otherwise irrelevant for the test.
+                Filial = new Filial { Id = 42 }
+            };
+
+            // Act
+            var result = userWithAccount.Adapt<T, UserWithAccountEditViewModel>();
+
+            // Assert
+            result.LastName.Should().BeEmpty();
+        }
+
         [Theory]
         [InlineData("Nickname", "Phone", "Nickname", "Phone")]
         [InlineData("", "", null, null)]
@@ -120,6 +137,22 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Amin
                 result.Username.Should().BeEmpty();
                 result.AspNetUserId.Should().Be("AspNetUserId");
             }
+        }
+
+        [Fact]
+        protected void Map_UserWithAccountEditViewModel_To_UserWithAccount_LastNameMappedToNullIfEmpty()
+        {
+            // Arrange
+            var userWithAccountEditViewModel = new UserWithAccountEditViewModel
+            {
+                LastName = string.Empty,
+            };
+
+            // Act
+            var result = userWithAccountEditViewModel.Adapt<UserWithAccountEditViewModel, T>();
+
+            // Assert
+            result.LastName.Should().BeNull();
         }
     }
 

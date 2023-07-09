@@ -15,7 +15,7 @@
                   MaxLength="@MaxLength.Actor.FirstName" />
 
     <MudTextField T="string" Label="Apellido" @bind-Value="_padrino.LastName" Immediate="true"
-                  Required="true" RequiredError="Se debe especificar el apellido."
+                  HelperText="En caso de ser una empresa, dejar en branco"
                   MaxLength="@MaxLength.Actor.LastName" />
 
     <MudTextField T="string" Label="Apodo" @bind-Value="_padrino.NickName" Immediate="true"

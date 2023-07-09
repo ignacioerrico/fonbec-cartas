@@ -43,7 +43,7 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
         {
             config.NewConfig<Padrino, PadrinoEditViewModel>()
                 .Map(dest => dest.FirstName, src => src.FirstName)
-                .Map(dest => dest.LastName, src => src.LastName)
+                .Map(dest => dest.LastName, src => src.LastName ?? string.Empty)
                 .Map(dest => dest.NickName, src => src.NickName ?? string.Empty)
                 .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.Email, src => src.Email)
@@ -56,7 +56,8 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
             config.NewConfig<PadrinoEditViewModel, Padrino>()
                 .Map(dest => dest.FilialId, src => src.FilialId)
                 .Map(dest => dest.FirstName, src => src.FirstName)
-                .Map(dest => dest.LastName, src => src.LastName)
+                .Map(dest => dest.LastName, src => src.LastName,
+                    srcCond => !string.IsNullOrWhiteSpace(srcCond.LastName))
                 .Map(dest => dest.NickName, src => src.NickName,
                     srcCond => !string.IsNullOrWhiteSpace(srcCond.NickName))
                 .Map(dest => dest.Gender, src => src.Gender)

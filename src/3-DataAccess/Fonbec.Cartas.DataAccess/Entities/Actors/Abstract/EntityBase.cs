@@ -11,7 +11,7 @@ namespace Fonbec.Cartas.DataAccess.Entities.Actors.Abstract
 
         public string FirstName { get; set; } = string.Empty;
 
-        public string LastName { get; set; } = string.Empty;
+        public string? LastName { get; set; }
 
         public string? NickName { get; set; }
 
@@ -21,11 +21,12 @@ namespace Fonbec.Cartas.DataAccess.Entities.Actors.Abstract
 
         public string FullName(bool includeNickName = false)
         {
-            var values = new List<string>
+            var values = new List<string> { FirstName };
+
+            if (LastName is not null)
             {
-                FirstName,
-                LastName
-            };
+                values.Add(LastName);
+            }
 
             if (includeNickName && !string.IsNullOrWhiteSpace(NickName))
             {

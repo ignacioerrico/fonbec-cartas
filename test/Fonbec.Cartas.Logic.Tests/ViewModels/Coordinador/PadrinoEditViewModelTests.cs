@@ -69,6 +69,19 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
         }
 
         [Fact]
+        public void Map_Padrino_To_PadrinoEditViewModel_LastNameMappedToEmptyIfNull()
+        {
+            // Arrange
+            var padrino = new Padrino();
+
+            // Act
+            var result = padrino.Adapt<PadrinoEditViewModel>();
+
+            // Assert
+            result.LastName.Should().BeEmpty();
+        }
+
+        [Fact]
         public void Map_PadrinoEditViewModel_To_Padrino()
         {
             // Arrange
@@ -128,6 +141,22 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
                 result.CreatedByCoordinadorId.Should().Be(3);
                 result.UpdatedByCoordinadorId.Should().Be(14);
             }
+        }
+
+        [Fact]
+        public void Map_PadrinoEditViewModel_To_Padrino_LastNameMappedToNullIfEmpty()
+        {
+            // Arrange
+            var padrinoEditViewModel = new PadrinoEditViewModel
+            {
+                LastName = string.Empty,
+            };
+
+            // Act
+            var result = padrinoEditViewModel.Adapt<Padrino>();
+
+            // Assert
+            result.LastName.Should().BeNull();
         }
     }
 }

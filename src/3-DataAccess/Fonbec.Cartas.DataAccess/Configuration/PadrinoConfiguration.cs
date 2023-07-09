@@ -16,7 +16,6 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .HasMaxLength(MaxLength.Actor.FirstName);
 
             builder.Property(p => p.LastName)
-                .IsRequired()
                 .HasMaxLength(MaxLength.Actor.LastName);
 
             builder.Property(p => p.NickName)
