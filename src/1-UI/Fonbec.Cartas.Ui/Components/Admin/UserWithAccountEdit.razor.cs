@@ -187,5 +187,14 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
             NavigationManager.NavigateTo(_pathToList);
         }
+
+        public IEnumerable<string> ValidateUsername(string username)
+        {
+            var usernameExists = UserWithAccountService.UsernameExists(username);
+            if (usernameExists)
+            {
+                yield return "Ya existe un usuario con ese nombre";
+            }
+        }
     }
 }

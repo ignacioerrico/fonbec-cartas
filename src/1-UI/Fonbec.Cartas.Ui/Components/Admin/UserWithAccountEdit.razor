@@ -40,13 +40,14 @@
 
     <MudTextField T="string" Label="Usuario" @bind-Value="_userWithAccount.Username" Immediate="true"
                   Required="true" RequiredError="Se debe especificar un nombre de usuario."
+                  Validation="@(new Func<string, IEnumerable<string>>(ValidateUsername))"
                   MaxLength="@MaxLength.Actor.Username" />
 
     @if (_isNew)
     {
         <MudTextField T="string" Label="Contraseña inicial" @bind-Value="_initialPassword" Immediate="true"
-                  Required="true" RequiredError="Se debe especificar una contraseña."
-                  MaxLength="@MaxLength.Actor.InitialPassword" />
+                      Required="true" RequiredError="Se debe especificar una contraseña."
+                      MaxLength="@MaxLength.Actor.InitialPassword" />
 
         @foreach (var error in _createErrors)
         {

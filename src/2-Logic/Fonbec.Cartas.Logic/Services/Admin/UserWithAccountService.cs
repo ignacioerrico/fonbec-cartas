@@ -13,6 +13,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
 {
     public interface IUserWithAccountService<T> where T : UserWithAccount
     {
+        bool UsernameExists(string username);
         Task<List<SelectableModel<int>>> GetAllFilialesAsSelectableAsync();
         Task<List<UsersWithAccountListViewModel>> GetAllUsersWithAccountAsync();
         Task<SearchResult<UserWithAccountEditViewModel>> GetUserWithAccountAsync(int id);
@@ -33,6 +34,17 @@ namespace Fonbec.Cartas.Logic.Services.Admin
             _userWithAccountRepository = userWithAccountRepository;
             _userManager = userManager;
             _userStore = userStore;
+        }
+
+        public bool UsernameExists(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return false;
+            }
+
+            return _userManager.Users.AsEnumerable()
+                .Any(u => string.Equals(u.UserName, username, StringComparison.OrdinalIgnoreCase));
         }
 
         public async Task<List<SelectableModel<int>>> GetAllFilialesAsSelectableAsync()
