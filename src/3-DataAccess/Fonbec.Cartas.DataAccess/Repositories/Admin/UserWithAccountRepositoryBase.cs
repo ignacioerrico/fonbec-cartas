@@ -65,6 +65,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Admin
                 return 0;
             }
 
+            single.FilialId = userWithAccount.FilialId;
             single.FirstName = userWithAccount.FirstName;
             single.LastName = userWithAccount.LastName;
             single.NickName = userWithAccount.NickName;
