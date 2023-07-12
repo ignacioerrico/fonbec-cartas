@@ -38,12 +38,11 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             || !string.Equals(_padrino.Email, _originalPadrino.Email, StringComparison.Ordinal)
             || !string.Equals(_padrino.Phone, _originalPadrino.Phone, StringComparison.Ordinal)
             || _padrino.SendAlsoTo.Count != _originalPadrino.SendAlsoTo.Count
-            || _padrino.SendAlsoTo.Select(sat =>
+            || _padrino.SendAlsoTo.Any(sat =>
                 _originalPadrino.SendAlsoTo.All(orig =>
                     orig.RecipientFullName != sat.RecipientFullName
                     || orig.RecipientEmail != sat.RecipientEmail
-                    || orig.SendAsBcc != sat.SendAsBcc))
-                .Any(notFound => notFound);
+                    || orig.SendAsBcc != sat.SendAsBcc));
 
         [Parameter]
         public string PadrinoId { get; set; } = string.Empty;
@@ -80,14 +79,14 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             _coordinadorId = authenticatedUserData.User.UserWithAccountId()
                              ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
-            _padrino.FilialId = authenticatedUserData.FilialId;
-
             if (string.Equals(PadrinoId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
             {
                 _isNew = true;
 
                 _pageTitle = "Alta de Padrino";
                 _saveButtonText = "Crear";
+
+                _padrino.FilialId = authenticatedUserData.FilialId;
             }
             else if (int.TryParse(PadrinoId, out _padrinoId) && _padrinoId > 0)
             {

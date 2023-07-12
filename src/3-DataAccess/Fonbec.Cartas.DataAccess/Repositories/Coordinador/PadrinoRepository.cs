@@ -43,8 +43,9 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             var padrino = await appDbContext.Padrinos
                 .Include(p => p.SendAlsoTo)
-                .Where(p => p.FilialId == filialId)
-                .SingleOrDefaultAsync(p => p.Id == padrinoId);
+                .SingleOrDefaultAsync(p =>
+                    p.Id == padrinoId
+                    && p.FilialId == filialId);
             return padrino;
         }
 

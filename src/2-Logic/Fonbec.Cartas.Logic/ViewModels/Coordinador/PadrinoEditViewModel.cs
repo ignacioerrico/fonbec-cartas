@@ -7,6 +7,8 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 {
     public class PadrinoEditViewModel
     {
+        public int FilialId { get; set; }
+
         public string FirstName { get; set; } = default!;
 
         public string LastName { get; set; } = default!;
@@ -20,8 +22,6 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
         public List<PadrinoEditSendAlsoToViewModel> SendAlsoTo { get; set; } = new();
 
         public string Phone { get; set; } = default!;
-
-        public int FilialId { get; set; }
 
         public int CreatedByCoordinadorId { get; set; }
         
@@ -42,6 +42,7 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
         public void Register(TypeAdapterConfig config)
         {
             config.NewConfig<Padrino, PadrinoEditViewModel>()
+                .Map(dest => dest.FilialId, src => src.FilialId)
                 .Map(dest => dest.FirstName, src => src.FirstName)
                 .Map(dest => dest.LastName, src => src.LastName ?? string.Empty)
                 .Map(dest => dest.NickName, src => src.NickName ?? string.Empty)

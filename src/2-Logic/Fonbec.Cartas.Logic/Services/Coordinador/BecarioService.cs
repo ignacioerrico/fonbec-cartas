@@ -46,43 +46,15 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
 
         public async Task<CrudResult> CreateAsync(BecarioEditViewModel becarioEditViewModel)
         {
-            var becario = new Becario
-            {
-                FilialId = becarioEditViewModel.FilialId,
-                MediadorId = becarioEditViewModel.MediadorId,
-                NivelDeEstudio = becarioEditViewModel.NivelDeEstudio,
-                FirstName = becarioEditViewModel.FirstName,
-                LastName = becarioEditViewModel.LastName,
-                NickName = string.IsNullOrWhiteSpace(becarioEditViewModel.NickName) ? null : becarioEditViewModel.NickName,
-                Gender = becarioEditViewModel.Gender,
-                Email = string.IsNullOrWhiteSpace(becarioEditViewModel.Email) ? null : becarioEditViewModel.Email,
-                Phone = string.IsNullOrWhiteSpace(becarioEditViewModel.Phone) ? null : becarioEditViewModel.Phone,
-                CreatedByCoordinadorId = becarioEditViewModel.CreatedByCoordinadorId,
-            };
-
+            var becario = becarioEditViewModel.Adapt<Becario>();
             var rowsAffected = await _becarioRepository.CreateAsync(becario);
-
             return new CrudResult(rowsAffected);
         }
 
         public async Task<CrudResult> UpdateAsync(int becarioId, BecarioEditViewModel becarioEditViewModel)
         {
-            var becario = new Becario
-            {
-                FilialId = becarioEditViewModel.FilialId,
-                MediadorId = becarioEditViewModel.MediadorId,
-                NivelDeEstudio = becarioEditViewModel.NivelDeEstudio,
-                FirstName = becarioEditViewModel.FirstName,
-                LastName = becarioEditViewModel.LastName,
-                NickName = string.IsNullOrWhiteSpace(becarioEditViewModel.NickName) ? null : becarioEditViewModel.NickName,
-                Gender = becarioEditViewModel.Gender,
-                Email = string.IsNullOrWhiteSpace(becarioEditViewModel.Email) ? null : becarioEditViewModel.Email,
-                Phone = string.IsNullOrWhiteSpace(becarioEditViewModel.Phone) ? null : becarioEditViewModel.Phone,
-                UpdatedByCoordinadorId = becarioEditViewModel.UpdatedByCoordinadorId,
-            };
-
+            var becario = becarioEditViewModel.Adapt<Becario>();
             var rowsAffected = await _becarioRepository.UpdateAsync(becarioId, becario);
-
             return new CrudResult(rowsAffected);
         }
     }

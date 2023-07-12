@@ -40,8 +40,10 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             || !string.Equals(_becario.LastName, _originalBecario.LastName, StringComparison.Ordinal)
             || !string.Equals(_becario.NickName, _originalBecario.NickName, StringComparison.Ordinal)
             || _becario.Gender != _originalBecario.Gender
+            || _selectedNivelDeEstudio != _originalBecario.NivelDeEstudio
             || !string.Equals(_becario.Email, _originalBecario.Email, StringComparison.Ordinal)
-            || !string.Equals(_becario.Phone, _originalBecario.Phone, StringComparison.Ordinal);
+            || !string.Equals(_becario.Phone, _originalBecario.Phone, StringComparison.Ordinal)
+            || (_selectedMediador is not null && _selectedMediador.Id != _originalBecario.MediadorId);
 
         [Parameter]
         public string BecarioId { get; set; } = string.Empty;
@@ -78,8 +80,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             _coordinadorId = authenticatedUserData.User.UserWithAccountId()
                              ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
-            _becario.FilialId = authenticatedUserData.FilialId;
-
             _mediadores = await BecarioService.GetAllMediadoresForSelectionAsync(authenticatedUserData.FilialId);
 
             if (!_mediadores.Any())
@@ -95,6 +95,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
                 _pageTitle = "Alta de Becario";
                 _saveButtonText = "Crear";
+                
+                _becario.FilialId = authenticatedUserData.FilialId;
             }
             else if (int.TryParse(BecarioId, out _becarioId) && _becarioId > 0)
             {
