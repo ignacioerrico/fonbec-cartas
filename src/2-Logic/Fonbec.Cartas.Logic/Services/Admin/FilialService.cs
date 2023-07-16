@@ -1,5 +1,6 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities;
 using Fonbec.Cartas.DataAccess.Repositories.Admin;
+using Fonbec.Cartas.Logic.Models;
 using Fonbec.Cartas.Logic.Models.Results;
 using Fonbec.Cartas.Logic.ViewModels.Admin;
 using Mapster;
@@ -9,6 +10,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin
     public interface IFilialService
     {
         Task<List<FilialesListViewModel>> GetAllFilialesAsync();
+        Task<List<SelectableModel<int>>> GetAllFilialesForSelectionAsync();
         Task<SearchResult<string>> GetFilialNameAsync(int id);
         Task<CrudResult> CreateFilialAsync(string filialName);
         Task<CrudResult> UpdateFilialAsync(int id, string newName);
@@ -29,6 +31,12 @@ namespace Fonbec.Cartas.Logic.Services.Admin
             var filialesDataModel = await _filialesRepository.GetAllFilialesAsync();
             var filialesListViewModel = filialesDataModel.Adapt<List<FilialesListViewModel>>();
             return filialesListViewModel;
+        }
+
+        public async Task<List<SelectableModel<int>>> GetAllFilialesForSelectionAsync()
+        {
+            var filiales = await _filialesRepository.GetAllFilialesForSelectionAsync();
+            return filiales.Select(f => new SelectableModel<int>(f.Id, f.Name)).ToList();
         }
 
         public async Task<SearchResult<string>> GetFilialNameAsync(int id)

@@ -11,6 +11,7 @@
         public const string AdminCoordinadores = $"{AdminRoot}/coordinadores";
         public const string AdminMediadores = $"{AdminRoot}/mediadores";
         public const string AdminRevisores = $"{AdminRoot}/revisores";
+        public const string AdminImport = $"{AdminRoot}/import";
         public const string CoordinadorPadrinos = $"{CoordinadorRoot}/padrinos";
         public const string CoordinadorBecarios = $"{CoordinadorRoot}/becarios";
         public const string CoordinadorPlanes = $"{CoordinadorRoot}/planes";

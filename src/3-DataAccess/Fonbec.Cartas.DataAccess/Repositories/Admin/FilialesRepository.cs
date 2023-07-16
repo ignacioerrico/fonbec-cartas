@@ -7,6 +7,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Admin
     public interface IFilialesRepository
     {
         Task<List<FilialesListDataModel>> GetAllFilialesAsync();
+        Task<List<Filial>> GetAllFilialesForSelectionAsync();
         Task<string?> GetFilialNameAsync(int id);
         Task<int> CreateFilialAsync(Filial filial);
         Task<int> UpdateFilialAsync(int id, string newName);
@@ -48,6 +49,15 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Admin
                 })
                 .ToListAsync();
             return filialesListDataModel;
+        }
+
+        public async Task<List<Filial>> GetAllFilialesForSelectionAsync()
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var filiales = await appDbContext.Filiales
+                .OrderBy(f => f.Name)
+                .ToListAsync();
+            return filiales;
         }
 
         public async Task<string?> GetFilialNameAsync(int id)

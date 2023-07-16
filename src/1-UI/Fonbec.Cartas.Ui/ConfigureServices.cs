@@ -1,10 +1,15 @@
 ﻿using Azure.Communication.Email;
+using Fonbec.Cartas.DataAccess.Entities;
 using Fonbec.Cartas.DataAccess.Entities.Actors;
 using Fonbec.Cartas.DataAccess.Repositories;
 using Fonbec.Cartas.DataAccess.Repositories.Admin;
+using Fonbec.Cartas.DataAccess.Repositories.Admin.DataImport;
 using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
+using Fonbec.Cartas.Logic.Models.Admin.DataImport;
 using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
+using Fonbec.Cartas.Logic.Services.Admin.DataImport;
+using Fonbec.Cartas.Logic.Services.Admin.DataImport.DataReader;
 using Fonbec.Cartas.Logic.Services.Coordinador;
 using Fonbec.Cartas.Logic.Services.Identity;
 using Fonbec.Cartas.Logic.Services.MessageTemplate;
@@ -45,6 +50,7 @@ namespace Fonbec.Cartas.Ui
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IFilialService, FilialService>();
+            services.AddScoped<IUserWithAccountSharedService, UserWithAccountSharedService>();
             services.AddScoped<IUserWithAccountService<Coordinador>, CoordinadorService>();
             services.AddScoped<IUserWithAccountService<Mediador>, MediadorService>();
             services.AddScoped<IUserWithAccountService<Revisor>, RevisorService>();
@@ -52,6 +58,18 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<IBecarioService, BecarioService>();
             services.AddScoped<IApadrinamientoService, ApadrinamientoService>();
             services.AddScoped<IPlanService, PlanService>();
+
+            services.AddScoped<IDataImportService, DataImportService>();
+            services.AddScoped<FileParserBase<Coordinador, UserWithAccountToCreate>, UserWithAccountFileParser<Coordinador>>();
+            services.AddScoped<FileParserBase<Mediador, UserWithAccountToCreate>, UserWithAccountFileParser<Mediador>>();
+            services.AddScoped<FileParserBase<Revisor, UserWithAccountToCreate >, UserWithAccountFileParser<Revisor>>();
+            services.AddScoped<FileParserBase<Padrino, Padrino>, PadrinosFileParser>();
+            services.AddScoped<FileParserBase<SendAlsoTo, SendAlsoTo>, SendAltoToFileParser>();
+            services.AddScoped<FileParserBase<Becario, Becario>, BecarioFileParser>();
+            services.AddScoped<FileParserBase<Apadrinamiento, Apadrinamiento>, ApadrinamientosFileParser>();
+            services.AddScoped<ICreateUserWithAccountService<Coordinador>, CreateUserWithAccountService<Coordinador>>();
+            services.AddScoped<ICreateUserWithAccountService<Mediador>, CreateUserWithAccountService<Mediador>>();
+            services.AddScoped<ICreateUserWithAccountService<Revisor>, CreateUserWithAccountService<Revisor>>();
 
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped<IFilialesRepository, FilialesRepository>();
@@ -62,6 +80,11 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<IBecarioRepository, BecarioRepository>();
             services.AddScoped<IApadrinamientoRepository, ApadrinamientoRepository>();
             services.AddScoped<IPlanRepository, PlanRepository>();
+
+            services.AddScoped<ICreateUserWithAccountRepository<Coordinador>, CreateUserWithAccountRepository<Coordinador>>();
+            services.AddScoped<ICreateUserWithAccountRepository<Mediador>, CreateUserWithAccountRepository<Mediador>>();
+            services.AddScoped<ICreateUserWithAccountRepository<Revisor>, CreateUserWithAccountRepository<Revisor>>();
+            services.AddScoped<IDataImportRepository, DataImportRepository>();
         }
     }
 }

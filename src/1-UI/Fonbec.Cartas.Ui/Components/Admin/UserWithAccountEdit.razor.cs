@@ -80,6 +80,9 @@ namespace Fonbec.Cartas.Ui.Components.Admin
         public string UserWithAccountId { get; set; } = string.Empty;
 
         [Inject]
+        public IUserWithAccountSharedService UserWithAccountSharedService { get; set; } = default!;
+
+        [Inject]
         public IUserWithAccountService<T> UserWithAccountService { get; set; } = default!;
 
         [Inject]
@@ -190,7 +193,7 @@ namespace Fonbec.Cartas.Ui.Components.Admin
 
         public IEnumerable<string> ValidateUsername(string username)
         {
-            var usernameExists = UserWithAccountService.UsernameExists(username);
+            var usernameExists = UserWithAccountSharedService.UsernameExists(username);
             if (usernameExists)
             {
                 yield return "Ya existe un usuario con ese nombre";

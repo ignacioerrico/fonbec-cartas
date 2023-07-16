@@ -8,6 +8,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Admin
     {
         Task<List<Filial>> GetAllFilialesAsync();
         Task<List<T>> GetAllAsync();
+        Task<List<T>> GetAllInFilialAsync(int filialId);
         Task<T?> GetAsync(int id);
         Task<int> CreateAsync(T userWithAccount);
         Task<int> UpdateAsync(int id, T userWithAccount);
@@ -36,6 +37,15 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Admin
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             var allWithFilial = await appDbContext.Set<T>()
                 .Include(e => e.Filial)
+                .ToListAsync();
+            return allWithFilial;
+        }
+
+        public async Task<List<T>> GetAllInFilialAsync(int filialId)
+        {
+            await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
+            var allWithFilial = await appDbContext.Set<T>()
+                .Where(e => e.FilialId == filialId)
                 .ToListAsync();
             return allWithFilial;
         }

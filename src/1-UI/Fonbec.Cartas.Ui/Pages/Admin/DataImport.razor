@@ -1,0 +1,325 @@
+﻿@page "/admin/import"
+@using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.Logic.Constants
+@using Fonbec.Cartas.Logic.Models
+@using Microsoft.AspNetCore.Components
+@attribute [Authorize(Roles = FonbecRoles.Admin)]
+
+<PageHeader Title="Importar datos" />
+
+<ActivityIndicator Loading="_loading" />
+
+<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Download" Color="Color.Primary"
+           OnClick="DownloadDataSet"
+           Class="mt-4">
+    Bajar dataset
+</MudButton>
+
+<MudText Class="mt-4">¿A qué filial corresponden los datos?</MudText>
+
+<MudSelect T="SelectableModel<int>" Label="Filial" ValueChanged="OnFilialChanged" Value="_selectedFilial"
+           Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+    @foreach (var filial in _filiales)
+    {
+        <MudSelectItem Value="filial" />
+    }
+</MudSelect>
+
+<MudText Class="mt-4">¿Qué coordinador hace el alta?</MudText>
+
+<MudSelect T="SelectableModel<int>" Label="Coordinador" @bind-Value="_selectedCoordinador"
+           Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter"
+           Disabled="@(_selectedFilial is null)">
+    @foreach (var coordinador in _coordinadores)
+    {
+        <MudSelectItem Value="coordinador" />
+    }
+</MudSelect>
+
+<MudCheckBox T="bool" @bind-Checked="_isDryRun" Class="mt-4">
+    Dry run (solo simulación de lo que pasaría; no se importan datos)
+</MudCheckBox>
+
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadDataset" Class="mt-4">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   Disabled="@(_selectedFilial is null || _selectedCoordinador is null)"
+                   for="@context">
+            Subir dataset
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+
+@if (_rightFilesUploaded.HasValue)
+{
+    <MudStack Row="true" Class="mt-4">
+        @if (_rightFilesUploaded.Value)
+        {
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-2" />
+            <MudText>Los archivos son correctos</MudText>
+        }
+        else
+        {
+            <MudIcon Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" Class="mr-2" />
+            <MudText>Tenés que subir estos archivos, todos juntos: @ImportFileNameConstants.FilesList()</MudText>
+        }
+    </MudStack>
+}
+
+@if (_runningImport)
+{
+    <MudText Class="mt-4"><em>Importando datos&hellip;</em></MudText>
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+
+@if (_model is not null)
+{
+    <MudStack Row="true" Class="mt-4">
+        @if (_model.Errors.Any())
+        {
+            <MudIcon Icon="@Icons.Material.Filled.Cancel" Color="@Color.Error" Class="mr-2"/>
+            <MudText>La importación de datos <strong>NO</strong> se completó con éxito</MudText>
+        }
+        else
+        {
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="@Color.Success" Class="mr-2"/>
+            <MudText>Los datos se importaron con éxito</MudText>
+        }
+    </MudStack>
+
+    if (_model.Errors.Any())
+    {
+        <MudList Class="mt-4">
+            <MudListSubheader>
+                Se produjeron los siguientes errores
+            </MudListSubheader>
+            @foreach (var error in _model.Errors)
+            {
+                <MudListItem>@error</MudListItem>
+            }
+        </MudList>
+    }
+
+    <MudText Typo="Typo.h4" Class="mt-4">Coordinadores</MudText>
+
+    <MudText>Total importados: @_model.CoordinadoresCreated.Count</MudText>
+
+    @if (_model.CoordinadoresCreated.Any())
+    {
+        <MudSimpleTable Dense="true" Hover="true" Bordered="true" Striped="true" Style="overflow-x: auto;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>ID Identity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var coordinador in _model.CoordinadoresCreated)
+                {
+                    <tr>
+                        <td>@coordinador.Id</td>
+                        <td>@coordinador.Username</td>
+                        <td>@coordinador.FirstName</td>
+                        <td>@coordinador.LastName</td>
+                        <td>@coordinador.Email</td>
+                        <td>@coordinador.AspNetUserId</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+
+    <MudText Typo="Typo.h4" Class="mt-4">Mediadores</MudText>
+
+    <MudText>Total importados: @_model.MediadoresCreated.Count</MudText>
+
+    @if (_model.MediadoresCreated.Any())
+    {
+        <MudSimpleTable Dense="true" Hover="true" Bordered="true" Striped="true" Style="overflow-x: auto;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>ID Identity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var mediador in _model.MediadoresCreated)
+                {
+                    <tr>
+                        <td>@mediador.Id</td>
+                        <td>@mediador.Username</td>
+                        <td>@mediador.FirstName</td>
+                        <td>@mediador.LastName</td>
+                        <td>@mediador.Email</td>
+                        <td>@mediador.AspNetUserId</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+
+    <MudText Typo="Typo.h4" Class="mt-4">Revisores</MudText>
+
+    <MudText>Total importados: @_model.RevisoresCreated.Count</MudText>
+
+    @if (_model.RevisoresCreated.Any())
+    {
+        <MudSimpleTable Dense="true" Hover="true" Bordered="true" Striped="true" Style="overflow-x: auto;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>ID Identity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var revisor in _model.RevisoresCreated)
+                {
+                    <tr>
+                        <td>@revisor.Id</td>
+                        <td>@revisor.Username</td>
+                        <td>@revisor.FirstName</td>
+                        <td>@revisor.LastName</td>
+                        <td>@revisor.Email</td>
+                        <td>@revisor.AspNetUserId</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+
+    <MudText Typo="Typo.h4" Class="mt-4">Padrinos</MudText>
+
+    <MudText>Total importados: @_model.PadrinosCreated.Count</MudText>
+
+    @if (_model.PadrinosCreated.Any())
+    {
+        <MudSimpleTable Dense="true" Hover="true" Bordered="true" Striped="true" Style="overflow-x: auto;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var padrinoCreated in _model.PadrinosCreated)
+                {
+                    <tr>
+                        <td>@padrinoCreated.Id</td>
+                        <td>@padrinoCreated.FirstName</td>
+                        <td>@padrinoCreated.LastName</td>
+                        <td>@padrinoCreated.Email</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+
+    <MudText Class="mt-4">Total actualizados: @_model.PadrinosUpdated.Count</MudText>
+
+    @if (_model.PadrinosUpdated.Any())
+    {
+        <MudSimpleTable Dense="true" Hover="true" Bordered="true" Striped="true" Style="overflow-x: auto;">
+            <thead>
+                <tr>
+                    <th>ID Padrino</th>
+                    <th>ID Send Also To</th>
+                    <th>Destinatario</th>
+                    <th>Email</th>
+                    <th>CC o BCC</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var padrinoUpdated in _model.PadrinosUpdated)
+                {
+                    foreach (var sendAlsoTo in padrinoUpdated.SendAlsoTo)
+                    {
+                        <tr>
+                            <td>@padrinoUpdated.Id</td>
+                            <td>@sendAlsoTo.Id</td>
+                            <td>@sendAlsoTo.RecipientFullName</td>
+                            <td>@sendAlsoTo.RecipientEmail</td>
+                            <td>@(sendAlsoTo.SendAsBcc ? "BCC" : "CC")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+
+    <MudText Typo="Typo.h4" Class="mt-4">Becarios</MudText>
+
+    <MudText>Total importados: @_model.BecariosCreated.Count</MudText>
+
+    @if (_model.BecariosCreated.Any())
+    {
+        <MudSimpleTable Dense="true" Hover="true" Bordered="true" Striped="true" Style="overflow-x: auto;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var becario in _model.BecariosCreated)
+                {
+                    <tr>
+                        <td>@becario.Id</td>
+                        <td>@becario.FirstName</td>
+                        <td>@becario.LastName</td>
+                        <td>@becario.Email</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+
+    <MudText Typo="Typo.h4" Class="mt-4">Apadrinamientos</MudText>
+
+    <MudText>Total importados: @_model.ApadrinamientosCreated.Count</MudText>
+
+    @if (_model.ApadrinamientosCreated.Any())
+    {
+        <MudSimpleTable Dense="true" Hover="true" Bordered="true" Striped="true" Style="overflow-x: auto;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ID Becario</th>
+                    <th>ID Padrino</th>
+                    <th>Desde</th>
+                    <th>Hasta</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var apadrinamiento in _model.ApadrinamientosCreated)
+                {
+                    <tr>
+                        <td>@apadrinamiento.Id</td>
+                        <td>@apadrinamiento.BecarioId</td>
+                        <td>@apadrinamiento.PadrinoId</td>
+                        <td>@apadrinamiento.From.ToString("yyyy-MM-dd")</td>
+                        <td>@(apadrinamiento.To.HasValue ? apadrinamiento.To.Value.ToString("yyyy-MM-dd") : "—")</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    }
+}
