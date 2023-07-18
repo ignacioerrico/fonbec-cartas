@@ -1,5 +1,6 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities;
 using Fonbec.Cartas.DataAccess.Entities.Actors;
+using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Fonbec.Cartas.DataAccess.ExtensionMethods;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

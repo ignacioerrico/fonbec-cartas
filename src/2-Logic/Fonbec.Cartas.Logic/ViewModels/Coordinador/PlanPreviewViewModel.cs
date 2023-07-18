@@ -1,4 +1,4 @@
-﻿using Fonbec.Cartas.DataAccess.Entities;
+﻿using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Mapster;
 
 namespace Fonbec.Cartas.Logic.ViewModels.Coordinador

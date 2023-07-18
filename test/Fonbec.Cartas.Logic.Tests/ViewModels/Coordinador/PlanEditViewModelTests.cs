@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Mapster;
 

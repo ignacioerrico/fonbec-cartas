@@ -1,5 +1,5 @@
 ﻿using Fonbec.Cartas.DataAccess.Constants;
-using Fonbec.Cartas.DataAccess.Entities;
+using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

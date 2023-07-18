@@ -1,6 +1,6 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
 
-namespace Fonbec.Cartas.DataAccess.Entities
+namespace Fonbec.Cartas.DataAccess.Entities.Planning
 {
     public class Plan : Auditable
     {

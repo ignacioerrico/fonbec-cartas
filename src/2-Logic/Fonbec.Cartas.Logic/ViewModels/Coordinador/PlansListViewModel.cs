@@ -1,4 +1,4 @@
-﻿using Fonbec.Cartas.DataAccess.Entities;
+﻿using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Fonbec.Cartas.Logic.ExtensionMethods;
 using Mapster;
 

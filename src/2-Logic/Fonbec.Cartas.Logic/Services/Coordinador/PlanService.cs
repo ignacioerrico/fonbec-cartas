@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
+﻿using Fonbec.Cartas.DataAccess.Entities.Planning;
+using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
 using Fonbec.Cartas.Logic.Models.Results;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Mapster;
@@ -52,14 +53,14 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
 
         public async Task<CrudResult> CreatePlanAsync(PlanEditViewModel planEditViewModel)
         {
-            var plan = planEditViewModel.Adapt<DataAccess.Entities.Plan>();
+            var plan = planEditViewModel.Adapt<Plan>();
             var rowsAffected = await _planRepository.CreatePlanAsync(plan);
             return new CrudResult(rowsAffected);
         }
 
         public async Task<CrudResult> UpdatePlanAsync(int planId, PlanEditViewModel planEditViewModel)
         {
-            var plan = planEditViewModel.Adapt<DataAccess.Entities.Plan>();
+            var plan = planEditViewModel.Adapt<Plan>();
             var rowsAffected = await _planRepository.UpdatePlanAsync(planId, plan);
             return new CrudResult(rowsAffected);
         }

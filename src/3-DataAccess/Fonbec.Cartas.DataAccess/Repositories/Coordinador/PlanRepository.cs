@@ -1,4 +1,4 @@
-﻿using Fonbec.Cartas.DataAccess.Entities;
+﻿using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
