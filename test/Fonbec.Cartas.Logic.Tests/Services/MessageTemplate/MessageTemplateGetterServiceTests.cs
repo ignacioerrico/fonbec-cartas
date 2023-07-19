@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using FluentAssertions;
 using Fonbec.Cartas.DataAccess.Entities.Enums;
+using Fonbec.Cartas.Logic.Properties;
 using Fonbec.Cartas.Logic.Services.MessageTemplate;
 using Moq;
 
@@ -9,14 +10,14 @@ namespace Fonbec.Cartas.Logic.Tests.Services.MessageTemplate
     public class MessageTemplateGetterServiceTests
     {
         private readonly Mock<IMessageTemplateParser> _messageTemplateParserMock;
-        private readonly Mock<IEmbeddedResourceFileReader> _embeddedResourceFileReaderMock;
+        private readonly Mock<IResourcesWrapper> _resourcesWrapperMock;
         
         private readonly MessageTemplateGetterService _sut;
 
         public MessageTemplateGetterServiceTests()
         {
             _messageTemplateParserMock = new Mock<IMessageTemplateParser>();
-            _embeddedResourceFileReaderMock = new Mock<IEmbeddedResourceFileReader>();
+            _resourcesWrapperMock = new Mock<IResourcesWrapper>();
 
             var messageTempleate = new StringBuilder();
             messageTempleate.AppendLine("<html>");
@@ -28,23 +29,38 @@ namespace Fonbec.Cartas.Logic.Tests.Services.MessageTemplate
             messageTempleate.AppendLine("</body>");
             messageTempleate.AppendLine("</html>");
 
-            _embeddedResourceFileReaderMock
-                .Setup(x => x.Read("MessageTemplate.html"))
+            _resourcesWrapperMock
+                .Setup(x => x.MessageTemplate)
                 .Returns(messageTempleate.ToString());
 
-            _sut = new MessageTemplateGetterService(_messageTemplateParserMock.Object, _embeddedResourceFileReaderMock.Object);
+            _sut = new MessageTemplateGetterService(_messageTemplateParserMock.Object, _resourcesWrapperMock.Object);
         }
 
         [Fact]
-        public void GetDefaultMessage_ShouldReturnContentsOfDefaultMessageFile()
+        public void GetDefaultSubject_ShouldReturnDefaultSubjectWithoutNewLinesAndSingleSpaced()
         {
             // Arrange
-            _embeddedResourceFileReaderMock
-                .Setup(x => x.Read("DefaultMessageMarkdown.txt"))
+            _resourcesWrapperMock
+                .Setup(x => x.DefaultSubject)
+                .Returns("Default    subject\non a single\r\n   line   ");
+
+            // Act
+            var result = _sut.GetDefaultSubject();
+
+            // Assert
+            result.Should().Be("Default subject on a single line");
+        }
+
+        [Fact]
+        public void GetDefaultMessageMarkdown_ShouldReturnDefaultMessageInMarkdown()
+        {
+            // Arrange
+            _resourcesWrapperMock
+                .Setup(x => x.DefaultMessageMarkdown)
                 .Returns("Default message");
 
             // Act
-            var result = _sut.GetDefaultMessage();
+            var result = _sut.GetDefaultMessageMarkdown();
 
             // Assert
             result.Should().Be("Default message");

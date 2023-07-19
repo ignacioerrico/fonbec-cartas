@@ -6,6 +6,7 @@ using Fonbec.Cartas.DataAccess.Repositories.Admin;
 using Fonbec.Cartas.DataAccess.Repositories.Admin.DataImport;
 using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
 using Fonbec.Cartas.Logic.Models.Admin.DataImport;
+using Fonbec.Cartas.Logic.Properties;
 using Fonbec.Cartas.Logic.Services;
 using Fonbec.Cartas.Logic.Services.Admin;
 using Fonbec.Cartas.Logic.Services.Admin.DataImport;
@@ -40,9 +41,9 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<ICommunicationService, CommunicationService>();
 
+            services.AddScoped<IResourcesWrapper, ResourcesWrapper>();
             services.AddScoped<IMessageTemplateGetterService, MessageTemplateGetterService>();
             services.AddScoped<IMessageTemplateParser, MessageTemplateParser>();
-            services.AddScoped<IEmbeddedResourceFileReader, EmbeddedResourceFileReader>();
 
             var communicationServiceConnectionString =
                 configuration.GetConnectionString("CommunicationServiceConnection");
@@ -57,7 +58,7 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<IPadrinoService, PadrinoService>();
             services.AddScoped<IBecarioService, BecarioService>();
             services.AddScoped<IApadrinamientoService, ApadrinamientoService>();
-            services.AddScoped<IPlanService, PlanService>();
+            services.AddScoped<IPlannedEventService, PlannedEventService>();
 
             services.AddScoped<IDataImportService, DataImportService>();
             services.AddScoped<FileParserBase<Coordinador, UserWithAccountToCreate>, UserWithAccountFileParser<Coordinador>>();
@@ -79,7 +80,7 @@ namespace Fonbec.Cartas.Ui
             services.AddScoped<IPadrinoRepository, PadrinoRepository>();
             services.AddScoped<IBecarioRepository, BecarioRepository>();
             services.AddScoped<IApadrinamientoRepository, ApadrinamientoRepository>();
-            services.AddScoped<IPlanRepository, PlanRepository>();
+            services.AddScoped<IPlannedEventRepository, PlannedEventRepository>();
 
             services.AddScoped<ICreateUserWithAccountRepository<Coordinador>, CreateUserWithAccountRepository<Coordinador>>();
             services.AddScoped<ICreateUserWithAccountRepository<Mediador>, CreateUserWithAccountRepository<Mediador>>();

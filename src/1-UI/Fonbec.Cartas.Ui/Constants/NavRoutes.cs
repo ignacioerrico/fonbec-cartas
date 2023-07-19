@@ -14,7 +14,7 @@
         public const string AdminImport = $"{AdminRoot}/import";
         public const string CoordinadorPadrinos = $"{CoordinadorRoot}/padrinos";
         public const string CoordinadorBecarios = $"{CoordinadorRoot}/becarios";
-        public const string CoordinadorPlanes = $"{CoordinadorRoot}/planes";
+        public const string CoordinadorPlanificación = $"{CoordinadorRoot}/planes";
 
         public const string New = "new";
 
@@ -25,7 +25,7 @@
         public const string AdminRevisorNew = $"{AdminRevisores}/{New}";
         public const string CoordinadorPadrinoNew = $"{CoordinadorPadrinos}/{New}";
         public const string CoordinadorBecariosNew = $"{CoordinadorBecarios}/{New}";
-        public const string CoordinadorPlanNew = $"{CoordinadorPlanes}/{New}";
+        public const string CoordinadorPlanificaciónNew = $"{CoordinadorPlanificación}/{New}";
 
         public const string AdminFilialEdit0 = $"{AdminFiliales}/{{0}}";
 
@@ -35,8 +35,8 @@
         public const string CoordinadorPadrinoEdit0 = $"{CoordinadorPadrinos}/{{0}}";
         public const string CoordinadorBecariosEdit0 = $"{CoordinadorBecarios}/{{0}}";
         public const string CoordinadorBecario0AsignarPadrinos = $"{CoordinadorBecarios}/{{0}}/padrinos";
-        public const string CoordinadorPlanEdit0 = $"{CoordinadorPlanes}/{{0}}";
+        public const string CoordinadorPlanificaciónCartaEdit0 = $"{CoordinadorPlanificación}/{{0}}";
         
-        public const string CoordinadorPlanPreview0 = $"{CoordinadorPlanes}/{{0}}/ver";
+        public const string CoordinadorPlanificaciónCartaPreview0 = $"{CoordinadorPlanificación}/{{0}}/ver";
     }
 }

@@ -1,0 +1,1 @@
+﻿Carta de {mes-de-carta} de tu {ahijado} {ahijado:nombre}

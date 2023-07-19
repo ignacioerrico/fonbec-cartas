@@ -1,4 +1,4 @@
-﻿@page "/coordinador/planes/{PlanId}/ver"
+﻿@page "/coordinador/planes/{PlannedCartaId}/ver"
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Ui.Components.Coordinador
 @using Fonbec.Cartas.Ui.Constants
@@ -22,7 +22,7 @@
     <iframe srcdoc="@((MarkupString)_renderedMessageBody)"></iframe>
 </MudPaper>
 
-    <MudButton Href="@NavRoutes.CoordinadorPlanes" Class="mt-4"
+    <MudButton Href="@NavRoutes.CoordinadorPlanificación" Class="mt-4"
            Variant="Variant.Filled" Color="Color.Default">
     Volver
 </MudButton>

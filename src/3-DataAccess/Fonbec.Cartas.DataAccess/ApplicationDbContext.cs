@@ -32,7 +32,7 @@ namespace Fonbec.Cartas.DataAccess
 
         public DbSet<SendAlsoTo> SendAlsoTo => Set<SendAlsoTo>();
 
-        public DbSet<Plan> Planes => Set<Plan>();
+        public DbSet<PlannedEvent> PlannedEvents => Set<PlannedEvent>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

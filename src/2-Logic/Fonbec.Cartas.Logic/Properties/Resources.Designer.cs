@@ -72,11 +72,22 @@ namespace Fonbec.Cartas.Logic.Properties {
         ///- Una videollamada
         ///- WhatsApp
         ///
-        ///&gt; FONBEC no es una donación más. Es un chico más en la escuela..
+        ///&gt; FONBEC no es una donación más. Es un chico más en la escuela.
+        ///
+        ///Atentamente,.
         /// </summary>
         internal static string DefaultMessageMarkdown {
             get {
                 return ResourceManager.GetString("DefaultMessageMarkdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Carta de {mes-de-carta} de tu {ahijado} {ahijado:nombre}.
+        /// </summary>
+        internal static string DefaultSubject {
+            get {
+                return ResourceManager.GetString("DefaultSubject", resourceCulture);
             }
         }
         

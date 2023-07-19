@@ -1,19 +1,21 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Actors;
+using Fonbec.Cartas.DataAccess.Entities.Enums;
 
 namespace Fonbec.Cartas.DataAccess.Entities.Planning
 {
-    public class Plan : Auditable
+    public class PlannedEvent : Auditable
     {
         public int Id { get; set; }
 
         public int FilialId { get; set; }
         public Filial Filial { get; set; } = default!;
 
-        public DateTime StartDate { get; set; }
+        public DateTime Date { get; set; }
 
-        public string Subject { get; set; } = default!;
+        public PlannedEventType Type { get; set; }
 
-        public string MessageMarkdown { get; set; } = default!;
+        public int? CartaObligatoriaId { get; set; }
+        public CartaObligatoria? CartaObligatoria { get; set; }
 
         public int CreatedByCoordinadorId { get; set; }
         public Coordinador CreatedByCoordinador { get; set; } = default!;

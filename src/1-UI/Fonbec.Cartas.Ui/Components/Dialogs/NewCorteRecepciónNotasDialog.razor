@@ -1,0 +1,21 @@
+﻿@using System.Globalization
+
+<MudDialog>
+    <DialogContent>
+        <MudText>¿Cuándo se produce la fecha de corte para recibir notas (boletines y libretas universitarias)?</MudText>
+        
+        <MudDatePicker Label="Fecha de corte de recepción de notas" Class="mt-4"
+                       @bind-Date="_date"
+                       IsDateDisabledFunc="IsDateDisabled"
+                       DateFormat="d MMMM yyyy" Culture="@(new CultureInfo("es-AR"))" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Filled">
+            Cancelar
+        </MudButton>
+        <MudButton OnClick="Create" Variant="Variant.Filled" Color="Color.Primary"
+                   Disabled="@(_date is null || (SelectedDate is not null && _date == SelectedDate.Value))">
+            @_saveButtonText
+        </MudButton>
+    </DialogActions>
+</MudDialog>

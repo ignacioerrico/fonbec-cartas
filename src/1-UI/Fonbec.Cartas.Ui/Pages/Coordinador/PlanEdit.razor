@@ -1,4 +1,4 @@
-﻿@page "/coordinador/planes/{PlanId}"
+﻿@page "/coordinador/planes/{PlannedCartaId}"
 @using Fonbec.Cartas.DataAccess.Constants
 @using Fonbec.Cartas.Ui.Components.Coordinador
 @using Fonbec.Cartas.Ui.Constants
@@ -10,24 +10,22 @@
 <ActivityIndicator Loading="_loading" />
 
 <MudForm @bind-IsValid="_formValidationSucceeded">
-    @if (_isNew)
-    {
-        <MudDatePicker DateChanged="OnStartDateChanged" Date="_plan.StartDate" Label="Mes de recepción de cartas"
-                       IsDateDisabledFunc="IsDateDisabled"
-                       FixDay="1"
-                       PickerVariant="PickerVariant.Dialog"
-                       Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" DateFormat="MMMM \d\e yyyy"
-                       Class="mt-4" />
-    }
+    <MudDatePicker DateChanged="OnStartDateChanged" Date="_viewModel.Date" Label="Mes de recepción de cartas"
+                   Disabled="!_isNew"
+                   IsDateDisabledFunc="IsDateDisabled"
+                   FixDay="1"
+                   PickerVariant="PickerVariant.Dialog"
+                   Variant="Variant.Outlined" OpenTo="OpenTo.Month" Culture="EsArCultureInfo" DateFormat="MMMM \d\e yyyy"
+                   Class="mt-4" />
 
-    <MudTextField T="string" ValueChanged="OnSubjectChanged" Value="_plan.Subject" Label="Asunto"
+    <MudTextField T="string" ValueChanged="OnSubjectChanged" Value="_viewModel.Subject" Label="Asunto"
                   MaxLength="@MaxLength.Plan.Subject"
                   Required="true" RequiredError="Se debe especificar el asunto."
                   Immediate="true"
                   Adornment="Adornment.Start" AdornmentText="FONBEC |"
                   Variant="Variant.Outlined" Class="mt-4" />
 
-    <MudTextField T="string" ValueChanged="OnMessageMarkdownChanged" Value="_plan.MessageMarkdown" Label="Cuerpo del mensaje"
+    <MudTextField T="string" ValueChanged="OnMessageMarkdownChanged" Value="_viewModel.MessageMarkdown" Label="Cuerpo del mensaje"
                   MaxLength="@MaxLength.Plan.MessageMarkdown"
                   Required="true" RequiredError="Se debe especificar el mensaje."
                   DebounceInterval="250"
@@ -38,7 +36,7 @@
                    Variant="Variant.Filled" Color="Color.Primary" Class="ml-0 mr-4">
             @_saveButtonText
         </MudButton>
-        <MudButton Href="@NavRoutes.CoordinadorPlanes"
+        <MudButton Href="@NavRoutes.CoordinadorPlanificación"
                    Variant="Variant.Filled" Color="Color.Default">
             Cancelar
         </MudButton>

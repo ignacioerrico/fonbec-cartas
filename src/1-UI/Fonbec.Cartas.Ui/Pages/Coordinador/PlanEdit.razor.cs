@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Globalization;
 using Fonbec.Cartas.Logic.Services.Coordinador;
-using Mapster;
 using Fonbec.Cartas.DataAccess.Entities.Enums;
 using Fonbec.Cartas.Ui.Components.Coordinador;
+using Mapster;
 
 namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
@@ -16,9 +16,9 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
     {
         private static readonly CultureInfo EsArCultureInfo = CultureInfo.GetCultureInfo("es-AR");
 
-        private PlanEditViewModel _plan = new();
-        private PlanEditViewModel _originalPlan = new();
-        private int _planId;
+        private PlannedCartaEditViewModel _viewModel = new();
+        private PlannedCartaEditViewModel _originalViewModel = new();
+        private int _plannedCartaId;
 
         private int _coordinadorId;
 
@@ -28,7 +28,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private string _saveButtonText = "Guardar";
         private bool _formValidationSucceeded;
 
-        private List<DateTime> _takenStartDates = new();
+        private List<DateTime> _takenCartasDates = new();
 
         private readonly MessageTemplateData _messageTemplateData = new()
         {
@@ -36,7 +36,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             Padrino = PersonSelectorForPreview.Padrino,
             Becario = PersonSelectorForPreview.Ahijado,
             Revisor = new PersonData("Victoria", Gender.Female),
-            FilialNombre = "AMBA",
         };
 
         private bool _highlight;
@@ -44,18 +43,18 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private string _renderedSubject = default!;
         private string _renderedMessageBody = default!;
 
-        private bool ModelHasChanged => !string.Equals(_plan.Subject, _originalPlan.Subject, StringComparison.Ordinal)
-                                        || !string.Equals(_plan.MessageMarkdown, _originalPlan.MessageMarkdown, StringComparison.Ordinal);
+        private bool ModelHasChanged => !string.Equals(_viewModel.Subject, _originalViewModel.Subject, StringComparison.Ordinal)
+                                        || !string.Equals(_viewModel.MessageMarkdown, _originalViewModel.MessageMarkdown, StringComparison.Ordinal);
 
         private bool SaveButtonDisabled => _loading
                                            || !_formValidationSucceeded
                                            || !ModelHasChanged;
 
         [Parameter]
-        public string PlanId { get; set; } = string.Empty;
+        public string PlannedCartaId { get; set; } = string.Empty;
         
         [Inject]
-        public IPlanService PlanService { get; set; } = default!;
+        public IPlannedEventService PlannedEventService { get; set; } = default!;
 
         [Inject]
         public IMessageTemplateGetterService MessageTemplateGetterService { get; set; } = default!;
@@ -77,45 +76,49 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             _coordinadorId = authenticatedUserData.User.UserWithAccountId()
                              ?? throw new NullReferenceException("No claim UserWithAccountId found");
 
-            _plan.FilialId = authenticatedUserData.FilialId;
+            _viewModel.FilialId = authenticatedUserData.FilialId;
 
-            if (string.Equals(PlanId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
+            _messageTemplateData.FilialNombre = authenticatedUserData.User.FilialName() ?? "AMBA";
+
+            if (string.Equals(PlannedCartaId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
             {
                 _isNew = true;
 
-                _pageTitle = "Plan nuevo";
+                _pageTitle = "Nueva planificación de cartas";
                 _saveButtonText = "Crear";
 
-                _takenStartDates = await PlanService.GetAllPlansStartDates(authenticatedUserData.FilialId);
+                _takenCartasDates = await PlannedEventService.GetAllPlannedEventDates(authenticatedUserData.FilialId, PlannedEventType.CartaObligatoria);
 
-                SetInitialStartDate();
-                _plan.MessageMarkdown = MessageTemplateGetterService.GetDefaultMessage();
+                _viewModel.Subject = MessageTemplateGetterService.GetDefaultSubject();
+                _viewModel.MessageMarkdown = MessageTemplateGetterService.GetDefaultMessageMarkdown();
+                
+                OnStartDateChanged();
             }
-            else if (int.TryParse(PlanId, out _planId) && _planId > 0)
+            else if (int.TryParse(PlannedCartaId, out _plannedCartaId) && _plannedCartaId > 0)
             {
                 _isNew = false;
 
-                var result = await PlanService.GetPlanAsync(_planId, authenticatedUserData.FilialId);
+                var result = await PlannedEventService.GetPlannedCartaAsync(_plannedCartaId, authenticatedUserData.FilialId);
 
                 if (!result.IsFound || result.Data is null)
                 {
-                    Snackbar.Add($"No se encontró plan con ID {_planId}.", Severity.Error);
-                    NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanNew);
+                    Snackbar.Add($"No se encontró planificación de carta con ID {_plannedCartaId}.", Severity.Error);
+                    NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanificaciónNew);
                     return;
                 }
 
-                _pageTitle = $"Editar plan de {result.Data.StartDate.ToPlanName()}";
+                _pageTitle = $"Editar planificación de cartas de {result.Data.Date.ToPlanName()}";
                 _saveButtonText = "Actualizar";
 
-                _plan = result.Data.Adapt<PlanEditViewModel>();
-                _originalPlan = result.Data.Adapt<PlanEditViewModel>();
+                _viewModel = result.Data.Adapt<PlannedCartaEditViewModel>();
+                _originalViewModel = result.Data.Adapt<PlannedCartaEditViewModel>();
+
+                OnStartDateChanged(_viewModel.Date);
             }
             else
             {
-                NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanes);
+                NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanificación);
             }
-
-            UpdatePreview();
 
             _loading = false;
         }
@@ -124,52 +127,63 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             if (_isNew)
             {
-                _plan.CreatedByCoordinadorId = _coordinadorId;
+                _viewModel.CreatedByCoordinadorId = _coordinadorId;
 
-                var result = await PlanService.CreatePlanAsync(_plan);
+                var result = await PlannedEventService.CreatePlannedCartaAsync(_viewModel);
 
                 if (!result.AnyRowsAffected)
                 {
-                    Snackbar.Add("No se pudo crear el plan.", Severity.Error);
+                    Snackbar.Add("No se pudo crear esta planificación de cartas.", Severity.Error);
                 }
             }
             else if (ModelHasChanged)
             {
-                _plan.UpdatedByCoordinadorId = _coordinadorId;
+                _viewModel.UpdatedByCoordinadorId = _coordinadorId;
                 
-                var result = await PlanService.UpdatePlanAsync(_planId, _plan);
+                var result = await PlannedEventService.UpdatePlannedCartaAsync(_plannedCartaId, _viewModel);
 
                 if (!result.AnyRowsAffected)
                 {
-                    Snackbar.Add("No se pudo actualizar el plan.", Severity.Error);
+                    Snackbar.Add("No se pudo actualizar esta planificación de cartas.", Severity.Error);
                 }
             }
 
-            NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanes);
+            NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanificación);
         }
 
         private void SetInitialStartDate()
         {
-            _plan.StartDate = _takenStartDates.Any()
-                ? _takenStartDates.Max().AddMonths(1)
-                : new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            var today = DateTime.Today;
+
+            _viewModel.Date = _takenCartasDates.Any()
+                ? _takenCartasDates.Max().AddMonths(1)
+                : new DateTime(today.Year, today.Month, 1)
+                    .AddMonths(1);
         }
 
         private bool IsDateDisabled(DateTime dateTime)
         {
-            return dateTime.Year < DateTime.Today.Year
-                   || dateTime.Month < DateTime.Today.Month
-                   || (dateTime.Month == DateTime.Today.Month && DateTime.Today.Day >= 10)
-                   || _takenStartDates.Any(taken => dateTime.Year == taken.Year && dateTime.Month == taken.Month);
+            var today = DateTime.Today;
+
+            var fechaDeCorte = new DateTime(today.Year, today.Month, 1);
+            
+            // It's possible to create "planned cartas" till the 10th of the month
+            if (today.Day > 10)
+            {
+                fechaDeCorte = fechaDeCorte.AddMonths(1);
+            }
+
+            return dateTime < fechaDeCorte
+                   || _takenCartasDates.Exists(taken => dateTime.Year == taken.Year && dateTime.Month == taken.Month);
         }
 
         private void UpdatePreview()
         {
-            _renderedSubject = MessageTemplateParser.FillPlaceholders(_plan.Subject, _messageTemplateData, _highlight);
-            _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(_plan.MessageMarkdown, _messageTemplateData, _highlight);
+            _renderedSubject = MessageTemplateParser.FillPlaceholders(_viewModel.Subject, _messageTemplateData, _highlight);
+            _renderedMessageBody = MessageTemplateGetterService.GetHtmlMessage(_viewModel.MessageMarkdown, _messageTemplateData, _highlight);
         }
 
-        private void OnStartDateChanged(DateTime? startDate)
+        private void OnStartDateChanged(DateTime? startDate = null)
         {
             if (startDate is null)
             {
@@ -177,22 +191,22 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             }
             else
             {
-                _plan.StartDate = startDate.Value;
+                _viewModel.Date = startDate.Value;
             }
 
-            _messageTemplateData.Date = _plan.StartDate;
+            _messageTemplateData.Date = _viewModel.Date;
             UpdatePreview();
         }
 
         private void OnSubjectChanged(string subject)
         {
-            _plan.Subject = subject;
+            _viewModel.Subject = subject;
             UpdatePreview();
         }
 
         private void OnMessageMarkdownChanged(string messageMarkdown)
         {
-            _plan.MessageMarkdown = messageMarkdown;
+            _viewModel.MessageMarkdown = messageMarkdown;
             UpdatePreview();
         }
     }
