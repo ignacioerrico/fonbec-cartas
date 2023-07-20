@@ -17,6 +17,8 @@ namespace Fonbec.Cartas.DataAccess.Entities.Planning
         public int? CartaObligatoriaId { get; set; }
         public CartaObligatoria? CartaObligatoria { get; set; }
 
+        public List<PlannedDelivery> PlannedDeliveries { get; set; } = new();
+
         public int CreatedByCoordinadorId { get; set; }
         public Coordinador CreatedByCoordinador { get; set; } = default!;
 
