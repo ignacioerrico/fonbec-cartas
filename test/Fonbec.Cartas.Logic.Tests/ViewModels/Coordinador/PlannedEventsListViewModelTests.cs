@@ -49,9 +49,6 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
                 result.Date.Should().Be(startDate);
                 result.Type.Should().Be(PlannedEventType.CartaObligatoria);
                 result.EventName.Should().Be("Carta de junio de 2020");
-                result.TotalToSend.Should().Be(0); // TODO
-                result.AlreadySent.Should().Be(0); // TODO
-                result.Percentage.Should().Be(0); // TODO
                 result.CreatedOnUtc.Should().Be(createdOnUtc);
                 result.CreatedBy.Should().Be("FirstName-1 LastName-1");
                 result.LastUpdatedOnUtc.Should().Be(createdOnUtc.AddDays(1));
@@ -92,9 +89,6 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
                 result.Date.Should().Be(startDate);
                 result.Type.Should().Be(PlannedEventType.Notas);
                 result.EventName.Should().Be("junio de 2020: corte para recepción de notas");
-                result.TotalToSend.Should().Be(0); // TODO
-                result.AlreadySent.Should().Be(0); // TODO
-                result.Percentage.Should().Be(0); // TODO
                 result.CreatedOnUtc.Should().Be(createdOnUtc);
                 result.CreatedBy.Should().Be("FirstName-1 LastName-1");
                 result.UpdatedBy.Should().BeNull();
@@ -134,9 +128,9 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
         [InlineData(PlannedEventType.Notas, "Se recibieron notas hasta el")]
         public void Map_Plan_To_PlansListViewModel_ExplanationsForPastEvents(PlannedEventType plannedEventType, string expectedExplanation0)
         {
+            // Arrange
             var pastDate = DateTime.Today.AddMonths(-1);
 
-            // Arrange
             var plan = new PlannedEvent
             {
                 Date = pastDate,
@@ -164,9 +158,9 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
         [InlineData(PlannedEventType.Notas, "Se recibirán notas hasta el")]
         public void Map_Plan_To_PlansListViewModel_ExplanationsForFutureEvents(PlannedEventType plannedEventType, string expectedExplanation0)
         {
+            // Arrange
             var futureDate = DateTime.Today.AddMonths(1);
 
-            // Arrange
             var plan = new PlannedEvent
             {
                 Date = futureDate,
@@ -186,6 +180,40 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
             {
                 result.Type.Should().Be(plannedEventType);
                 result.Explanation.Should().Be($"{expectedExplanation0} {futureDate.Date:d/M/yy}");
+            }
+        }
+
+        [Fact]
+        public void Map_Plan_To_PlansListViewModel_Statistics()
+        {
+            // Arrange
+            var plan = new PlannedEvent
+            {
+                PlannedDeliveries = new()
+                {
+                    new(),
+                    new() { SentOn = DateTimeOffset.Now },
+                    new(),
+                    new() { SentOn = DateTimeOffset.Now },
+                    new() { SentOn = DateTimeOffset.Now },
+                },
+                CreatedByCoordinador = new DataAccess.Entities.Actors.Coordinador
+                {
+                    FirstName = "FirstName-1",
+                    LastName = "LastName-1"
+                },
+            };
+
+            // Act
+            var result = plan.Adapt<PlannedEventsListViewModel>();
+
+            // Assert
+            using (new AssertionScope())
+            {
+                result.TotalToSend.Should().Be(5);
+                result.AlreadySent.Should().Be(3);
+                result.Percentage.Should().BeGreaterThan(.59)
+                    .And.BeLessThan(.61); // So about 3/5
             }
         }
     }

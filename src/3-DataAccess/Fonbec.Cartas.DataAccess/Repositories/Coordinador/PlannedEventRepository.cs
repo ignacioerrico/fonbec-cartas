@@ -1,7 +1,6 @@
 ﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
 using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
 {
@@ -29,6 +28,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
             var all = await appDbContext.PlannedEvents
+                .Include(p => p.PlannedDeliveries)
                 .Include(p => p.CreatedByCoordinador)
                 .Include(p => p.UpdatedByCoordinador)
                 .Where(p => p.FilialId == filialId)

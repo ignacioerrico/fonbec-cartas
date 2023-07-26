@@ -21,7 +21,7 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
 
         public int AlreadySent { get; set; }
 
-        public float Percentage { get; set; }
+        public double Percentage { get; set; }
     }
 
     public class PlansListViewModelMappingDefinitions : IRegister
@@ -44,9 +44,10 @@ namespace Fonbec.Cartas.Logic.ViewModels.Coordinador
                     srcCond => srcCond.Type == PlannedEventType.Notas && srcCond.Date <= DateTime.Today)
                 .Map(dest => dest.Explanation, src => $"Se recibirán notas hasta el {src.Date:d/M/yy}",
                     srcCond => srcCond.Type == PlannedEventType.Notas && srcCond.Date > DateTime.Today)
-                .Map(dest => dest.TotalToSend, src => 0) // TODO
-                .Map(dest => dest.AlreadySent, src => 0) // TODO
-                .Map(dest => dest.Percentage, src => 0) // TODO
+                .Map(dest => dest.TotalToSend, src => src.PlannedDeliveries.Count)
+                .Map(dest => dest.AlreadySent, src => src.PlannedDeliveries.Count(pd => pd.HasBeenSent))
+                .Map(dest => dest.Percentage, src => (double)src.PlannedDeliveries.Count(pd => pd.HasBeenSent) / src.PlannedDeliveries.Count,
+                    srcCond => srcCond.PlannedDeliveries.Any())
                 .Map(dest => dest.CreatedOnUtc, src => src.CreatedOnUtc)
                 .Map(dest => dest.CreatedBy, src => src.CreatedByCoordinador.FullName(false))
                 .Map(dest => dest.LastUpdatedOnUtc, src => src.LastUpdatedOnUtc)
