@@ -7,11 +7,12 @@
         </MudAutocomplete>
         
         <MudDatePicker Label="Desde" @bind-Date="_viewModel.Desde" OpenTo="OpenTo.Month" Culture="EsArCultureInfo"
-                       PickerVariant="PickerVariant.Dialog" />
+                       PickerVariant="PickerVariant.Inline" />
         
         <MudDatePicker Label="Hasta" @bind-Date="_viewModel.Hasta" OpenTo="OpenTo.Month" Culture="EsArCultureInfo"
                        Disabled="!_viewModel.KnownEndDate"
-                       PickerVariant="PickerVariant.Dialog" />
+                       IsDateDisabledFunc="IsToDateDisabled"
+                       PickerVariant="PickerVariant.Inline" />
         
         <MudCheckBox T="bool" CheckedChanged="OnKnownEndDateChanged" Checked="_viewModel.KnownEndDate" Label="Sé hasta cuándo va a apadrinar" Color="Color.Primary"></MudCheckBox>
     </DialogContent>

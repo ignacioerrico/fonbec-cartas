@@ -59,6 +59,16 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
             return Padrinos.Where(m => m.DisplayName.ContainsIgnoringAccents(searchString));
         }
 
+        private bool IsToDateDisabled(DateTime to)
+        {
+            if (!_viewModel.Desde.HasValue)
+            {
+                return true;
+            }
+
+            return to.Date <= _viewModel.Desde.Value.Date;
+        }
+
         private void OnKnownEndDateChanged(bool knownEndDate)
         {
             _viewModel.KnownEndDate = knownEndDate;
