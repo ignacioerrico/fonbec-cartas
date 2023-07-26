@@ -3,7 +3,7 @@ using Mapster;
 
 namespace Fonbec.Cartas.Logic.Models.Coordinador
 {
-    public class ApadrinamientoEditAssignPadrinoToBecarioModel
+    public class ApadrinamientoEditNewApadrinamientoModel
     {
         public int BecarioId { get; set; }
 
@@ -16,11 +16,11 @@ namespace Fonbec.Cartas.Logic.Models.Coordinador
         public int CreatedByCoordinadorId { get; set; }
     }
 
-    public class ApadrinamientoEditAssignPadrinoToBecarioModelMappingDefinitions : IRegister
+    public class ApadrinamientoEditNewApadrinamientoModelMappingDefinitions : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<ApadrinamientoEditAssignPadrinoToBecarioModel, Apadrinamiento>()
+            config.NewConfig<ApadrinamientoEditNewApadrinamientoModel, Apadrinamiento>()
                 .Map(dest => dest.BecarioId, src => src.BecarioId)
                 .Map(dest => dest.PadrinoId, src => src.PadrinoId)
                 .Map(dest => dest.From, src => src.From)

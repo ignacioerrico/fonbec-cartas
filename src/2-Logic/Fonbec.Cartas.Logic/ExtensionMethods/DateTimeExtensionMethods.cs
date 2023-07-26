@@ -12,5 +12,9 @@ namespace Fonbec.Cartas.Logic.ExtensionMethods
 
         public static string ToLocalizedDateTime(this DateTime dateTime) =>
             dateTime.ToString("d MMM yyyy @ HH:mm", new CultureInfo("es-AR"));
+
+        public static bool IsBetween(this DateTime pointInTime, DateTime lowerBound, DateTime? upperBound = null) =>
+            lowerBound.Date <= pointInTime.Date
+            && (!upperBound.HasValue || pointInTime.Date <= upperBound.Value.Date);
     }
 }

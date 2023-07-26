@@ -18,7 +18,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private bool _loading;
 
         private int _coordinadorId;
-        private string _coordinadorName = default!;
         
         private string? _pageTitle;
         private string _becarioFirstName = default!;
@@ -47,9 +46,6 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             _coordinadorId = authenticatedUserData.User.UserWithAccountId()
                              ?? throw new NullReferenceException("No claim UserWithAccountId found");
             
-            _coordinadorName = authenticatedUserData.User.NickName()
-                               ?? throw new NullReferenceException("No claim NickName found");
-
             _viewModel = await ApadrinamientoService.GetApadrinamientoEditDataAsync(authenticatedUserData.FilialId, BecarioId);
 
             if (!_viewModel.BecarioExists)
@@ -113,23 +109,24 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private async Task OpenAssignNewPadrinoDialogAsync()
         {
             var nuevaAsignación = await OpenAssignNewPadrinoDialogAndGetDataAsync(getNewData: true);
-            if (nuevaAsignación is null)
+            if (nuevaAsignación?.Desde is null)
             {
                 return;
             }
 
             // Is there any overlap with another assignment for the same Padrino?
-            var overlapWithSamePadrino = _viewModel.ApadrinamientosViewModel.Any(asignación =>
-                string.Equals(asignación.PadrinoFullName, nuevaAsignación.SelectedPadrino!.DisplayName, StringComparison.OrdinalIgnoreCase)
-                && ((nuevaAsignación.Desde <= asignación.From && (!nuevaAsignación.Hasta.HasValue || asignación.From <= nuevaAsignación.Hasta.Value))
-                    || (asignación.From <= nuevaAsignación.Desde && (!asignación.To.HasValue || nuevaAsignación.Desde <= asignación.To.Value))));
+            var overlapWithSamePadrino = _viewModel.ApadrinamientosViewModel.Exists(asignación =>
+                asignación.PadrinoId == nuevaAsignación.SelectedPadrino!.Id
+                && (asignación.From.IsBetween(nuevaAsignación.Desde.Value, nuevaAsignación.Hasta)
+                    || nuevaAsignación.Desde.Value.IsBetween(asignación.From, asignación.To)));
+                
             if (overlapWithSamePadrino)
             {
                 Snackbar.Add($"{nuevaAsignación.SelectedPadrino!.DisplayName} ya apadrina a {_becarioFirstName} en ese período.", Severity.Error);
                 return;
             }
 
-            var apadrinamientoEditAssignPadrinoToBecarioModel = new ApadrinamientoEditAssignPadrinoToBecarioModel
+            var apadrinamientoEditNewApadrinamientoModel = new ApadrinamientoEditNewApadrinamientoModel
             {
                 BecarioId = BecarioId,
                 PadrinoId = nuevaAsignación.SelectedPadrino!.Id,
@@ -138,24 +135,16 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 CreatedByCoordinadorId = _coordinadorId,
             };
 
-            var dataResult = await ApadrinamientoService.AssignPadrinoToBecarioAsync(apadrinamientoEditAssignPadrinoToBecarioModel);
+            var result = await ApadrinamientoService.CreateApadrinamientoAsync(apadrinamientoEditNewApadrinamientoModel);
 
-            if (!dataResult.AnyRowsAffected)
+            if (!result.AnyRowsAffected)
             {
                 Snackbar.Add("No se pudo almacenar la asignación.", Severity.Error);
                 return;
             }
 
-            var apadrinamientoEditViewModel = new ApadrinamientoEditApadrinamientoViewModel(nuevaAsignación.Desde!.Value, nuevaAsignación.Hasta)
-            {
-                ApadrinamientoId = dataResult.Data,
-                PadrinoId = nuevaAsignación.SelectedPadrino.Id,
-                PadrinoFullName = nuevaAsignación.SelectedPadrino.DisplayName,
-                CreatedOnUtc = DateTimeOffset.UtcNow,
-                CreatedBy = _coordinadorName,
-            };
-
-            _viewModel.ApadrinamientosViewModel.Add(apadrinamientoEditViewModel);
+            var url = string.Format(NavRoutes.CoordinadorBecario0AsignarPadrinos, BecarioId);
+            NavigationManager.NavigateTo(url, forceLoad: true);
         }
 
         private async Task OpenAssignNewPadrinoDialogForEditAsync(int apadrinamientoId, int padrinoId, DateTime from, DateTime? to)
@@ -166,23 +155,23 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            var result = await ApadrinamientoService.UpdateApadrinamientoAsync(apadrinamientoId, asignaciónModificada.Desde!.Value, asignaciónModificada.Hasta, _coordinadorId);
+            var apadrinamientoEditUpdateApadrinamientoModel = new ApadrinamientoEditUpdateApadrinamientoModel
+            {
+                ApadrinamientoId = apadrinamientoId,
+                From = asignaciónModificada.Desde!.Value,
+                To = asignaciónModificada.Hasta,
+                UpdatedByCoordinadorId = _coordinadorId,
+            };
+
+            var result = await ApadrinamientoService.UpdateApadrinamientoAsync(apadrinamientoEditUpdateApadrinamientoModel);
             if (!result.AnyRowsAffected)
             {
                 Snackbar.Add("No se pudo almacenar el cambio", Severity.Error);
                 return;
             }
 
-            var newStatus = new ApadrinamientoEditApadrinamientoViewModel(asignaciónModificada.Desde!.Value, asignaciónModificada.Hasta)
-                .Status;
-
-            var updatedApadrinamiento = _viewModel.ApadrinamientosViewModel.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
-            updatedApadrinamiento.PadrinoFullName = asignaciónModificada.SelectedPadrino!.DisplayName;
-            updatedApadrinamiento.From = asignaciónModificada.Desde!.Value;
-            updatedApadrinamiento.To = asignaciónModificada.Hasta;
-            updatedApadrinamiento.Status = newStatus;
-            updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
-            updatedApadrinamiento.UpdatedBy = _coordinadorName; // TODO: This should be the full name, but we would need to get that in the user's claims
+            var url = string.Format(NavRoutes.CoordinadorBecario0AsignarPadrinos, BecarioId);
+            NavigationManager.NavigateTo(url, forceLoad: true);
         }
 
         private async Task SetToDateToToday(int apadrinamientoId)
@@ -194,10 +183,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            var updatedApadrinamiento = _viewModel.ApadrinamientosViewModel.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
-            updatedApadrinamiento.To = DateTime.Today;
-            updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
-            updatedApadrinamiento.UpdatedBy = _coordinadorName;
+            var url = string.Format(NavRoutes.CoordinadorBecario0AsignarPadrinos, BecarioId);
+            NavigationManager.NavigateTo(url, forceLoad: true);
         }
 
         private async Task SetToDateToUknown(int apadrinamientoId)
@@ -209,10 +196,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            var updatedApadrinamiento = _viewModel.ApadrinamientosViewModel.Single(pa => pa.ApadrinamientoId == apadrinamientoId);
-            updatedApadrinamiento.To = null;
-            updatedApadrinamiento.LastUpdatedOnUtc = DateTimeOffset.UtcNow;
-            updatedApadrinamiento.UpdatedBy = _coordinadorName;
+            var url = string.Format(NavRoutes.CoordinadorBecario0AsignarPadrinos, BecarioId);
+            NavigationManager.NavigateTo(url, forceLoad: true);
         }
     }
 }

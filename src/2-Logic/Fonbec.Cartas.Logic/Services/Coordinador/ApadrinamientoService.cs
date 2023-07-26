@@ -10,8 +10,8 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
     public interface IApadrinamientoService
     {
         Task<ApadrinamientoEditViewModel> GetApadrinamientoEditDataAsync(int filialId, int becarioId);
-        Task<CrudDataResult<int>> AssignPadrinoToBecarioAsync(ApadrinamientoEditAssignPadrinoToBecarioModel model);
-        Task<CrudResult> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId);
+        Task<CrudResult> CreateApadrinamientoAsync(ApadrinamientoEditNewApadrinamientoModel model);
+        Task<CrudResult> UpdateApadrinamientoAsync(ApadrinamientoEditUpdateApadrinamientoModel model);
         Task<CrudResult> SetToDateToUknownAsync(int apadrinamientoId, int coordinadorId);
         Task<CrudResult> SetToDateToTodayAsync(int apadrinamientoId, int coordinadorId);
     }
@@ -31,16 +31,17 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
             return apadrinamientosForBecario.Adapt<ApadrinamientoEditViewModel>();
         }
 
-        public async Task<CrudDataResult<int>> AssignPadrinoToBecarioAsync(ApadrinamientoEditAssignPadrinoToBecarioModel model)
+        public async Task<CrudResult> CreateApadrinamientoAsync(ApadrinamientoEditNewApadrinamientoModel model)
         {
             var apadrinamiento = model.Adapt<Apadrinamiento>();
-            var dataModel = await _apadrinamientoRepository.AssignPadrinoToBecarioAsync(apadrinamiento);
-            return new CrudDataResult<int>(dataModel.ApadrinamientoId, dataModel.RowsAffected);
+            var rowsAffected = await _apadrinamientoRepository.CreateApadrinamientoAsync(apadrinamiento);
+            return new CrudResult(rowsAffected);
         }
 
-        public async Task<CrudResult> UpdateApadrinamientoAsync(int apadrinamientoId, DateTime from, DateTime? to, int coordinadorId)
+        public async Task<CrudResult> UpdateApadrinamientoAsync(ApadrinamientoEditUpdateApadrinamientoModel model)
         {
-            var rowsAffected = await _apadrinamientoRepository.UpdateApadrinamientoAsync(apadrinamientoId, from, to, coordinadorId);
+            var apadrinamiento = model.Adapt<Apadrinamiento>();
+            var rowsAffected = await _apadrinamientoRepository.UpdateApadrinamientoAsync(apadrinamiento);
             return new CrudResult(rowsAffected);
         }
 
