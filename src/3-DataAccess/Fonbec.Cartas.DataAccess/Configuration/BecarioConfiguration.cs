@@ -28,9 +28,6 @@ namespace Fonbec.Cartas.DataAccess.Configuration
             builder.Property(b => b.Phone)
                 .HasMaxLength(MaxLength.Actor.Phone);
 
-            builder.Property(b => b.BecarioGuid)
-                .HasDefaultValueSql("NEWID()");
-
             builder.HasOne(b => b.Mediador)
                 .WithMany(m => m.Becarios)
                 .HasForeignKey(b => b.MediadorId)

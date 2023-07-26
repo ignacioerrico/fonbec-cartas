@@ -20,6 +20,9 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .HasForeignKey(a => a.PadrinoId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Property(b => b.ApadrinamientoGuid)
+                .HasDefaultValueSql("NEWID()");
+
             builder.HasOne(a => a.CreatedByCoordinador)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedByCoordinadorId)

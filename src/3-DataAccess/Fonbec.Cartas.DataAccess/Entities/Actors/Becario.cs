@@ -14,11 +14,6 @@ namespace Fonbec.Cartas.DataAccess.Entities.Actors
 
         public string? Email { get; set; }
 
-        /// <summary>
-        /// Use in URLs to make it easy for benefactors (padrinos) to respond to grantees (becarios).
-        /// </summary>
-        public Guid BecarioGuid { get; set; }
-
         public bool EsUniversitario => NivelDeEstudio == NivelDeEstudio.Universitario;
     }
 }

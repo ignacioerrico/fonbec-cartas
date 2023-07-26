@@ -19,6 +19,11 @@ namespace Fonbec.Cartas.DataAccess.Entities
 
         public DateTime? To { get; set; }
 
+        /// <summary>
+        /// Use in URLs to make it easy for benefactors (padrinos) to respond to grantees (becarios).
+        /// </summary>
+        public Guid ApadrinamientoGuid { get; set; }
+
         public int CreatedByCoordinadorId { get; set; }
         public Coordinador CreatedByCoordinador { get; set; } = default!;
 
