@@ -6,15 +6,17 @@
                          Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
         </MudAutocomplete>
         
-        <MudDatePicker Label="Desde" @bind-Date="_viewModel.Desde" OpenTo="OpenTo.Month" Culture="EsArCultureInfo"
+        <MudDatePicker Label="Desde" @bind-Date="_viewModel.Desde" Culture="EsArCultureInfo"
                        PickerVariant="PickerVariant.Inline" />
         
-        <MudDatePicker Label="Hasta" @bind-Date="_viewModel.Hasta" OpenTo="OpenTo.Month" Culture="EsArCultureInfo"
+        <MudDatePicker Label="Hasta" @bind-Date="_viewModel.Hasta" Culture="EsArCultureInfo"
                        Disabled="!_viewModel.KnownEndDate"
                        IsDateDisabledFunc="IsToDateDisabled"
                        PickerVariant="PickerVariant.Inline" />
         
         <MudCheckBox T="bool" CheckedChanged="OnKnownEndDateChanged" Checked="_viewModel.KnownEndDate" Label="Sé hasta cuándo va a apadrinar" Color="Color.Primary"></MudCheckBox>
+        
+        <div style="width:400px; height:250px"></div>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">
