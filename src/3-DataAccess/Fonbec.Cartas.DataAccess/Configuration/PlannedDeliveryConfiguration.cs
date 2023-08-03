@@ -15,15 +15,18 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .HasForeignKey(pd => pd.PlannedEventId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(pd => pd.FromBecario)
+            builder.HasOne(pd => pd.Apadrinamiento)
                 .WithMany()
-                .HasForeignKey(pd => pd.FromBecarioId)
+                .HasForeignKey(pd => pd.ApadrinamientoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(pd => pd.DeliveryApprovedByRevisor)
+                .WithMany()
+                .IsRequired(false)
+                .HasForeignKey(pd => pd.DeliveryApprovedByRevisorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(pd => pd.ToPadrino)
-                .WithMany()
-                .HasForeignKey(pd => pd.ToPadrinoId)
-                .OnDelete(DeleteBehavior.NoAction);
+            builder.HasQueryFilter(pd => !pd.Apadrinamiento.SoftDeletedOnUtc.HasValue);
         }
     }
 }

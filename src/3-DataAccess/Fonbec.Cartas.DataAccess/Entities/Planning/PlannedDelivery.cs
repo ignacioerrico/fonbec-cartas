@@ -9,11 +9,11 @@ namespace Fonbec.Cartas.DataAccess.Entities.Planning
         public int PlannedEventId { get; set; }
         public PlannedEvent PlannedEvent { get; set; } = default!;
 
-        public int FromBecarioId { get; set; }
-        public Becario FromBecario { get; set; } = default!;
+        public int ApadrinamientoId { get; set; }
+        public Apadrinamiento Apadrinamiento { get; set; } = default!;
 
-        public int ToPadrinoId { get; set; }
-        public Padrino ToPadrino { get; set; } = default!;
+        public int? DeliveryApprovedByRevisorId { get; set; }
+        public Revisor? DeliveryApprovedByRevisor { get; set; } = default!;
 
         public DateTimeOffset? SentOn { get; set; }
 

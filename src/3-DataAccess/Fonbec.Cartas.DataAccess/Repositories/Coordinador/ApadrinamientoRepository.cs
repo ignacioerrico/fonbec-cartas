@@ -1,7 +1,6 @@
 ﻿using Fonbec.Cartas.DataAccess.DataModels;
 using Fonbec.Cartas.DataAccess.DataModels.Coordinador;
 using Fonbec.Cartas.DataAccess.Entities;
-using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
@@ -61,24 +60,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
         public async Task<int> CreateApadrinamientoAsync(Apadrinamiento apadrinamiento)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-            
             await appDbContext.Apadrinamientos.AddAsync(apadrinamiento);
-
-            // Add apadrinamiento to corresponding planned deliveries
-            var newPlansToDeliverCartas = await appDbContext.PlannedEvents
-                .Where(pe =>
-                    apadrinamiento.From.Date <= pe.Date.Date
-                    && (!apadrinamiento.To.HasValue || pe.Date.Date < apadrinamiento.To.Value.Date))
-                .Select(pe => 
-                    new PlannedDelivery
-                    {
-                        PlannedEventId = pe.Id,
-                        FromBecarioId = apadrinamiento.BecarioId,
-                        ToPadrinoId = apadrinamiento.PadrinoId,
-                    })
-                .ToListAsync();
-            await appDbContext.PlannedDeliveries.AddRangeAsync(newPlansToDeliverCartas);
-            
             return await appDbContext.SaveChangesAsync();
         }
 
@@ -91,17 +73,11 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
                 return 0;
             }
 
-            var originalFrom = apadrinamientoDb.From;
-            var originalTo = apadrinamientoDb.To;
-
             apadrinamientoDb.From = apadrinamiento.From;
             apadrinamientoDb.To = apadrinamiento.To;
             apadrinamientoDb.UpdatedByCoordinadorId = apadrinamiento.UpdatedByCoordinadorId;
 
             appDbContext.Apadrinamientos.Update(apadrinamientoDb);
-
-            // Remove the ones outside of the new range; add the ones not included in the old range
-            await AddRemovePlannedDeliveries(appDbContext, apadrinamientoDb, originalFrom, originalTo);
 
             return await appDbContext.SaveChangesAsync();
         }
@@ -115,15 +91,10 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
                 return 0;
             }
 
-            var originalTo = apadrinamientoDb.To;
-
             apadrinamientoDb.To = null;
             apadrinamientoDb.UpdatedByCoordinadorId = coordinadorId;
 
             appDbContext.Apadrinamientos.Update(apadrinamientoDb);
-
-            // Add the ones not included in the old range
-            await AddRemovePlannedDeliveries(appDbContext, apadrinamientoDb, apadrinamientoDb.From, originalTo);
 
             return await appDbContext.SaveChangesAsync();
         }
@@ -137,67 +108,12 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
                 return 0;
             }
 
-            var originalTo = apadrinamientoDb.To;
-
             apadrinamientoDb.To = DateTime.Today;
             apadrinamientoDb.UpdatedByCoordinadorId = coordinadorId;
 
             appDbContext.Apadrinamientos.Update(apadrinamientoDb);
 
-            // Remove or add based on the new range
-            await AddRemovePlannedDeliveries(appDbContext, apadrinamientoDb, apadrinamientoDb.From, originalTo);
-
             return await appDbContext.SaveChangesAsync();
-        }
-
-        private static async Task AddRemovePlannedDeliveries(ApplicationDbContext appDbContext, Apadrinamiento apadrinamiento, DateTime originalFrom, DateTime? originalTo)
-        {
-            var originalPlannedEventIds = await appDbContext.PlannedEvents
-                .Where(pe =>
-                    originalFrom.Date <= pe.Date.Date
-                    && (!originalTo.HasValue || pe.Date.Date < originalTo.Value.Date))
-                .Select(pe => pe.Id)
-                .ToListAsync();
-
-            var newFrom = apadrinamiento.From;
-            var newTo = apadrinamiento.To;
-
-            var newPlannedEventIds = await appDbContext.PlannedEvents
-                .Where(pe =>
-                    newFrom.Date <= pe.Date.Date
-                    && (!newTo.HasValue || pe.Date.Date < newTo.Value.Date))
-                .Select(pe => pe.Id)
-                .ToListAsync();
-
-            var plannedEventIdsToRemoveFrom = originalPlannedEventIds.Except(newPlannedEventIds).ToList();
-
-            var plannedEventIdsToAddTo = newPlannedEventIds.Except(originalPlannedEventIds).ToList();
-
-            if (plannedEventIdsToRemoveFrom.Any())
-            {
-                var plannedDeliveriesToRemove = await appDbContext.PlannedDeliveries
-                    .Where(pd =>
-                        plannedEventIdsToRemoveFrom.Contains(pd.PlannedEventId)
-                        && pd.FromBecarioId == apadrinamiento.BecarioId
-                        && pd.ToPadrinoId == apadrinamiento.PadrinoId)
-                    .ToListAsync();
-
-                appDbContext.PlannedDeliveries.RemoveRange(plannedDeliveriesToRemove);
-            }
-
-            if (plannedEventIdsToAddTo.Any())
-            {
-                var plannedDeliveriesToAdd = plannedEventIdsToAddTo
-                    .Select(id =>
-                        new PlannedDelivery
-                        {
-                            PlannedEventId = id,
-                            FromBecarioId = apadrinamiento.BecarioId,
-                            ToPadrinoId = apadrinamiento.PadrinoId,
-                        });
-
-                await appDbContext.PlannedDeliveries.AddRangeAsync(plannedDeliveriesToAdd);
-            }
         }
     }
 }

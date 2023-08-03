@@ -73,14 +73,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
         public async Task<int> CreatePlannedCartaAsync(PlannedEvent plannedCarta)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-
-            // Create planned "carta" event
             await appDbContext.PlannedEvents.AddAsync(plannedCarta);
-            await appDbContext.SaveChangesAsync();
-
-            // Create a "snapshot" of all the apadrinamientos that are expected to be active when the planned event starts
-            await AddPlannedDeliveriesForApadrinamientosThatAreActiveWhenPlannedEventStarts(appDbContext, plannedCarta.Id, plannedCarta.Date);
-
             return await appDbContext.SaveChangesAsync();
         }
 
@@ -115,14 +108,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
         public async Task<int> CreatePlannedCorteNotasAsync(PlannedEvent plannedCorteNotas)
         {
             await using var appDbContext = await _appDbContextFactory.CreateDbContextAsync();
-            
-            // Create planned "notas" event
             await appDbContext.PlannedEvents.AddAsync(plannedCorteNotas);
-            await appDbContext.SaveChangesAsync();
-
-            // Create a "snapshot" of all the apadrinamientos that are expected to be active when the planned event starts
-            await AddPlannedDeliveriesForApadrinamientosThatAreActiveWhenPlannedEventStarts(appDbContext, plannedCorteNotas.Id, plannedCorteNotas.Date);
-
             return await appDbContext.SaveChangesAsync();
         }
 
@@ -143,61 +129,7 @@ namespace Fonbec.Cartas.DataAccess.Repositories.Coordinador
             
             appDbContext.PlannedEvents.Update(plannedCorteNotasDb);
 
-            await UpdatePlannedDeliveriesForApadrinamientosThatAreActiveWhenPlannedEventStarts(appDbContext, plannedCorteNotasDb.Id, plannedCorteNotas.Date);
-
             return await appDbContext.SaveChangesAsync();
-        }
-
-        private static async Task<List<PlannedDelivery>> GetPlannedDeliveriesForApadrinamientosThatAreActiveWhenPlannedEventStarts(
-            ApplicationDbContext appDbContext,
-            int plannedEventId,
-            DateTime apadrinamientoActiveOn)
-        {
-            var plannedDeliveriesActiveWhenPlannedEventStarts = await appDbContext.Apadrinamientos
-                .Include(a => a.Becario)
-                .Include(a => a.Padrino)
-                .Where(a =>
-                    a.From.Date <= apadrinamientoActiveOn
-                    && (a.To == null || apadrinamientoActiveOn <= a.To.Value.Date))
-                .Select(a =>
-                    new PlannedDelivery
-                    {
-                        PlannedEventId = plannedEventId,
-                        FromBecarioId = a.BecarioId,
-                        ToPadrinoId = a.PadrinoId,
-                    })
-                .ToListAsync();
-            return plannedDeliveriesActiveWhenPlannedEventStarts;
-        }
-
-        private async Task AddPlannedDeliveriesForApadrinamientosThatAreActiveWhenPlannedEventStarts(ApplicationDbContext appDbContext, int plannedEventId, DateTime plannedEventDate)
-        {
-            var plannedDeliveries = await GetPlannedDeliveriesForApadrinamientosThatAreActiveWhenPlannedEventStarts(appDbContext, plannedEventId, plannedEventDate);
-
-            await appDbContext.PlannedDeliveries.AddRangeAsync(plannedDeliveries);
-        }
-
-        private async Task UpdatePlannedDeliveriesForApadrinamientosThatAreActiveWhenPlannedEventStarts(ApplicationDbContext appDbContext, int currentPlannedEventId, DateTime newDate)
-        {
-            var currentPlannedDeliveries = await appDbContext.PlannedDeliveries
-                .Where(pd => pd.PlannedEventId == currentPlannedEventId)
-                .ToListAsync();
-
-            var neededPlannedDeliveries = await GetPlannedDeliveriesForApadrinamientosThatAreActiveWhenPlannedEventStarts(appDbContext, currentPlannedEventId, newDate);
-
-            // Planned deliveries that are in the database but are no longer valid (according to the new date)
-            var plannedDeliveriesToRemove = currentPlannedDeliveries.ExceptBy(
-                neededPlannedDeliveries.Select(npd => (npd.FromBecarioId, npd.ToPadrinoId)),
-                pd => (pd.FromBecarioId, pd.ToPadrinoId));
-            
-            // Planned deliveries that are active on the new date, but are not in the database
-            var plannedDeliveriesToAdd = neededPlannedDeliveries.ExceptBy(
-                currentPlannedDeliveries.Select(cpd => (cpd.FromBecarioId, cpd.ToPadrinoId)),
-                pd => (pd.FromBecarioId, pd.ToPadrinoId));
-
-            appDbContext.PlannedDeliveries.RemoveRange(plannedDeliveriesToRemove);
-            
-            await appDbContext.PlannedDeliveries.AddRangeAsync(plannedDeliveriesToAdd);
         }
     }
 }
