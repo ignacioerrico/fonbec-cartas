@@ -6,6 +6,7 @@
 
         public const string AdminRoot = "/admin";
         public const string CoordinadorRoot = "/coordinador";
+        public const string MediadorRoot = "/mediador";
 
         public const string AdminFiliales = $"{AdminRoot}/filiales";
         public const string AdminCoordinadores = $"{AdminRoot}/coordinadores";
@@ -38,5 +39,7 @@
         public const string CoordinadorPlanificaciónCartaEdit0 = $"{CoordinadorPlanificación}/{{0}}";
         
         public const string CoordinadorPlanificaciónCartaPreview0 = $"{CoordinadorPlanificación}/{{0}}/ver";
+
+        public const string MediadorSubir = $"{MediadorRoot}/subir";
     }
 }

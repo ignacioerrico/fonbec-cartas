@@ -8,7 +8,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin.DataImport.DataReader.Payloads
 
         public int CreatedByCoordinadorId { get; set; }
 
-        public List<Mediador> ExistingMediadores { get; set; } = default!;
+        public List<DataAccess.Entities.Actors.Mediador> ExistingMediadores { get; set; } = default!;
 
         public List<int> ExistingMediadorIds { get; set; } = default!;
     }

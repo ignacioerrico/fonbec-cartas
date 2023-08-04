@@ -1,0 +1,31 @@
+﻿@page "/mediador/subir"
+@using Fonbec.Cartas.DataAccess.Constants
+@using Fonbec.Cartas.Logic.Models
+@inherits PerFilialComponentBase
+@attribute [Authorize(Roles = FonbecRoles.Mediador)]
+
+<PageHeader Title="Subir documentos" />
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true"
+                       Class="my-4" />
+}
+
+<MudText Class="mt-4">¿De qué becario es el documento que vas a subir?</MudText>
+
+<MudAutocomplete T="SelectableModel<int>" Label="Becario" ValueChanged="OnSelectedBecarioChanged" Value="_selectedBecario" SearchFunc="SearchBecario"
+                 Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter"
+                 Disabled="@(_selectedBecario is not null)">
+</MudAutocomplete>
+
+<MudText Class="mt-4">¿Qué documento vas a subir?</MudText>
+
+<MudSelect T="SelectableModel<int>" Label="Documento" ValueChanged="OnSelectedDocumentTypeChanged" Value="_selectedDocumentType"
+           Required="true" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter" Class="mb-4"
+           Disabled="@(_selectedDocumentType is not null)">
+    @foreach (var documentType in _documentTypes)
+    {
+        <MudSelectItem Value="documentType" />
+    }
+</MudSelect>

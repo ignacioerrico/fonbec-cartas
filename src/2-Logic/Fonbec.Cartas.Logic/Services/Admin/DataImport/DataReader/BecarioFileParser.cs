@@ -81,7 +81,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin.DataImport.DataReader
                 var existingMediador = becarioPayload.ExistingMediadores.SingleOrDefault(p => p.FullName() == mediador);
                 if (existingMediador is null)
                 {
-                    AddError(errors, lineNumber, $"mediador '{mediador}' does not exist; make sure spelling matches that in {ImportFileNameConstants.FileNameOf(typeof(Mediador))}");
+                    AddError(errors, lineNumber, $"mediador '{mediador}' does not exist; make sure spelling matches that in {ImportFileNameConstants.FileNameOf(typeof(DataAccess.Entities.Actors.Mediador))}");
                 }
                 else
                 {

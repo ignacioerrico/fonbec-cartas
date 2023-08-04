@@ -27,28 +27,28 @@ namespace Fonbec.Cartas.Logic.Services.Admin.DataImport
         private readonly IUserWithAccountSharedService _userWithAccountSharedService;
         private readonly IUserWithAccountRepositoryBase<DataAccess.Entities.Actors.Coordinador> _coordinadorRepository;
         private readonly FileParserBase<DataAccess.Entities.Actors.Coordinador, UserWithAccountToCreate> _coordinadorFileParser;
-        private readonly FileParserBase<Mediador, UserWithAccountToCreate> _mediadorFileParser;
+        private readonly FileParserBase<DataAccess.Entities.Actors.Mediador, UserWithAccountToCreate> _mediadorFileParser;
         private readonly FileParserBase<Revisor, UserWithAccountToCreate> _revisorFileParser;
         private readonly FileParserBase<Padrino, Padrino> _padrinosFileParser;
         private readonly FileParserBase<SendAlsoTo, SendAlsoTo> _sendAltoToFileParser;
         private readonly FileParserBase<Becario, Becario> _becarioFileParser;
         private readonly FileParserBase<Apadrinamiento, Apadrinamiento> _apadrinamientosFileParser;
         private readonly ICreateUserWithAccountService<DataAccess.Entities.Actors.Coordinador> _createCoordinadorService;
-        private readonly ICreateUserWithAccountService<Mediador> _createMediadorService;
+        private readonly ICreateUserWithAccountService<DataAccess.Entities.Actors.Mediador> _createMediadorService;
         private readonly ICreateUserWithAccountService<Revisor> _createRevisorService;
         private readonly IDataImportRepository _dataImportRepository;
 
         public DataImportService(IUserWithAccountSharedService userWithAccountSharedService,
             IUserWithAccountRepositoryBase<DataAccess.Entities.Actors.Coordinador> coordinadorRepository,
             FileParserBase<DataAccess.Entities.Actors.Coordinador, UserWithAccountToCreate> coordinadorFileParser,
-            FileParserBase<Mediador, UserWithAccountToCreate> mediadorFileParser,
+            FileParserBase<DataAccess.Entities.Actors.Mediador, UserWithAccountToCreate> mediadorFileParser,
             FileParserBase<Revisor, UserWithAccountToCreate> revisorFileParser,
             FileParserBase<Padrino, Padrino> padrinosFileParser,
             FileParserBase<SendAlsoTo, SendAlsoTo> sendAltoToFileParser,
             FileParserBase<Becario, Becario> becarioFileParser,
             FileParserBase<Apadrinamiento, Apadrinamiento> apadrinamientosFileParser,
             ICreateUserWithAccountService<DataAccess.Entities.Actors.Coordinador> createCoordinadorService,
-            ICreateUserWithAccountService<Mediador> createMediadorService,
+            ICreateUserWithAccountService<DataAccess.Entities.Actors.Mediador> createMediadorService,
             ICreateUserWithAccountService<Revisor> createRevisorService,
             IDataImportRepository dataImportRepository)
         {
@@ -72,7 +72,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin.DataImport
             var types = new[]
             {
                 typeof(DataAccess.Entities.Actors.Coordinador),
-                typeof(Mediador),
+                typeof(DataAccess.Entities.Actors.Mediador),
                 typeof(Revisor),
                 typeof(Padrino),
                 typeof(SendAlsoTo),
@@ -148,18 +148,18 @@ namespace Fonbec.Cartas.Logic.Services.Admin.DataImport
             return coordinadoresCreated;
         }
 
-        private async Task<List<Mediador>> ImportMediadoresAsync(ImportDataStreamsInputModel input, List<string> errors)
+        private async Task<List<DataAccess.Entities.Actors.Mediador>> ImportMediadoresAsync(ImportDataStreamsInputModel input, List<string> errors)
         {
             var mediadoresFile = await GetFileContentsAsync(input.Mediadores, errors);
 
-            var mediadorPayload = new UserWithAccountPayload<Mediador>
+            var mediadorPayload = new UserWithAccountPayload<DataAccess.Entities.Actors.Mediador>
             {
                 UserWithAccountService = _userWithAccountSharedService
             };
             var mediadores = await _mediadorFileParser.ConvertToObjects(mediadoresFile, mediadorPayload, errors);
 
             var mediadoresCreated = input.IsDryRun
-                ? mediadores.Adapt<List<Mediador>>()
+                ? mediadores.Adapt<List<DataAccess.Entities.Actors.Mediador>>()
                 : await _createMediadorService.CreateAsync(input.FilialId, mediadores, errors);
 
             return mediadoresCreated;
@@ -220,7 +220,7 @@ namespace Fonbec.Cartas.Logic.Services.Admin.DataImport
             return sendAlsoToPayload.PadrinosToUpdate;
         }
 
-        private async Task<List<Becario>> ImportBecariosAsync(ImportDataStreamsInputModel input, List<Mediador> mediadoresCreated, List<string> errors)
+        private async Task<List<Becario>> ImportBecariosAsync(ImportDataStreamsInputModel input, List<DataAccess.Entities.Actors.Mediador> mediadoresCreated, List<string> errors)
         {
             var becariosFile = await GetFileContentsAsync(input.Becarios, errors);
 
