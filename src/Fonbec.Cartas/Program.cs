@@ -5,6 +5,7 @@ using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Fonbec.Cartas.DataAccess.Triggers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,12 @@ builder.Services
     .AddDbContextFactory<ApplicationDbContext>(options =>
         options.UseSqlServer(connectionString)
             .EnableSensitiveDataLogging()
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+            .UseTriggers(triggerOptions =>
+            {
+                triggerOptions.AddTrigger<PlannedEventAfterSaveTrigger>();
+                triggerOptions.AddTrigger<ApadrinamientoAfterSaveTrigger>();
+            }));
 
 // Identity
 builder.Services
