@@ -69,22 +69,11 @@ namespace Fonbec.Cartas.Logic.Services.Admin.DataImport
 
         public async Task<byte[]> CreateZippedDataset()
         {
-            var types = new[]
-            {
-                typeof(DataAccess.Entities.Actors.Coordinador),
-                typeof(DataAccess.Entities.Actors.Mediador),
-                typeof(Revisor),
-                typeof(Padrino),
-                typeof(SendAlsoTo),
-                typeof(Becario),
-                typeof(Apadrinamiento),
-            };
-
             var memoryStream = new MemoryStream();
 
             using var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true);
 
-            foreach (var type in types)
+            foreach (var type in ImportFileNameConstants.Types)
             {
                 var zipArchiveEntry = zipArchive.CreateEntry(ImportFileNameConstants.FileNameOf(type), CompressionLevel.Optimal);
                 await using var entryStream = zipArchiveEntry.Open();

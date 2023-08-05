@@ -47,6 +47,8 @@ namespace Fonbec.Cartas.Logic.Constants
             return value;
         }
 
+        public static readonly Type[] Types = FileNames.Keys.ToArray();
+
         public static readonly string[] ExpectedFileNames = FileNames.Values.ToArray();
 
         public static string FilesList() => string.Join(", ", ExpectedFileNames.OrderBy(f => f));
