@@ -11,6 +11,8 @@ namespace Fonbec.Cartas.DataAccess.Entities.Planning
 
         public DateTime Date { get; set; }
 
+        public List<UnplannedDelivery> UnplannedDeliveries { get; set; } = default!;
+
         public int CreatedByCoordinadorId { get; set; }
         public Coordinador CreatedByCoordinador { get; set; } = default!;
 

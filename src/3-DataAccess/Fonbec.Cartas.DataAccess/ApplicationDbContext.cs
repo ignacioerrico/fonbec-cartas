@@ -38,6 +38,8 @@ namespace Fonbec.Cartas.DataAccess
 
         public DbSet<PlannedDelivery> PlannedDeliveries => Set<PlannedDelivery>();
 
+        public DbSet<UnplannedDelivery> UnplannedDeliveries => Set<UnplannedDelivery>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
