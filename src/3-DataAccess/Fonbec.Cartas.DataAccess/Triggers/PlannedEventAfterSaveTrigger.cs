@@ -24,7 +24,7 @@ namespace Fonbec.Cartas.DataAccess.Triggers
                 var plannedDeliveries = await GetPlannedDeliveriesBasedOOnApadrinamientosActiveOn(
                     appDbContext,
                     newPlannedEvent.Id,
-                    newPlannedEvent.Date,
+                    newPlannedEvent.StartsOn,
                     cancellationToken);
 
                 await appDbContext.PlannedDeliveries.AddRangeAsync(plannedDeliveries, cancellationToken);
@@ -44,7 +44,7 @@ namespace Fonbec.Cartas.DataAccess.Triggers
                 var newPlannedDeliveries = await GetPlannedDeliveriesBasedOOnApadrinamientosActiveOn(
                     appDbContext,
                     updatedPlannedEvent.Id,
-                    updatedPlannedEvent.Date,
+                    updatedPlannedEvent.StartsOn,
                     cancellationToken);
 
                 var plannedDelieveriesToRemove = oldPlannedDeliveries.Except(newPlannedDeliveries, new PlannedDeliveryComparer());

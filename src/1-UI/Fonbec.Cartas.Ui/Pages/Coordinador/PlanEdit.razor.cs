@@ -16,9 +16,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
     {
         private static readonly CultureInfo EsArCultureInfo = CultureInfo.GetCultureInfo("es-AR");
 
-        private PlannedCartaEditViewModel _viewModel = new();
-        private PlannedCartaEditViewModel _originalViewModel = new();
-        private int _plannedCartaId;
+        private PlannedEventEditViewModel _viewModel = new();
+        private PlannedEventEditViewModel _originalViewModel = new();
 
         private int _coordinadorId;
 
@@ -28,7 +27,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private string _saveButtonText = "Guardar";
         private bool _formValidationSucceeded;
 
-        private List<DateTime> _takenCartasDates = new();
+        private List<DateTime> _takenPlannedEventDates = new();
 
         private readonly MessageTemplateData _messageTemplateData = new()
         {
@@ -51,7 +50,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                                            || !ModelHasChanged;
 
         [Parameter]
-        public string PlannedCartaId { get; set; } = string.Empty;
+        public string PlannedEventId { get; set; } = string.Empty;
         
         [Inject]
         public IPlannedEventService PlannedEventService { get; set; } = default!;
@@ -80,29 +79,29 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             _messageTemplateData.FilialNombre = authenticatedUserData.User.FilialName() ?? "AMBA";
 
-            if (string.Equals(PlannedCartaId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(PlannedEventId, NavRoutes.New, StringComparison.OrdinalIgnoreCase))
             {
                 _isNew = true;
 
                 _pageTitle = "Nueva planificación de cartas";
                 _saveButtonText = "Crear";
 
-                _takenCartasDates = await PlannedEventService.GetAllPlannedEventDates(authenticatedUserData.FilialId, PlannedEventType.CartaObligatoria);
+                _takenPlannedEventDates = await PlannedEventService.GetAllPlannedEventDatesAsync(authenticatedUserData.FilialId);
 
                 _viewModel.Subject = MessageTemplateGetterService.GetDefaultSubject();
                 _viewModel.MessageMarkdown = MessageTemplateGetterService.GetDefaultMessageMarkdown();
                 
                 OnStartDateChanged();
             }
-            else if (int.TryParse(PlannedCartaId, out _plannedCartaId) && _plannedCartaId > 0)
+            else if (int.TryParse(PlannedEventId, out var plannedEventId) && plannedEventId > 0)
             {
                 _isNew = false;
 
-                var result = await PlannedEventService.GetPlannedCartaAsync(_plannedCartaId, authenticatedUserData.FilialId);
+                var result = await PlannedEventService.GetPlannedEventAsync(plannedEventId, authenticatedUserData.FilialId);
 
                 if (!result.IsFound || result.Data is null)
                 {
-                    Snackbar.Add($"No se encontró planificación de carta con ID {_plannedCartaId}.", Severity.Error);
+                    Snackbar.Add($"No se encontró planificación de carta con ID {plannedEventId}.", Severity.Error);
                     NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanificaciónNew);
                     return;
                 }
@@ -110,8 +109,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 _pageTitle = $"Editar planificación de cartas de {result.Data.Date.ToPlanName()}";
                 _saveButtonText = "Actualizar";
 
-                _viewModel = result.Data.Adapt<PlannedCartaEditViewModel>();
-                _originalViewModel = result.Data.Adapt<PlannedCartaEditViewModel>();
+                _viewModel = result.Data.Adapt<PlannedEventEditViewModel>();
+                _originalViewModel = result.Data.Adapt<PlannedEventEditViewModel>();
 
                 OnStartDateChanged(_viewModel.Date);
             }
@@ -129,7 +128,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             {
                 _viewModel.CreatedByCoordinadorId = _coordinadorId;
 
-                var result = await PlannedEventService.CreatePlannedCartaAsync(_viewModel);
+                var result = await PlannedEventService.CreatePlannedEventAsync(_viewModel);
 
                 if (!result.AnyRowsAffected)
                 {
@@ -140,7 +139,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             {
                 _viewModel.UpdatedByCoordinadorId = _coordinadorId;
                 
-                var result = await PlannedEventService.UpdatePlannedCartaAsync(_plannedCartaId, _viewModel);
+                var result = await PlannedEventService.UpdatePlannedEventAsync(_viewModel);
 
                 if (!result.AnyRowsAffected)
                 {
@@ -155,8 +154,8 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             var today = DateTime.Today;
 
-            _viewModel.Date = _takenCartasDates.Any()
-                ? _takenCartasDates.Max().AddMonths(1)
+            _viewModel.Date = _takenPlannedEventDates.Any()
+                ? _takenPlannedEventDates.Max().AddMonths(1)
                 : new DateTime(today.Year, today.Month, 1)
                     .AddMonths(1);
         }
@@ -165,16 +164,18 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         {
             var today = DateTime.Today;
 
-            var fechaDeCorte = new DateTime(today.Year, today.Month, 1);
+            var earliestSelectableDate = new DateTime(today.Year, today.Month, 1);
             
-            // It's possible to create "planned cartas" till the 10th of the month
+            // It's possible to create a planned event till the 10th of the month
             if (today.Day > 10)
             {
-                fechaDeCorte = fechaDeCorte.AddMonths(1);
+                earliestSelectableDate = earliestSelectableDate.AddMonths(1);
             }
 
-            return dateTime < fechaDeCorte
-                   || _takenCartasDates.Exists(taken => dateTime.Year == taken.Year && dateTime.Month == taken.Month);
+            return dateTime < earliestSelectableDate
+                   || _takenPlannedEventDates.Exists(taken =>
+                       dateTime.Year == taken.Year
+                       && dateTime.Month == taken.Month);
         }
 
         private void UpdatePreview()

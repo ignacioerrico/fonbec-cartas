@@ -18,7 +18,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
         private int _coordinadorId;
         private int _filialId;
 
-        private List<DateTime> _takenNotasDates = new();
+        private List<DateTime> _takenDeadlinesDates = new();
 
         [Inject]
         public IPlannedEventService PlannedEventService { get; set; } = default!;
@@ -44,16 +44,16 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             _viewModels = await PlannedEventService.GetAllPlansAsync(authenticatedUserData.FilialId);
 
-            _takenNotasDates = await PlannedEventService.GetAllPlannedEventDates(authenticatedUserData.FilialId);
+            _takenDeadlinesDates = await PlannedEventService.GetAllDeadlinesDatesAsync(authenticatedUserData.FilialId);
 
             _loading = false;
         }
 
-        private async Task OpenNewCorteRecepciónNotasDialog()
+        private async Task OpenNewDeadlineDialog()
         {
             var parameters = new DialogParameters
             {
-                ["TakenNotasDates"] = _takenNotasDates
+                ["TakenDeadlinesDates"] = _takenDeadlinesDates
             };
             var options = new DialogOptions
             {
@@ -70,23 +70,23 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             var date = (DateTime)result.Data;
 
-            var model = new PlannedEventsListPlannedCorteNotasModel
+            var model = new PlannedEventsListDeadlineModel
             {
                 Date = date,
                 FilialId = _filialId,
-                CreatedByCoordinadorId = _coordinadorId,
+                CoordinadorId = _coordinadorId,
             };
 
-            await PlannedEventService.CreatePlannedCorteNotasAsync(model);
+            await PlannedEventService.CreateDeadlineAsync(model);
 
             NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanificación, forceLoad: true);
         }
 
-        private async Task OpenEditCorteRecepciónNotasDialog(int plannedCorteNotasId, DateTime selectedDate)
+        private async Task OpenEditDeadlineDialog(int deadlineId, DateTime selectedDate)
         {
             var parameters = new DialogParameters
             {
-                ["TakenNotasDates"] = _takenNotasDates.Except(new[] { selectedDate }).ToList(),
+                ["TakenDeadlinesDates"] = _takenDeadlinesDates.Except(new[] { selectedDate }).ToList(),
                 ["SelectedDate"] = selectedDate,
             };
             var options = new DialogOptions
@@ -104,15 +104,15 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 
             var date = (DateTime)result.Data;
 
-            var model = new PlannedEventsListPlannedCorteNotasModel
+            var model = new PlannedEventsListDeadlineModel
             {
-                PlannedCorteNotasId = plannedCorteNotasId,
+                DeadlineId = deadlineId,
                 Date = date,
                 FilialId = _filialId,
-                CreatedByCoordinadorId = _coordinadorId,
+                CoordinadorId = _coordinadorId,
             };
 
-            await PlannedEventService.UpdatePlannedCorteNotasAsync(model);
+            await PlannedEventService.UpdateDeadlineAsync(model);
 
             NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanificación, forceLoad: true);
         }

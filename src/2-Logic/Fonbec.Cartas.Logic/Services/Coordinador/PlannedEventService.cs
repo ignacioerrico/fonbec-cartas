@@ -1,5 +1,4 @@
-﻿using Fonbec.Cartas.DataAccess.Entities.Enums;
-using Fonbec.Cartas.DataAccess.Entities.Planning;
+﻿using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Fonbec.Cartas.DataAccess.Repositories.Coordinador;
 using Fonbec.Cartas.Logic.Models.Coordinador;
 using Fonbec.Cartas.Logic.Models.Results;
@@ -10,14 +9,21 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
 {
     public interface IPlannedEventService
     {
+        /// <summary>
+        /// Returns all planned events and deadlines for a given Filial in descending order by date.
+        /// </summary>
+        /// <param name="filialId"></param>
+        /// <returns></returns>
         Task<List<PlannedEventsListViewModel>> GetAllPlansAsync(int filialId);
-        Task<SearchResult<PlannedCartaEditViewModel>> GetPlannedCartaAsync(int planId, int filialId);
-        Task<SearchResult<PlannedCartaPreviewViewModel>> GetPlannedCartaForPreviewAsync(int planId, int filialId);
-        Task<List<DateTime>> GetAllPlannedEventDates(int filialId, PlannedEventType? plannedEventType = null);
-        Task<CrudResult> CreatePlannedCartaAsync(PlannedCartaEditViewModel plannedCartaEditViewModel);
-        Task<CrudResult> UpdatePlannedCartaAsync(int planId, PlannedCartaEditViewModel plannedCartaEditViewModel);
-        Task<CrudResult> CreatePlannedCorteNotasAsync(PlannedEventsListPlannedCorteNotasModel model);
-        Task<CrudResult> UpdatePlannedCorteNotasAsync(PlannedEventsListPlannedCorteNotasModel model);
+        
+        Task<SearchResult<PlannedEventEditViewModel>> GetPlannedEventAsync(int plannedEventId, int filialId);
+        Task<SearchResult<PlannedEventPreviewViewModel>> GetPlannedEventForPreviewAsync(int plannedEventId, int filialId);
+        Task<List<DateTime>> GetAllPlannedEventDatesAsync(int filialId);
+        Task<List<DateTime>> GetAllDeadlinesDatesAsync(int filialId);
+        Task<CrudResult> CreatePlannedEventAsync(PlannedEventEditViewModel plannedEventEditViewModel);
+        Task<CrudResult> UpdatePlannedEventAsync(PlannedEventEditViewModel plannedEventEditViewModel);
+        Task<CrudResult> CreateDeadlineAsync(PlannedEventsListDeadlineModel model);
+        Task<CrudResult> UpdateDeadlineAsync(PlannedEventsListDeadlineModel model);
     }
 
     public class PlannedEventService : IPlannedEventService
@@ -31,55 +37,63 @@ namespace Fonbec.Cartas.Logic.Services.Coordinador
 
         public async Task<List<PlannedEventsListViewModel>> GetAllPlansAsync(int filialId)
         {
-            var all = await _plannedEventRepository.GetAllPlannedEventsAsync(filialId);
-            return all.Adapt<List<PlannedEventsListViewModel>>();
+            var dataModels = await _plannedEventRepository.GetAllPlansAsync(filialId);
+            return dataModels.BuildAdapter()
+                .AddParameters("dataModels", dataModels)
+                .AdaptToType<List<PlannedEventsListViewModel>>();
         }
 
-        public async Task<SearchResult<PlannedCartaEditViewModel>> GetPlannedCartaAsync(int planId, int filialId)
+        public async Task<SearchResult<PlannedEventEditViewModel>> GetPlannedEventAsync(int plannedEventId, int filialId)
         {
-            var plannedCarta = await _plannedEventRepository.GetPlannedCartaForPreviewAsync(planId, filialId);
-            var planEditViewModel = plannedCarta?.Adapt<PlannedCartaEditViewModel>();
-            return new SearchResult<PlannedCartaEditViewModel>(planEditViewModel);
+            var plannedEvent = await _plannedEventRepository.GetPlannedEventAsync(plannedEventId, filialId);
+            var planEditViewModel = plannedEvent?.Adapt<PlannedEventEditViewModel>();
+            return new SearchResult<PlannedEventEditViewModel>(planEditViewModel);
         }
 
-        public async Task<SearchResult<PlannedCartaPreviewViewModel>> GetPlannedCartaForPreviewAsync(int planId, int filialId)
+        public async Task<SearchResult<PlannedEventPreviewViewModel>> GetPlannedEventForPreviewAsync(int plannedEventId, int filialId)
         {
-            var plan = await _plannedEventRepository.GetPlannedCartaForPreviewAsync(planId, filialId);
-            var planEditViewModel = plan?.Adapt<PlannedCartaPreviewViewModel>();
-            return new SearchResult<PlannedCartaPreviewViewModel>(planEditViewModel);
+            var plan = await _plannedEventRepository.GetPlannedEventAsync(plannedEventId, filialId);
+            var planEditViewModel = plan?.Adapt<PlannedEventPreviewViewModel>();
+            return new SearchResult<PlannedEventPreviewViewModel>(planEditViewModel);
         }
 
-        public async Task<List<DateTime>> GetAllPlannedEventDates(int filialId, PlannedEventType? plannedEventType = null)
+        public async Task<List<DateTime>> GetAllPlannedEventDatesAsync(int filialId)
         {
-            var takenStartDates = await _plannedEventRepository.GetAllPlannedEventDates(filialId, plannedEventType);
+            var takenStartDates = await _plannedEventRepository.GetAllPlannedEventDatesAsync(filialId);
             return takenStartDates;
         }
 
-        public async Task<CrudResult> CreatePlannedCartaAsync(PlannedCartaEditViewModel plannedCartaEditViewModel)
+        public async Task<List<DateTime>> GetAllDeadlinesDatesAsync(int filialId)
         {
-            var plannedCarta = plannedCartaEditViewModel.Adapt<PlannedEvent>();
-            var rowsAffected = await _plannedEventRepository.CreatePlannedCartaAsync(plannedCarta);
+            var takenDates = await _plannedEventRepository.GetAllDeadlinesDatesAsync(filialId);
+            return takenDates;
+        }
+
+        public async Task<CrudResult> CreatePlannedEventAsync(PlannedEventEditViewModel plannedEventEditViewModel)
+        {
+            var plannedEvent = plannedEventEditViewModel.Adapt<PlannedEvent>();
+            var rowsAffected = await _plannedEventRepository.CreatePlannedEventAsync(plannedEvent);
             return new CrudResult(rowsAffected);
         }
 
-        public async Task<CrudResult> UpdatePlannedCartaAsync(int planId, PlannedCartaEditViewModel plannedCartaEditViewModel)
+        public async Task<CrudResult> UpdatePlannedEventAsync(PlannedEventEditViewModel plannedEventEditViewModel)
         {
-            var plannedCarta = plannedCartaEditViewModel.Adapt<PlannedEvent>();
-            var rowsAffected = await _plannedEventRepository.UpdatePlannedCartaAsync(planId, plannedCarta);
+            var plannedEvent = plannedEventEditViewModel.Adapt<PlannedEvent>();
+            var rowsAffected = await _plannedEventRepository.UpdatePlannedEventAsync(plannedEvent);
             return new CrudResult(rowsAffected);
         }
 
-        public async Task<CrudResult> CreatePlannedCorteNotasAsync(PlannedEventsListPlannedCorteNotasModel model)
+        public async Task<CrudResult> CreateDeadlineAsync(PlannedEventsListDeadlineModel model)
         {
-            var plannedCorteNotas = model.Adapt<PlannedEvent>();
-            var rowsAffected = await _plannedEventRepository.CreatePlannedCorteNotasAsync(plannedCorteNotas);
+            var deadline = model.Adapt<Deadline>();
+            var rowsAffected = await _plannedEventRepository.CreateDeadlineAsync(deadline);
             return new CrudResult(rowsAffected);
         }
 
-        public async Task<CrudResult> UpdatePlannedCorteNotasAsync(PlannedEventsListPlannedCorteNotasModel model)
+        public async Task<CrudResult> UpdateDeadlineAsync(PlannedEventsListDeadlineModel model)
         {
-            var plannedCorteNotas = model.Adapt<PlannedEvent>();
-            var rowsAffected = await _plannedEventRepository.UpdatePlannedCorteNotasAsync(plannedCorteNotas);
+            var deadline = model.Adapt<Deadline>();
+            var rowsAffected = await _plannedEventRepository.UpdateDeadlineAsync(deadline);
             return new CrudResult(rowsAffected);
         }
     }

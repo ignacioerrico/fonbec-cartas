@@ -1,4 +1,5 @@
-﻿using Fonbec.Cartas.DataAccess.Entities.Planning;
+﻿using Fonbec.Cartas.DataAccess.Constants;
+using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,11 +16,13 @@ namespace Fonbec.Cartas.DataAccess.Configuration
                 .HasForeignKey(pe => pe.FilialId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(pe => pe.CartaObligatoria)
-                .WithOne()
-                .IsRequired(false)
-                .HasForeignKey<PlannedEvent>(pe => pe.CartaObligatoriaId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(pe => pe.Subject)
+                .IsRequired()
+                .HasMaxLength(MaxLength.Plan.Subject);
+
+            builder.Property(pe => pe.MessageMarkdown)
+                .IsRequired()
+                .HasMaxLength(MaxLength.Plan.MessageMarkdown);
 
             builder.HasOne(pe => pe.CreatedByCoordinador)
                 .WithMany()

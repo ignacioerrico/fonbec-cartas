@@ -1,13 +1,12 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using Fonbec.Cartas.DataAccess.Entities.Enums;
 using Fonbec.Cartas.DataAccess.Entities.Planning;
 using Fonbec.Cartas.Logic.ViewModels.Coordinador;
 using Mapster;
 
 namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
 {
-    public class PlannedCartaEditViewModelTests : MapsterTests
+    public class PlannedEventEditViewModelTests : MapsterTests
     {
         [Fact]
         public void Map_PlannedEvent_To_PlanEditViewModel()
@@ -18,18 +17,15 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
             var plannedEvent = new PlannedEvent
             {
                 FilialId = 42,
-                Date = startDate,
-                CartaObligatoria = new CartaObligatoria
-                {
-                    Subject = "Subject",
-                    MessageMarkdown = "MessageMarkdown",
-                },
+                StartsOn = startDate,
+                Subject = "Subject",
+                MessageMarkdown = "MessageMarkdown",
                 CreatedByCoordinadorId = 78,
                 UpdatedByCoordinadorId = 123,
             };
 
             // Act
-            var result = plannedEvent.Adapt<PlannedCartaEditViewModel>();
+            var result = plannedEvent.Adapt<PlannedEventEditViewModel>();
 
             // Assert
             using (new AssertionScope())
@@ -49,7 +45,7 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
             // Arrange
             var startDate = new DateTime(2020, 6, 1);
 
-            var planEditViewModel = new PlannedCartaEditViewModel
+            var planEditViewModel = new PlannedEventEditViewModel
             {
                 FilialId = 42,
                 Date = startDate,
@@ -65,13 +61,10 @@ namespace Fonbec.Cartas.Logic.Tests.ViewModels.Coordinador
             // Assert
             using (new AssertionScope())
             {
-                result.CartaObligatoria.Should().NotBeNull();
-                
                 result.FilialId.Should().Be(42);
-                result.Date.Should().Be(startDate);
-                result.Type.Should().Be(PlannedEventType.CartaObligatoria);
-                result.CartaObligatoria!.Subject.Should().Be("Subject");
-                result.CartaObligatoria.MessageMarkdown.Should().Be("MessageMarkdown");
+                result.StartsOn.Should().Be(startDate);
+                result.Subject.Should().Be("Subject");
+                result.MessageMarkdown.Should().Be("MessageMarkdown");
                 result.CreatedByCoordinadorId.Should().Be(78);
                 result.UpdatedByCoordinadorId.Should().Be(123);
             }

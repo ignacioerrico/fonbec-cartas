@@ -34,6 +34,8 @@ namespace Fonbec.Cartas.DataAccess
 
         public DbSet<PlannedEvent> PlannedEvents => Set<PlannedEvent>();
 
+        public DbSet<Deadline> Deadlines => Set<Deadline>();
+
         public DbSet<PlannedDelivery> PlannedDeliveries => Set<PlannedDelivery>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

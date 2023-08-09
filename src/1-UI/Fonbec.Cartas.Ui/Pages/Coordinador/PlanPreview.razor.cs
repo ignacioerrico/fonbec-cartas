@@ -12,13 +12,13 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
 {
     public partial class PlanPreview : PerFilialComponentBase
     {
-        private PlannedCartaPreviewViewModel _viewModel = new();
+        private PlannedEventPreviewViewModel _viewModel = new();
 
         private bool _loading;
         private string? _pageTitle;
 
         [Parameter]
-        public string PlannedCartaId { get; set; } = string.Empty;
+        public string PlannedEventId { get; set; } = string.Empty;
 
         [Inject]
         public IPlannedEventService PlannedEventService { get; set; } = default!;
@@ -54,13 +54,13 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
                 return;
             }
 
-            if (int.TryParse(PlannedCartaId, out var plannedCartaId) && plannedCartaId > 0)
+            if (int.TryParse(PlannedEventId, out var plannedEventId) && plannedEventId > 0)
             {
-                var result = await PlannedEventService.GetPlannedCartaForPreviewAsync(plannedCartaId, authenticatedUserData.FilialId);
+                var result = await PlannedEventService.GetPlannedEventForPreviewAsync(plannedEventId, authenticatedUserData.FilialId);
 
                 if (!result.IsFound || result.Data is null)
                 {
-                    Snackbar.Add($"No se encontró plan con ID {PlannedCartaId}.", Severity.Error);
+                    Snackbar.Add($"No se encontró plan con ID {PlannedEventId}.", Severity.Error);
                     NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanificaciónNew);
                     return;
                 }
@@ -72,7 +72,7 @@ namespace Fonbec.Cartas.Ui.Pages.Coordinador
             }
             else
             {
-                Snackbar.Add($"'{PlannedCartaId}' no es un ID de planificación válido.", Severity.Error);
+                Snackbar.Add($"'{PlannedEventId}' no es un ID de planificación válido.", Severity.Error);
                 NavigationManager.NavigateTo(NavRoutes.CoordinadorPlanificación);
             }
 

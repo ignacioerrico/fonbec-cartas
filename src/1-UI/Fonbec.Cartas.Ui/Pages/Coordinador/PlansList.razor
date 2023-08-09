@@ -19,7 +19,7 @@
     <MudTooltip Text="Corte recepción de notas"
                 Arrow="true" Placement="Placement.Right"
                 Color="Color.Secondary">
-        <MudFab OnClick="OpenNewCorteRecepciónNotasDialog"
+        <MudFab OnClick="OpenNewDeadlineDialog"
                 Disabled="!_viewModels.Any()"
                 StartIcon="@Icons.Material.Filled.ContentCut"
                 Color="Color.Secondary" />
@@ -48,8 +48,8 @@
             {
             <tr>
                 <td>
-                    <AuditableItemDisplay Id="@context.Id" Name="@context.EventName" AuditableViewModel="@context"
-                                          Color="@(context.Type == PlannedEventType.CartaObligatoria ? Color.Primary : Color.Secondary)" />
+                    <AuditableItemDisplay Id="@context.PlanningId" Name="@context.EventName" AuditableViewModel="@context"
+                                          Color="@(context.PlanningType == PlanningType.PlannedEvent ? Color.Primary : Color.Secondary)" />
                     
                     @if (context.TotalToSend != 0 && context.TotalToSend == context.AlreadySent)
                     {
@@ -60,31 +60,34 @@
                     }
                     else
                     {
-                        <MudText>@context.Explanation</MudText>
+                        <MudText>@context.Description</MudText>
                     }
                 </td>
                 <td>@context.AlreadySent</td>
                 <td>@context.TotalToSend</td>
                 <td>
-                    <MudProgressLinear Color="Color.Tertiary" Size="Size.Large" Value="context.Percentage" />
+                    @if (context.TotalToSend > 0)
+                    {
+                        <MudProgressLinear Color="Color.Tertiary" Size="Size.Large" Value="context.Percentage"/>
+                    }
                 </td>
                 <td>
-                    @if (context.Type == PlannedEventType.CartaObligatoria)
+                    @if (context.PlanningType == PlanningType.PlannedEvent)
                     {
                         <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                            <MudIconButton Href="@(string.Format(NavRoutes.CoordinadorPlanificaciónCartaEdit0, context.Id))"
+                            <MudIconButton Href="@(string.Format(NavRoutes.CoordinadorPlanificaciónCartaEdit0, context.PlanningId))"
                                            Disabled="@(@context.Date <= DateTime.Today)"
                                            Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary"/>
                         </MudTooltip>
                         <MudTooltip Text="Ver" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                            <MudIconButton Href="@(string.Format(NavRoutes.CoordinadorPlanificaciónCartaPreview0, context.Id))"
+                            <MudIconButton Href="@(string.Format(NavRoutes.CoordinadorPlanificaciónCartaPreview0, context.PlanningId))"
                                            Icon="@Icons.Material.Filled.RemoveRedEye" Size="Size.Small" Color="Color.Primary"/>
                         </MudTooltip>
                     }
                     else
                     {
                         <MudTooltip Text="Editar" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
-                            <MudIconButton OnClick="@(async () =>  await OpenEditCorteRecepciónNotasDialog(context.Id, context.Date))"
+                            <MudIconButton OnClick="@(async () =>  await OpenEditDeadlineDialog(context.PlanningId, context.Date))"
                                            Disabled="@(@context.Date <= DateTime.Today)"
                                            Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" />
                         </MudTooltip>

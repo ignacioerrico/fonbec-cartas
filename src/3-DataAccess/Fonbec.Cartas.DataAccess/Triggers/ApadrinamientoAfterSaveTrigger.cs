@@ -24,8 +24,8 @@ namespace Fonbec.Cartas.DataAccess.Triggers
 
                 var plannedDeliveriesToAdd = await appDbContext.PlannedEvents
                     .Where(pe =>
-                        newApadrinamiento.From.Date <= pe.Date.Date
-                        && (!newApadrinamiento.To.HasValue || pe.Date.Date < newApadrinamiento.To.Value.Date))
+                        newApadrinamiento.From.Date <= pe.StartsOn.Date
+                        && (!newApadrinamiento.To.HasValue || pe.StartsOn.Date < newApadrinamiento.To.Value.Date))
                     .Select(pe =>
                         new PlannedDelivery
                         {
@@ -50,8 +50,8 @@ namespace Fonbec.Cartas.DataAccess.Triggers
 
                 var newPlannedDeliveries = await appDbContext.PlannedEvents
                     .Where(pe =>
-                        updatedApadrinamiento.From.Date <= pe.Date.Date
-                        && (!updatedApadrinamiento.To.HasValue || pe.Date.Date < updatedApadrinamiento.To.Value.Date))
+                        updatedApadrinamiento.From.Date <= pe.StartsOn.Date
+                        && (!updatedApadrinamiento.To.HasValue || pe.StartsOn.Date < updatedApadrinamiento.To.Value.Date))
                     .Select(pe =>
                         new PlannedDelivery
                         {

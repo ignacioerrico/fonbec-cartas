@@ -13,7 +13,7 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         private MudDialogInstance MudDialog { get; set; } = default!;
 
         [Parameter]
-        public List<DateTime> TakenNotasDates { get; set; } = new();
+        public List<DateTime> TakenDeadlinesDates { get; set; } = new();
 
         [Parameter]
         public DateTime? SelectedDate { get; set; }
@@ -36,7 +36,7 @@ namespace Fonbec.Cartas.Ui.Components.Dialogs
         private bool IsDateDisabled(DateTime dateTime)
         {
             return dateTime < DateTime.Today
-                   || TakenNotasDates.Exists(taken =>
+                   || TakenDeadlinesDates.Exists(taken =>
                        dateTime.Year == taken.Year
                        && dateTime.Month == taken.Month
                        && dateTime.Day == taken.Day);

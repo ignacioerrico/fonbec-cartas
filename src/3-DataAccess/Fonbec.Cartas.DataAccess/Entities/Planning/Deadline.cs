@@ -2,20 +2,14 @@
 
 namespace Fonbec.Cartas.DataAccess.Entities.Planning
 {
-    public class PlannedEvent : Auditable
+    public class Deadline : Auditable
     {
         public int Id { get; set; }
 
         public int FilialId { get; set; }
         public Filial Filial { get; set; } = default!;
 
-        public DateTime StartsOn { get; set; }
-
-        public string Subject { get; set; } = string.Empty;
-
-        public string MessageMarkdown { get; set; } = string.Empty;
-
-        public List<PlannedDelivery> PlannedDeliveries { get; set; } = new();
+        public DateTime Date { get; set; }
 
         public int CreatedByCoordinadorId { get; set; }
         public Coordinador CreatedByCoordinador { get; set; } = default!;
